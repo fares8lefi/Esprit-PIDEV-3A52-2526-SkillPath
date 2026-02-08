@@ -24,11 +24,8 @@ class Cours
     #[ORM\Column(length: 255)]
     private ?string $type = null;
 
-    /**
-     * @var Collection<int, Module>
-     */
-    #[ORM\OneToMany(targetEntity: Module::class, mappedBy: 'cours')]
-    private Collection $Module;
+    #[ORM\ManyToOne(inversedBy: 'cours')]
+    private ?Module $module = null;
 
     /**
      * @var Collection<int, User>
@@ -38,7 +35,6 @@ class Cours
 
     public function __construct()
     {
-        $this->Module = new ArrayCollection();
         $this->users = new ArrayCollection();
     }
 
@@ -83,32 +79,14 @@ class Cours
         return $this;
     }
 
-    /**
-     * @return Collection<int, Module>
-     */
-    public function getModule(): Collection
+    public function getModule(): ?Module
     {
-        return $this->Module;
+        return $this->module;
     }
 
-    public function addModule(Module $module): static
+    public function setModule(?Module $module): static
     {
-        if (!$this->Module->contains($module)) {
-            $this->Module->add($module);
-            $module->setCours($this);
-        }
-
-        return $this;
-    }
-
-    public function removeModule(Module $module): static
-    {
-        if ($this->Module->removeElement($module)) {
-            // set the owning side to null (unless already changed)
-            if ($module->getCours() === $this) {
-                $module->setCours(null);
-            }
-        }
+        $this->module = $module;
 
         return $this;
     }
