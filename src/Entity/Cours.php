@@ -30,9 +30,16 @@ class Cours
     #[ORM\OneToMany(targetEntity: Module::class, mappedBy: 'cours')]
     private Collection $Module;
 
+    /**
+     * @var Collection<int, User>
+     */
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'cours')]
+    private Collection $users;
+
     public function __construct()
     {
         $this->Module = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -101,6 +108,33 @@ class Cours
             if ($module->getCours() === $this) {
                 $module->setCours(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): static
+    {
+        if (!$this->users->contains($user)) {
+            $this->users->add($user);
+            $user->addCour($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): static
+    {
+        if ($this->users->removeElement($user)) {
+            $user->removeCour($this);
         }
 
         return $this;
