@@ -11,6 +11,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 
 #[Route('/user')]
 class UserController extends AbstractController
@@ -40,7 +42,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/register', name: 'app_user_register', methods: ['GET', 'POST'])]
-    public function register(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
+    public function register(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher, MailerInterface $mailer): Response
     {
         $user = new User();
         // Simulation d'un formulaire pour l'exemple
@@ -55,13 +57,49 @@ class UserController extends AbstractController
             );
             $user->setPassword($hashedPassword);
 
-            $user->setStatus('active');
+            $user->setStatus('pending'); // Compte en attente de vérification
             $user->setRole('student'); // Rôle par défaut
+            
+            // Générer un code de vérification aléatoire à 6 chiffres
+            $verificationCode = sprintf('%06d', random_int(0, 999999));
+            $user->setVerificationCode($verificationCode);
 
             $entityManager->persist($user);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_user_index');
+            // Log pour déboguer
+            $userEmail = $user->getEmail();
+            
+            // Envoyer l'email de vérification
+            try {
+                // Vérifier que l'email existe
+                if (empty($userEmail)) {
+                    throw new \Exception('L\'adresse email de l\'utilisateur est vide');
+                }
+                
+                $email = (new Email())
+                    ->from('skillPathdonotreply@gmail.com')
+                    ->to($userEmail)
+                    ->subject('Vérification de votre compte SkillPath')
+                    ->html(
+                        '<h1>Bienvenue sur SkillPath!</h1>' .
+                        '<p>Bonjour <strong>' . $user->getUsername() . '</strong>,</p>' .
+                        '<p>Votre code de vérification est : <strong style="font-size: 24px; color: #1e88e5;">' . $verificationCode . '</strong></p>' .
+                        '<p>Veuillez entrer ce code pour activer votre compte.</p>' .
+                        '<p>Ce code est valable pendant 24 heures.</p>' .
+                        '<p style="color: #666; font-size: 12px;">Si vous n\'avez pas créé de compte, ignorez cet email.</p>'
+                    );
+
+                $mailer->send($email);
+                
+                $this->addFlash('success', 'Un email de vérification a été envoyé à ' . $userEmail);
+            } catch (\Exception $e) {
+                // En cas d'erreur, on affiche le message mais on permet quand même la vérification
+                $this->addFlash('warning', 'Erreur lors de l\'envoi de l\'email : ' . $e->getMessage() . '. Votre code de vérification est : ' . $verificationCode);
+            }
+
+            // Rediriger vers la page de vérification
+            return $this->redirectToRoute('app_user_verify', ['email' => $userEmail]);
         }
 
         return $this->render('FrontOffice/user/register.html.twig', [
@@ -112,5 +150,95 @@ class UserController extends AbstractController
         return $this->render('BackOffice/user/index.html.twig', [
             'users' => $userRepository->findAll(),
         ]);
+    }
+
+    #[Route('/verify', name: 'app_user_verify', methods: ['GET', 'POST'])]
+    public function verify(Request $request, EntityManagerInterface $entityManager, UserRepository $userRepository): Response
+    {
+        // Récupérer l'email depuis GET ou POST
+        $email = $request->query->get('email');
+        
+        // Si POST, traiter la vérification
+        if ($request->isMethod('POST')) {
+            $email = trim($request->request->get('email'));
+            $code = trim($request->request->get('code'));
+            
+            // Trouver l'utilisateur
+            $user = $userRepository->findOneBy(['email' => $email]);
+            
+            if ($user === null) {
+                $this->addFlash('error', 'Aucun compte trouvé avec cet email.');
+                return $this->redirectToRoute('app_user_verify', ['email' => $email]);
+            }
+            
+            // Vérifier si déjà vérifié
+            if ($user->isVerified()) {
+                $this->addFlash('success', 'Votre compte est déjà vérifié !');
+                return $this->redirectToRoute('app_user_login');
+            }
+            
+            // Comparer les codes (avec trim pour éviter les espaces)
+            $storedCode = trim($user->getVerificationCode() ?? '');
+            $inputCode = trim($code);
+            
+            // Comparaison
+            if (!empty($storedCode) && $storedCode === $inputCode) {
+                // Code correct - activer le compte
+                $user->setIsVerified(true);
+                $user->setStatus('active');
+                $user->setVerificationCode(null);
+                $entityManager->flush();
+                
+                $this->addFlash('success', 'Votre compte a été vérifié avec succès ! Vous pouvez maintenant vous connecter.');
+                return $this->redirectToRoute('app_user_login');
+            } else {
+                // Code incorrect - afficher les valeurs pour debug
+                $this->addFlash('error', 'Code incorrect. Stocké: "' . $storedCode . '" (len:' . strlen($storedCode) . ') - Entré: "' . $inputCode . '" (len:' . strlen($inputCode) . ')');
+                return $this->redirectToRoute('app_user_verify', ['email' => $email]);
+            }
+        }
+        
+        // Récupérer l'utilisateur pour afficher le code actuel (debug)
+        $user = $userRepository->findOneBy(['email' => $email]);
+        $currentCode = $user ? $user->getVerificationCode() : 'N/A';
+        
+        // Afficher la page de vérification (GET)
+        return $this->render('FrontOffice/user/verify.html.twig', [
+            'email' => $email,
+            'debug_code' => $currentCode, // Temporaire pour debug
+        ]);
+    }
+
+    #[Route('/resend-verification', name: 'app_user_resend_verification', methods: ['POST'])]
+    public function resendVerification(Request $request, EntityManagerInterface $entityManager, UserRepository $userRepository, MailerInterface $mailer): Response
+    {
+        $email = $request->request->get('email');
+        $user = $userRepository->findOneBy(['email' => $email]);
+
+        if ($user && !$user->isVerified()) {
+            // Générer un nouveau code
+            $verificationCode = sprintf('%06d', random_int(0, 999999));
+            $user->setVerificationCode($verificationCode);
+            $entityManager->flush();
+
+            // Envoyer l'email
+            $emailMessage = (new Email())
+                ->from('skillPathdonotreply@gmail.com')
+                ->to($user->getEmail())
+                ->subject('Nouveau code de vérification SkillPath')
+                ->html(
+                    '<h1>Nouveau code de vérification</h1>' .
+                    '<p>Votre nouveau code de vérification est : <strong>' . $verificationCode . '</strong></p>' .
+                    '<p>Veuillez entrer ce code pour activer votre compte.</p>'
+                );
+
+            $mailer->send($emailMessage);
+            
+            $this->addFlash('success', 'Un nouveau code a été envoyé à votre email.');
+        } else {
+            $this->addFlash('error', 'Compte introuvable ou déjà vérifié.');
+        }
+
+        return $this->redirectToRoute('app_user_verify', ['email' => $email]);
     }
 }
