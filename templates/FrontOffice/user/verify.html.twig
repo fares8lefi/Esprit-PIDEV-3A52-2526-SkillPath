@@ -6,10 +6,8 @@
 <div class="min-h-screen bg-gradient-to-br from-skill-blue via-skill-green to-skill-yellow/30 flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-10">
         <div class="text-center mb-8">
-            <div class="inline-flex items-center justify-center w-20 h-20 bg-skill-green/20 rounded-full mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-skill-green" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 19v-8.93a2 2 0 01.89-1.664l7-4.666a2 2 0 012.22 0l7 4.666A2 2 0 0121 10.07V19M3 19a2 2 0 002 2h14a2 2 0 002-2M3 19l6.75-4.5M21 19l-6.75-4.5M3 10l6.75 4.5M21 10l-6.75 4.5m0 0l-1.14.76a2 2 0 01-2.22 0l-1.14-.76" />
-                </svg>
+            <div class="inline-flex items-center justify-center mb-4">
+                <img src="{{ asset('images/logo.png') }}" alt="SkillPath Logo" class="h-16 w-auto">
             </div>
             <h2 class="text-3xl font-extrabold text-skill-blue mb-2">Vérification du compte</h2>
             <p class="text-gray-500 text-sm">
@@ -17,10 +15,6 @@
                 <strong class="text-skill-blue">{{ email }}</strong>
             </p>
             
-            {# DEBUG BLOCK #}
-            <div class="mt-4 p-2 bg-gray-100 border border-dashed border-gray-400 rounded-lg text-xs text-gray-600">
-                <strong>DEBUG :</strong> Code attendu en base : <span class="font-mono font-bold text-red-600">{{ debug_code }}</span>
-            </div>
         </div>
 
         {# Messages Flash #}
