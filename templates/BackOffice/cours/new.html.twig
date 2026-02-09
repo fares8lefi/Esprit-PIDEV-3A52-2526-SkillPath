@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<h1>➕ Ajouter un cours</h1>
+
+<form method="POST">
+    <input type="text" name="titre" placeholder="Titre"><br><br>
+    <input type="text" name="contenu" placeholder="Contenu"><br><br>
+    <input type="text" name="type" placeholder="Type"><br><br>
+
+    <button type="submit">Enregistrer</button>
+</form>
+
+{% endblock %}

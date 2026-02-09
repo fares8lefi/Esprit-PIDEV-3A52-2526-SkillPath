@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+Gestion des cours
+{% endblock %}
+
+{% block body %}
+
+<div style="width:90%; margin:auto;">
+
+    <h1>📚 Gestion des cours</h1>
+
+    <a href="{{ path('cours_new') }}" style="display:inline-block; margin:15px 0;">
+        ➕ Ajouter un cours
+    </a>
+
+    <table border="1" cellpadding="10" width="100%" style="border-collapse: collapse;">
+        <tr style="background:#f2f2f2;">
+            <th>ID</th>
+            <th>Titre</th>
+            <th>Contenu</th>
+            <th>Type</th>
+            <th width="150">Actions</th>
+        </tr>
+
+        {% for c in cours %}
+            <tr>
+                <td>{{ c.id }}</td>
+                <td>{{ c.titre }}</td>
+                <td>{{ c.contenu }}</td>
+                <td>{{ c.type }}</td>
+                <td>
+                    <a href="{{ path('cours_edit', {'id': c.id}) }}">✏️</a>
+                    |
+                    <a href="{{ path('cours_delete', {'id': c.id}) }}"
+                       onclick="return confirm('Supprimer ce cours ?')">
+                       🗑️
+                    </a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5" style="text-align:center;">Aucun cours disponible</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+</div>
+
+{% endblock %}
