@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des utilisateurs{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-neutral-900 text-white p-8">
+    <div class="max-w-6xl mx-auto">
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-3xl font-bold text-white">Utilisateurs</h1>
+            <div class="flex space-x-4">
+                <a href="{{ path('app_user_register') }}" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg transition-colors text-sm font-semibold">
+                    + Inscription (Student)
+                </a>
+                <a href="{{ path('app_user_admin_create') }}" class="px-4 py-2 bg-red-600 hover:bg-red-500 rounded-lg transition-colors text-sm font-semibold">
+                    + Créer via Admin
+                </a>
+            </div>
+        </div>
+
+        <div class="bg-neutral-800 rounded-xl overflow-hidden border border-neutral-700 shadow-xl">
+            <table class="w-full text-left">
+                <thead class="bg-neutral-700/50 text-neutral-400 text-xs uppercase tracking-wider">
+                    <tr>
+                        <th class="px-6 py-4 font-semibold">Username</th>
+                        <th class="px-6 py-4 font-semibold">Email</th>
+                        <th class="px-6 py-4 font-semibold text-center">Rôle</th>
+                        <th class="px-6 py-4 font-semibold text-center">Status</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-neutral-700">
+                    {% for user in users %}
+                    <tr class="hover:bg-neutral-700/30 transition-colors">
+                        <td class="px-6 py-4 font-medium">{{ user.username }}</td>
+                        <td class="px-6 py-4 text-neutral-400">{{ user.email }}</td>
+                        <td class="px-6 py-4 text-center">
+                            <span class="px-3 py-1 rounded-full text-xs font-bold {{ user.role == 'admin' ? 'bg-red-500/20 text-red-400 border border-red-500/30' : 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' }}">
+                                {{ user.role|upper }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 text-center">
+                            <span class="flex items-center justify-center space-x-2">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                <span class="text-sm">{{ user.status }}</span>
+                            </span>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4" class="px-6 py-12 text-center text-neutral-500 italic">
+                            Aucun utilisateur trouvé.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard Admin - SkillPath{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-neutral-900 text-white p-8">
+    <div class="max-w-7xl mx-auto">
+        <header class="flex justify-between items-center mb-12">
+            <div>
+                <h1 class="text-4xl font-extrabold bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">Admin Dashboard</h1>
+                <p class="text-neutral-400 mt-2">Bienvenue, {{ app.user.username }}</p>
+            </div>
+            <a href="{{ path('app_logout') }}" class="px-6 py-2 bg-neutral-800 hover:bg-neutral-700 border border-neutral-700 rounded-xl transition-all">Déconnexion</a>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="bg-neutral-800 p-8 rounded-3xl border border-neutral-700 shadow-xl">
+                <h3 class="text-neutral-400 text-sm font-bold uppercase tracking-widest mb-4">Utilisateurs</h3>
+                <p class="text-5xl font-black mb-6">Gestion</p>
+                <a href="{{ path('app_user_index') }}" class="inline-flex items-center text-red-500 font-bold hover:underline">
+                    Voir la liste 
+                    <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                </a>
+            </div>
+            
+            <!-- Placeholders for other admin sections -->
+            <div class="bg-neutral-800 p-8 rounded-3xl border border-neutral-700 shadow-xl opacity-50">
+                <h3 class="text-neutral-400 text-sm font-bold uppercase tracking-widest mb-4">Cours</h3>
+                <p class="text-5xl font-black mb-6">Contenu</p>
+                <span class="text-neutral-500">Bientôt disponible</span>
+            </div>
+
+            <div class="bg-neutral-800 p-8 rounded-3xl border border-neutral-700 shadow-xl opacity-50">
+                <h3 class="text-neutral-400 text-sm font-bold uppercase tracking-widest mb-4">Analyses</h3>
+                <p class="text-5xl font-black mb-6">Stats</p>
+                <span class="text-neutral-500">Bientôt disponible</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

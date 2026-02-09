@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil - SkillPath{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-white">
+    <!-- Navbar -->
+    <nav class="border-b border-gray-100 px-8 py-4 flex justify-between items-center bg-white sticky top-0 z-50">
+        <div class="flex items-center space-x-2">
+            <div class="w-8 h-8 border-2 border-skill-green flex items-center justify-center">
+                <div class="w-2 h-2 bg-skill-green"></div>
+            </div>
+            <span class="text-2xl font-bold text-skill-blue">SkillPath</span>
+        </div>
+        <div class="flex items-center space-x-8">
+            {% if app.user %}
+                <span class="text-gray-600 font-medium">Salut, {{ app.user.username }}</span>
+                <a href="{{ path('app_logout') }}" class="px-6 py-2 bg-skill-blue text-white rounded-xl shadow-lg shadow-skill-blue/20 hover:scale-105 transition-transform">Déconnexion</a>
+            {% else %}
+                <a href="{{ path('app_user_login') }}" class="text-gray-600 font-bold hover:text-skill-blue transition-colors">Connexion</a>
+                <a href="{{ path('app_user_register') }}" class="px-6 py-2 bg-skill-blue text-white rounded-xl shadow-lg shadow-skill-blue/20 hover:scale-105 transition-transform">S'inscrire</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="max-w-7xl mx-auto px-8 py-20 text-center">
+        <h1 class="text-6xl font-black text-skill-blue mb-6 leading-tight">
+            Maîtrisez les compétences <br>
+            <span class="bg-skill-green px-4 text-white">du futur</span>
+        </h1>
+        <p class="text-xl text-gray-500 max-w-2xl mx-auto mb-12">
+            Explorez des centaines de cours en ligne pour apprendre à coder, à concevoir et à diriger.
+        </p>
+        <div class="flex justify-center space-x-4">
+            <a href="#" class="px-10 py-4 bg-skill-blue text-white font-bold rounded-2xl shadow-xl shadow-skill-blue/20 hover:-translate-y-1 transition-transform">Commencer</a>
+            <a href="#" class="px-10 py-4 bg-gray-50 text-skill-blue font-bold rounded-2xl border-2 border-gray-100 hover:bg-gray-100 transition-colors">En savoir plus</a>
+        </div>
+    </header>
+
+    <!-- Stats Section -->
+    <section class="bg-gray-50 py-20">
+        <div class="max-w-7xl mx-auto px-8 grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
+            <div>
+                <p class="text-5xl font-black text-skill-blue mb-2">500+</p>
+                <p class="text-gray-400 font-bold uppercase tracking-widest text-sm">Cours en ligne</p>
+            </div>
+            <div>
+                <p class="text-5xl font-black text-skill-blue mb-2">100K+</p>
+                <p class="text-gray-400 font-bold uppercase tracking-widest text-sm">Apprenants</p>
+            </div>
+            <div>
+                <p class="text-5xl font-black text-skill-blue mb-2">4.9/5</p>
+                <p class="text-gray-400 font-bold uppercase tracking-widest text-sm">Satisfaction</p>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
