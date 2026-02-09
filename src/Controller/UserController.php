@@ -12,6 +12,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Mime\Email;
 
 #[Route('/user')]
@@ -144,6 +145,59 @@ class UserController extends AbstractController
         ]);
     }
 
+    #[Route('/{id}', name: 'app_user_show', methods: ['GET'], requirements: ['id' => '\d+'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function show(User $user): Response
+    {
+        return $this->render('BackOffice/user/show.html.twig', [
+            'user' => $user,
+        ]);
+    }
+
+    #[Route('/{id}/edit', name: 'app_user_edit', methods: ['GET', 'POST'], requirements: ['id' => '\d+'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function edit(Request $request, User $user, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
+    {
+        if ($request->isMethod('POST')) {
+            $user->setEmail($request->request->get('email'));
+            $user->setUsername($request->request->get('username'));
+            
+            $role = $request->request->get('role');
+            if (in_array($role, ['student', 'admin'])) {
+                $user->setRole($role);
+            }
+
+            $user->setStatus($request->request->get('status'));
+
+            // Optionnel: modification du mot de passe
+            $newPassword = $request->request->get('password');
+            if (!empty($newPassword)) {
+                $user->setPassword($passwordHasher->hashPassword($user, $newPassword));
+            }
+
+            $entityManager->flush();
+            $this->addFlash('success', 'Utilisateur modifié avec succès.');
+            return $this->redirectToRoute('app_user_index');
+        }
+
+        return $this->render('BackOffice/user/edit.html.twig', [
+            'user' => $user,
+        ]);
+    }
+
+    #[Route('/{id}/delete', name: 'app_user_delete', methods: ['POST'], requirements: ['id' => '\d+'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function delete(Request $request, User $user, EntityManagerInterface $entityManager): Response
+    {
+        if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->request->get('_token'))) {
+            $entityManager->remove($user);
+            $entityManager->flush();
+            $this->addFlash('success', 'Utilisateur supprimé avec succès.');
+        }
+
+        return $this->redirectToRoute('app_user_index');
+    }
+
     #[Route('/', name: 'app_user_index', methods: ['GET'])]
     public function index(UserRepository $userRepository): Response
     {
@@ -198,14 +252,9 @@ class UserController extends AbstractController
             }
         }
         
-        // Récupérer l'utilisateur pour afficher le code actuel (debug)
-        $user = $userRepository->findOneBy(['email' => $email]);
-        $currentCode = $user ? $user->getVerificationCode() : 'N/A';
-        
         // Afficher la page de vérification (GET)
         return $this->render('FrontOffice/user/verify.html.twig', [
             'email' => $email,
-            'debug_code' => $currentCode, // Temporaire pour debug
         ]);
     }
 
@@ -239,6 +288,45 @@ class UserController extends AbstractController
             $this->addFlash('error', 'Compte introuvable ou déjà vérifié.');
         }
 
-        return $this->redirectToRoute('app_user_verify', ['email' => $email]);
+    }
+
+    #[Route('/profile', name: 'app_user_profile', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_USER')]
+    public function profile(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        if ($request->isMethod('POST')) {
+            $currentPassword = $request->request->get('current_password');
+            $newUsername = $request->request->get('username');
+            $newEmail = $request->request->get('email');
+            $newPassword = $request->request->get('new_password');
+
+            // 1. Vérifier le mot de passe actuel
+            if (!$passwordHasher->isPasswordValid($user, $currentPassword)) {
+                $this->addFlash('error', 'Le mot de passe actuel est incorrect.');
+                return $this->redirectToRoute('app_user_profile');
+            }
+
+            // 2. Mettre à jour les informations de base
+            $user->setUsername($newUsername);
+            $user->setEmail($newEmail);
+
+            // 3. Mettre à jour le mot de passe si fourni
+            if (!empty($newPassword)) {
+                $hashedPassword = $passwordHasher->hashPassword($user, $newPassword);
+                $user->setPassword($hashedPassword);
+            }
+
+            $entityManager->flush();
+            $this->addFlash('success', 'Votre profil a été mis à jour avec succès.');
+            
+            return $this->redirectToRoute('app_user_profile');
+        }
+
+        return $this->render('FrontOffice/user/profile.html.twig', [
+            'user' => $user,
+        ]);
     }
 }
