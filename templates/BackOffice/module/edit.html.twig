@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier module{% endblock %}
+
+{% block body %}
+
+<div style="width:60%; margin:auto; margin-top:40px;">
+
+    <h1>✏ Modifier module</h1>
+
+    <form method="post">
+
+        <label>Nom :</label>
+        <input type="text" name="name" value="{{ module.name }}" required><br>
+
+        <label>Description :</label>
+        <input type="text" name="description" value="{{ module.description }}" required><br>
+
+        <label>Date :</label>
+        <input type="date" name="dateCreation"
+               value="{{ module.dateCreation ? module.dateCreation|date('Y-m-d') : '' }}"
+               required><br>
+
+        <label>Level :</label>
+        <input type="text" name="level" value="{{ module.level }}" required><br>
+
+        <label>Image :</label>
+        <input type="text" name="image" value="{{ module.image }}"><br><br>
+
+        <button style="
+            background:orange;
+            color:white;
+            padding:10px 15px;
+            border:none;
+            border-radius:5px;">
+            💾 Modifier
+        </button>
+
+        <a href="{{ path('module_list') }}" style="margin-left:10px;">
+            ⬅ Retour
+        </a>
+
+    </form>
+
+</div>
+
+{% endblock %}

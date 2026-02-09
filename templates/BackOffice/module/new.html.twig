@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter module{% endblock %}
+
+{% block body %}
+
+<div style="width:60%; margin:auto; margin-top:40px;">
+
+    <h1>➕ Ajouter un module</h1>
+
+    <form method="post">
+
+        <label>Nom :</label>
+        <input type="text" name="name" required class="form-control"><br>
+
+        <label>Description :</label>
+        <input type="text" name="description" required class="form-control"><br>
+
+        <label>Date :</label>
+        <input type="date" name="dateCreation" required class="form-control"><br>
+
+        <label>Level :</label>
+        <input type="text" name="level" required class="form-control"><br>
+
+        <label>Image :</label>
+        <input type="text" name="image" class="form-control"><br><br>
+
+        <button style="
+            background:#4CAF50;
+            color:white;
+            padding:10px 15px;
+            border:none;
+            border-radius:5px;">
+            💾 Enregistrer
+        </button>
+
+        <a href="{{ path('module_list') }}" style="margin-left:10px;">
+            ⬅ Retour
+        </a>
+
+    </form>
+
+</div>
+
+{% endblock %}
