@@ -27,6 +27,9 @@ class Cours
     #[ORM\ManyToOne(inversedBy: 'cours')]
     private ?Module $module = null;
 
+    #[ORM\OneToOne(mappedBy: 'cours', cascade: ['persist', 'remove'])]
+    private ?Quiz $quiz = null;
+
     /**
      * @var Collection<int, User>
      */
@@ -87,6 +90,23 @@ class Cours
     public function setModule(?Module $module): static
     {
         $this->module = $module;
+
+        return $this;
+    }
+
+    public function getQuiz(): ?Quiz
+    {
+        return $this->quiz;
+    }
+
+    public function setQuiz(Quiz $quiz): static
+    {
+        // set the owning side of the relation if necessary
+        if ($quiz->getCours() !== $this) {
+            $quiz->setCours($this);
+        }
+
+        $this->quiz = $quiz;
 
         return $this;
     }
