@@ -44,6 +44,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Cours::class, inversedBy: 'users')]
     private Collection $cours;
 
+    
     public function __construct()
     {
         $this->cours = new ArrayCollection();
