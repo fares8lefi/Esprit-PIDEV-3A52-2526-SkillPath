@@ -58,11 +58,13 @@ class UserController extends AbstractController
             );
             $user->setPassword($hashedPassword);
 
-            $user->setStatus('pending'); // Compte en attente de vérification
-            $user->setRole('student'); // Rôle par défaut
+            $user->setStatus('pending'); 
+            $user->setRole('student'); 
             
             // Générer un code de vérification aléatoire à 6 chiffres
             $verificationCode = sprintf('%06d', random_int(0, 999999));
+            echo "==========================================================================================================\n";
+            dump($verificationCode); //a affichage dan,s le terminal 
             $user->setVerificationCode($verificationCode);
 
             $entityManager->persist($user);
@@ -216,6 +218,10 @@ class UserController extends AbstractController
         if ($request->isMethod('POST')) {
             $email = trim($request->request->get('email'));
             $code = trim($request->request->get('code'));
+            echo "============================================================================================================\n";
+
+            dump($code);
+            
             
             // Trouver l'utilisateur
             $user = $userRepository->findOneBy(['email' => $email]);
@@ -233,7 +239,11 @@ class UserController extends AbstractController
             
             // Comparer les codes (avec trim pour éviter les espaces)
             $storedCode = trim($user->getVerificationCode() ?? '');
+            echo "============================================================================================================\n";
+            dump($storedCode);
             $inputCode = trim($code);
+            echo "============================================================================================================\n";
+            dump($inputCode);
             
             // Comparaison
             if (!empty($storedCode) && $storedCode === $inputCode) {
