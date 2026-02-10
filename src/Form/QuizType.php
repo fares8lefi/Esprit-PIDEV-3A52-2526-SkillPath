@@ -49,6 +49,7 @@ class QuizType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Quiz::class,
+            'attr' => ['novalidate' => 'novalidate'],
         ]);
     }
 }

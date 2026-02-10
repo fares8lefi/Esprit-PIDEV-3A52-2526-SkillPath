@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\QuestionRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: QuestionRepository::class)]
 class Question
@@ -19,12 +20,16 @@ class Question
     private ?Quiz $quiz = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Assert\NotBlank(message: "L'énoncé de la question est obligatoire")]
+    #[Assert\Length(min: 5, minMessage: "L'énoncé doit faire au moins 5 caractères")]
     private ?string $enonce = null;
 
     #[ORM\Column(name: 'choix_a', length: 255)]
+    #[Assert\NotBlank(message: "Le choix A est obligatoire")]
     private ?string $choixA = null;
 
     #[ORM\Column(name: 'choix_b', length: 255)]
+    #[Assert\NotBlank(message: "Le choix B est obligatoire")]
     private ?string $choixB = null;
 
     #[ORM\Column(name: 'choix_c', length: 255)]
@@ -34,9 +39,13 @@ class Question
     private ?string $choixD = null;
 
     #[ORM\Column(name: 'bonne_reponse', length: 1)]
+    #[Assert\NotBlank(message: "La bonne réponse est obligatoire")]
+    #[Assert\Choice(choices: ['A', 'B', 'C', 'D'], message: "La bonne réponse doit être A, B, C ou D")]
     private ?string $bonneReponse = null;
 
     #[ORM\Column]
+    #[Assert\NotNull(message: "Le nombre de points est obligatoire")]
+    #[Assert\Positive(message: "Le nombre de points doit être positif")]
     private ?int $points = null;
 
     public function getId(): ?int

@@ -8,6 +8,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
+use Symfony\Component\Validator\Constraints as Assert;
+
 #[ORM\Entity(repositoryClass: QuizRepository::class)]
 class Quiz
 {
@@ -17,15 +19,23 @@ class Quiz
     private ?int $id = null;
 
     #[ORM\Column(length: 150)]
+    #[Assert\NotBlank(message: "Le titre est obligatoire")]
+    #[Assert\Length(min: 3, minMessage: "Le titre doit faire au moins 3 caractères")]
     private ?string $titre = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Assert\NotBlank(message: "La description est obligatoire")]
+    #[Assert\Length(min: 10, minMessage: "La description doit faire au moins 10 caractères")]
     private ?string $description = null;
 
     #[ORM\Column]
+    #[Assert\NotNull(message: "La durée est obligatoire")]
+    #[Assert\Positive(message: "La durée doit être positive")]
     private ?int $duree = null;
 
     #[ORM\Column(name: 'note_max')]
+    #[Assert\NotNull(message: "La note max est obligatoire")]
+    #[Assert\Positive(message: "La note max doit être positive")]
     private ?int $noteMax = null;
 
     #[ORM\Column(name: 'date_creation', type: Types::DATETIME_MUTABLE)]
