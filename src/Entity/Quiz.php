@@ -31,9 +31,6 @@ class Quiz
     #[ORM\Column(name: 'date_creation', type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $dateCreation = null;
 
-    #[ORM\OneToOne(inversedBy: 'quiz', cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(name: 'id_cours', referencedColumnName: 'id', nullable: false)]
-    private ?Cours $cours = null;
 
     /**
      * @var Collection<int, Question>
@@ -118,14 +115,9 @@ class Quiz
         return $this;
     }
 
-    public function getCours(): ?Cours
+    public function setId(int $id): static
     {
-        return $this->cours;
-    }
-
-    public function setCours(Cours $cours): static
-    {
-        $this->cours = $cours;
+        $this->id = $id;
 
         return $this;
     }

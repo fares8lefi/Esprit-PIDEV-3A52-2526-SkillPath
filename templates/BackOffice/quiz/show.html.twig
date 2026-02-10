@@ -1,0 +1,84 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Quiz{% endblock %}
+
+{% block body %}
+    <div class="container mx-auto p-4">
+        <h1 class="text-2xl font-bold mb-4">Quiz</h1>
+
+        <div class="bg-white shadow overflow-hidden sm:rounded-lg mb-4">
+            <div class="px-4 py-5 sm:px-6">
+                <h3 class="text-lg leading-6 font-medium text-gray-900">Quiz Details</h3>
+            </div>
+            <div class="border-t border-gray-200">
+                <dl>
+                    <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">Id</dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ quiz.id }}</dd>
+                    </div>
+                    <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">Titre</dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ quiz.titre }}</dd>
+                    </div>
+                    <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">Description</dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ quiz.description }}</dd>
+                    </div>
+                    <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">Duree</dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ quiz.duree }} min</dd>
+                    </div>
+                    <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">Note Max</dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ quiz.noteMax }}</dd>
+                    </div>
+                    <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt class="text-sm font-medium text-gray-500">Date Creation</dt>
+                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ quiz.dateCreation ? quiz.dateCreation|date('Y-m-d H:i:s') : '' }}</dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        <a href="{{ path('app_back_office_quiz_index') }}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mr-2">Back to list</a>
+        <a href="{{ path('app_back_office_quiz_edit', {'id': quiz.id}) }}" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded mr-2">Edit</a>
+        {{ include('BackOffice/quiz/_delete_form.html.twig') }}
+        
+        <hr class="my-8">
+        
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-bold">Questions</h2>
+            <a href="{{ path('app_back_office_question_new', {'id_quiz': quiz.id}) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Add Question</a>
+        </div>
+        
+        <div class="overflow-x-auto relative shadow-md sm:rounded-lg">
+            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                    <tr>
+                        <th scope="col" class="py-3 px-6">Enonce</th>
+                        <th scope="col" class="py-3 px-6">Points</th>
+                        <th scope="col" class="py-3 px-6">Bonne Réponse</th>
+                        <th scope="col" class="py-3 px-6">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for question in quiz.questions %}
+                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                        <td class="py-4 px-6">{{ question.enonce }}</td>
+                        <td class="py-4 px-6">{{ question.points }}</td>
+                        <td class="py-4 px-6">{{ question.bonneReponse }}</td>
+                        <td class="py-4 px-6">
+                             <a href="{{ path('app_back_office_question_edit', {'id': question.id}) }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="4" class="py-4 px-6 text-center">No questions found</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+{% endblock %}
