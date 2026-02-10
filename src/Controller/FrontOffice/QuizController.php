@@ -17,10 +17,17 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class QuizController extends AbstractController
 {
     #[Route('/', name: 'app_front_office_quiz_index', methods: ['GET'])]
-    public function index(QuizRepository $quizRepository): Response
+    public function index(Request $request, QuizRepository $quizRepository): Response
     {
+        $search = $request->query->get('search');
+        $sort = $request->query->get('sort');
+
+        $quizzes = $quizRepository->searchAndSort($search, $sort);
+
         return $this->render('FrontOffice/quiz/index.html.twig', [
-            'quizzes' => $quizRepository->findAll(),
+            'quizzes' => $quizzes,
+            'current_search' => $search,
+            'current_sort' => $sort
         ]);
     }
 

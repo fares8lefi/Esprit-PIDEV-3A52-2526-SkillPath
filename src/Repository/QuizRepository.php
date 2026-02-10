@@ -15,4 +15,41 @@ class QuizRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Quiz::class);
     }
+    /**
+     * @return Quiz[] Returns an array of Quiz objects
+     */
+    public function searchAndSort(?string $search, ?string $sort): array
+    {
+        $qb = $this->createQueryBuilder('q');
+
+        if ($search) {
+            $qb->andWhere('q.titre LIKE :search OR q.description LIKE :search')
+               ->setParameter('search', '%' . $search . '%');
+        }
+
+        switch ($sort) {
+            case 'titre_asc':
+                $qb->orderBy('q.titre', 'ASC');
+                break;
+            case 'titre_desc':
+                $qb->orderBy('q.titre', 'DESC');
+                break;
+            case 'duree_asc':
+                $qb->orderBy('q.duree', 'ASC');
+                break;
+            case 'duree_desc':
+                $qb->orderBy('q.duree', 'DESC');
+                break;
+            case 'note_asc':
+                $qb->orderBy('q.noteMax', 'ASC');
+                break;
+            case 'note_desc':
+                $qb->orderBy('q.noteMax', 'DESC');
+                break;
+            default:
+                $qb->orderBy('q.titre', 'ASC'); // Default sort
+        }
+
+        return $qb->getQuery()->getResult();
+    }
 }
