@@ -1,59 +1,291 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Accueil - SkillPath{% endblock %}
+{% block title %}SkillPath - Propulsez votre carrière{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .text-gradient {
+        background: linear-gradient(135deg, #1e88e5 0%, #3ca047 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    .bg-gradient-main {
+        background: linear-gradient(135deg, #1e88e5 0%, #3ca047 100%);
+    }
+    .glass-nav {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    .hero-mesh {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 100%;
+        z-index: -1;
+        background-color: #ffffff;
+        background-image: 
+            radial-gradient(at 0% 0%, rgba(30, 136, 229, 0.15) 0px, transparent 50%),
+            radial-gradient(at 100% 0%, rgba(60, 160, 71, 0.1) 0px, transparent 50%),
+            radial-gradient(at 100% 100%, rgba(251, 192, 45, 0.05) 0px, transparent 50%);
+    }
+    .card-hover {
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .card-hover:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+    }
+    @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-20px); }
+        100% { transform: translateY(0px); }
+    }
+    .float-anim {
+        animation: float 6s ease-in-out infinite;
+    }
+</style>
+{% endblock %}
 
 {% block body %}
-<div class="min-h-screen bg-white">
-    <!-- Navbar -->
-    <nav class="border-b border-gray-100 px-8 py-4 flex justify-between items-center bg-white sticky top-0 z-50">
-        <div class="flex items-center space-x-2">
-            <div class="w-8 h-8 border-2 border-skill-green flex items-center justify-center">
-                <div class="w-2 h-2 bg-skill-green"></div>
+<div class="relative min-h-screen overflow-hidden">
+    <div class="hero-mesh"></div>
+
+    <!-- Navigation -->
+    <nav class="glass-nav sticky top-0 z-[100] px-6 lg:px-12 py-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3 group cursor-pointer">
+                <div class="w-10 h-10 bg-gradient-main rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:scale-110 transition-transform">
+                    <img src="{{ asset('images/logo.png') }}" alt="Logo" class="w-6 h-6 invert brightness-0">
+                </div>
+                <span class="text-2xl font-black tracking-tight text-slate-900 group-hover:text-blue-600 transition-colors">SkillPath</span>
             </div>
-            <span class="text-2xl font-bold text-skill-blue">SkillPath</span>
-        </div>
-        <div class="flex items-center space-x-8">
-            {% if app.user %}
-                <span class="text-gray-600 font-medium">Salut, {{ app.user.username }}</span>
-                <a href="{{ path('app_logout') }}" class="px-6 py-2 bg-skill-blue text-white rounded-xl shadow-lg shadow-skill-blue/20 hover:scale-105 transition-transform">Déconnexion</a>
-            {% else %}
-                <a href="{{ path('app_user_login') }}" class="text-gray-600 font-bold hover:text-skill-blue transition-colors">Connexion</a>
-                <a href="{{ path('app_user_register') }}" class="px-6 py-2 bg-skill-blue text-white rounded-xl shadow-lg shadow-skill-blue/20 hover:scale-105 transition-transform">S'inscrire</a>
-            {% endif %}
+
+            <div class="hidden md:flex items-center gap-10">
+                <a href="#" class="text-sm font-bold text-slate-600 hover:text-blue-600 transition-colors">Cours</a>
+                <a href="#" class="text-sm font-bold text-slate-600 hover:text-blue-600 transition-colors">Parcours</a>
+                <a href="#" class="text-sm font-bold text-slate-600 hover:text-blue-600 transition-colors">À propos</a>
+            </div>
+
+            <div class="flex items-center gap-4">
+                {% if app.user %}
+                    <div class="flex items-center gap-4 pl-4 border-l border-slate-200">
+                        <div class="text-right hidden sm:block">
+                            <p class="text-xs font-black text-slate-900">{{ app.user.username }}</p>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Compte {{ app.user.role }}</p>
+                        </div>
+                        <a href="{{ path('app_user_profile') }}" class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center border-2 border-white shadow-sm overflow-hidden hover:scale-105 transition-transform">
+                             <div class="w-full h-full bg-gradient-main flex items-center justify-center text-white font-black text-sm">
+                                {{ app.user.username|first|upper }}
+                             </div>
+                        </a>
+                        <a href="{{ path('app_logout') }}" class="p-2 text-slate-400 hover:text-red-500 transition-colors" title="Déconnexion">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                        </a>
+                    </div>
+                {% else %}
+                    <a href="{{ path('app_user_login') }}" class="text-sm font-bold text-slate-600 hover:text-blue-600 px-4 py-2 transition-colors">Connexion</a>
+                    <a href="{{ path('app_user_register') }}" class="text-sm font-bold bg-slate-900 text-white px-6 py-3 rounded-2xl shadow-xl shadow-slate-900/10 hover:bg-black hover:-translate-y-0.5 transition-all active:scale-95">S'inscrire</a>
+                {% endif %}
+            </div>
         </div>
     </nav>
 
     <!-- Hero Section -->
-    <header class="max-w-7xl mx-auto px-8 py-20 text-center">
-        <h1 class="text-6xl font-black text-skill-blue mb-6 leading-tight">
-            Maîtrisez les compétences <br>
-            <span class="bg-skill-green px-4 text-white">du futur</span>
-        </h1>
-        <p class="text-xl text-gray-500 max-w-2xl mx-auto mb-12">
-            Explorez des centaines de cours en ligne pour apprendre à coder, à concevoir et à diriger.
-        </p>
-        <div class="flex justify-center space-x-4">
-            <a href="#" class="px-10 py-4 bg-skill-blue text-white font-bold rounded-2xl shadow-xl shadow-skill-blue/20 hover:-translate-y-1 transition-transform">Commencer</a>
-            <a href="#" class="px-10 py-4 bg-gray-50 text-skill-blue font-bold rounded-2xl border-2 border-gray-100 hover:bg-gray-100 transition-colors">En savoir plus</a>
-        </div>
-    </header>
+    <section class="max-w-7xl mx-auto px-6 lg:px-12 pt-20 pb-32">
+        <div class="flex flex-col lg:flex-row items-center gap-16">
+            <div class="flex-1 text-center lg:text-left">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 border border-blue-100 mb-8 animate-bounce">
+                    <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                    <span class="text-xs font-black text-blue-600 uppercase tracking-widest">Nouvelle plateforme 2.0</span>
+                </div>
+                <h1 class="text-6xl lg:text-8xl font-[900] text-slate-900 mb-8 leading-[1.05] tracking-tight">
+                    Apprenez sans <br>
+                    <span class="text-gradient">limites.</span>
+                </h1>
+                <p class="text-xl text-slate-500 max-w-xl mb-12 font-medium leading-relaxed">
+                    Accédez à des formations de classe mondiale conçues par des experts du secteur pour booster votre carrière et maîtriser les technologies de demain.
+                </p>
+                <div class="flex flex-col sm:flex-row items-center gap-5 justify-center lg:justify-start">
+                    <a href="#" class="w-full sm:w-auto px-10 py-5 bg-gradient-main text-white font-black rounded-[2rem] shadow-2xl shadow-blue-500/30 hover:scale-105 active:scale-95 transition-all text-center">
+                        Commencer l'aventure
+                    </a>
+                    <a href="#" class="w-full sm:w-auto px-10 py-5 bg-white text-slate-900 font-bold rounded-[2rem] border-2 border-slate-100 hover:bg-slate-50 transition-all text-center flex items-center justify-center gap-2 group">
+                        Parcourir les cours
+                        <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                    </a>
+                </div>
+            </div>
 
-    <!-- Stats Section -->
-    <section class="bg-gray-50 py-20">
-        <div class="max-w-7xl mx-auto px-8 grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
-            <div>
-                <p class="text-5xl font-black text-skill-blue mb-2">500+</p>
-                <p class="text-gray-400 font-bold uppercase tracking-widest text-sm">Cours en ligne</p>
-            </div>
-            <div>
-                <p class="text-5xl font-black text-skill-blue mb-2">100K+</p>
-                <p class="text-gray-400 font-bold uppercase tracking-widest text-sm">Apprenants</p>
-            </div>
-            <div>
-                <p class="text-5xl font-black text-skill-blue mb-2">4.9/5</p>
-                <p class="text-gray-400 font-bold uppercase tracking-widest text-sm">Satisfaction</p>
+            <div class="flex-1 relative hidden lg:block">
+                <div class="relative w-full aspect-square rounded-[3rem] bg-gradient-main shadow-3xl transform rotate-3 float-anim overflow-hidden">
+                    <div class="absolute inset-0 bg-white/10 backdrop-blur-3xl opacity-50"></div>
+                    <!-- Abstract shapes for visual interest -->
+                    <div class="absolute top-1/4 left-1/4 w-32 h-32 rounded-full bg-yellow-400 blur-3xl opacity-30"></div>
+                    <div class="absolute bottom-1/4 right-1/4 w-48 h-48 rounded-full bg-blue-300 blur-3xl opacity-30"></div>
+                    
+                    <!-- Content Overlay -->
+                    <div class="p-12 h-full flex flex-col justify-end">
+                        <div class="glass-nav p-6 rounded-3xl border border-white/20">
+                            <div class="flex items-center gap-4 mb-4">
+                                <div class="w-12 h-12 rounded-xl bg-blue-500 flex items-center justify-center text-white font-black">JS</div>
+                                <div>
+                                    <p class="text-slate-900 font-black">JavaScript Expert</p>
+                                    <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Cours Masterclass</p>
+                                </div>
+                            </div>
+                            <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                                <div class="bg-blue-500 h-2 w-3/4 rounded-full"></div>
+                            </div>
+                            <p class="text-right text-[10px] font-black text-slate-500 mt-2">75% Complété</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Decorative elements -->
+                <div class="absolute -top-10 -right-10 w-40 h-40 bg-skill-yellow/20 rounded-full blur-3xl -z-10 animate-pulse"></div>
             </div>
         </div>
     </section>
+
+    <!-- Trusted By -->
+    <section class="border-y border-slate-100 bg-slate-50/50 py-12">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <p class="text-xs font-black text-slate-400 uppercase tracking-[0.3em] mb-10">Reconnu par les meilleures entreprises</p>
+            <div class="flex flex-wrap justify-center gap-12 lg:gap-24 opacity-40 grayscale group hover:grayscale-0 transition-all">
+                <span class="text-2xl font-black text-slate-900">Google</span>
+                <span class="text-2xl font-black text-slate-900">Netflix</span>
+                <span class="text-2xl font-black text-slate-900">Adobe</span>
+                <span class="text-2xl font-black text-slate-900">Spotify</span>
+                <span class="text-2xl font-black text-slate-900">Vercel</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="max-w-7xl mx-auto px-6 lg:px-12 py-32">
+        <div class="text-center mb-20">
+            <h2 class="text-4xl lg:text-5xl font-black text-slate-900 mb-6">Pourquoi choisir <span class="text-gradient">SkillPath</span> ?</h2>
+            <p class="text-slate-500 font-medium max-w-xl mx-auto">Une expérience d'apprentissage repensée pour vous donner les clés de la réussite.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="card-hover p-10 rounded-[2.5rem] bg-white border border-slate-100 shadow-sm relative overflow-hidden group">
+                <div class="w-16 h-16 bg-blue-50 text-blue-500 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-blue-500 group-hover:text-white transition-all">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                </div>
+                <h3 class="text-2xl font-black text-slate-900 mb-4">Bibliothèque Elite</h3>
+                <p class="text-slate-500 font-medium leading-relaxed">Accès illimité à plus de 500 cours premium mis à jour chaque semaine par nos experts.</p>
+            </div>
+
+            <div class="card-hover p-10 rounded-[2.5rem] bg-white border border-slate-100 shadow-sm relative overflow-hidden group">
+                <div class="w-16 h-16 bg-green-50 text-green-500 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-green-500 group-hover:text-white transition-all">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                </div>
+                <h3 class="text-2xl font-black text-slate-900 mb-4">Certifications NFT</h3>
+                <p class="text-slate-500 font-medium leading-relaxed">Validez vos compétences avec des certificats infalsifiables reconnus par l'industrie.</p>
+            </div>
+
+            <div class="card-hover p-10 rounded-[2.5rem] bg-white border border-slate-100 shadow-sm relative overflow-hidden group">
+                <div class="w-16 h-16 bg-orange-50 text-orange-500 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-orange-500 group-hover:text-white transition-all">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                </div>
+                <h3 class="text-2xl font-black text-slate-900 mb-4">Apprentissage IA</h3>
+                <p class="text-slate-500 font-medium leading-relaxed">Bénéficiez d'un parcours personnalisé généré par nos algorithmes pour atteindre vos objectifs.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats -->
+    <section class="max-w-7xl mx-auto px-6 lg:px-12 pb-32">
+        <div class="bg-slate-900 rounded-[3rem] p-12 lg:p-20 relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-96 h-96 bg-blue-500/20 rounded-full blur-[120px]"></div>
+            <div class="absolute bottom-0 left-0 w-96 h-96 bg-green-500/10 rounded-full blur-[120px]"></div>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-12 relative z-10 text-center">
+                <div>
+                    <h4 class="text-5xl font-black text-white mb-2">50k+</h4>
+                    <p class="text-xs font-black text-slate-400 uppercase tracking-widest">Élèves</p>
+                </div>
+                <div>
+                    <h4 class="text-5xl font-black text-white mb-2">120</h4>
+                    <p class="text-xs font-black text-slate-400 uppercase tracking-widest">Formateurs</p>
+                </div>
+                <div>
+                    <h4 class="text-5xl font-black text-white mb-2">4.9</h4>
+                    <p class="text-xs font-black text-slate-400 uppercase tracking-widest">Note Moyenne</p>
+                </div>
+                <div>
+                    <h4 class="text-5xl font-black text-white mb-2">98%</h4>
+                    <p class="text-xs font-black text-slate-400 uppercase tracking-widest">Succès</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-100 pt-20 pb-10">
+        <div class="max-w-7xl mx-auto px-6 lg:px-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-20">
+                <div class="col-span-1 md:col-span-1">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-8 h-8 bg-gradient-main rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20">
+                            <img src="{{ asset('images/logo.png') }}" alt="Logo" class="w-5 h-5 invert brightness-0">
+                        </div>
+                        <span class="text-xl font-black tracking-tight text-slate-900">SkillPath</span>
+                    </div>
+                    <p class="text-slate-500 text-sm font-medium leading-relaxed mb-6">
+                        Transformer l'éducation par la technologie pour tout le monde, partout.
+                    </p>
+                    <div class="flex gap-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-blue-500 hover:text-white transition-all">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/></svg>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-blue-600 hover:text-white transition-all">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                        </a>
+                    </div>
+                </div>
+
+                <div>
+                    <h5 class="text-sm font-black text-slate-900 uppercase tracking-widest mb-6">Plateforme</h5>
+                    <ul class="space-y-4">
+                        <li><a href="#" class="text-slate-500 text-sm font-medium hover:text-blue-600 transition-colors">Tous les cours</a></li>
+                        <li><a href="#" class="text-slate-500 text-sm font-medium hover:text-blue-600 transition-colors">Abonnements</a></li>
+                        <li><a href="#" class="text-slate-500 text-sm font-medium hover:text-blue-600 transition-colors">Parrainage</a></li>
+                        <li><a href="#" class="text-slate-500 text-sm font-medium hover:text-blue-600 transition-colors">IA Guidance</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h5 class="text-sm font-black text-slate-900 uppercase tracking-widest mb-6">Société</h5>
+                    <ul class="space-y-4">
+                        <li><a href="#" class="text-slate-500 text-sm font-medium hover:text-blue-600 transition-colors">Notre équipe</a></li>
+                        <li><a href="#" class="text-slate-500 text-sm font-medium hover:text-blue-600 transition-colors">Carrières</a></li>
+                        <li><a href="#" class="text-slate-500 text-sm font-medium hover:text-blue-600 transition-colors">Blog</a></li>
+                        <li><a href="#" class="text-slate-500 text-sm font-medium hover:text-blue-600 transition-colors">Contact</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h5 class="text-sm font-black text-slate-900 uppercase tracking-widest mb-6">Support</h5>
+                    <ul class="space-y-4">
+                        <li><a href="#" class="text-slate-500 text-sm font-medium hover:text-blue-600 transition-colors">FAQ</a></li>
+                        <li><a href="#" class="text-slate-500 text-sm font-medium hover:text-blue-600 transition-colors">Centre d'aide</a></li>
+                        <li><a href="#" class="text-slate-500 text-sm font-medium hover:text-blue-600 transition-colors">Sécurité</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6 pt-10 border-t border-slate-100">
+                <p class="text-xs font-bold text-slate-400">© 2026 SkillPath Inc. Tous droits réservés.</p>
+                <div class="flex gap-8">
+                    <a href="#" class="text-xs font-bold text-slate-400 hover:text-slate-600">Confidentialité</a>
+                    <a href="#" class="text-xs font-bold text-slate-400 hover:text-slate-600">Conditions</a>
+                </div>
+            </div>
+        </div>
+    </footer>
 </div>
 {% endblock %}
