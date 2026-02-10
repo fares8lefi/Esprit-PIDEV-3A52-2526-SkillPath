@@ -43,28 +43,31 @@ class UserController extends AbstractController
     }
 
     #[Route('/register', name: 'app_user_register', methods: ['GET', 'POST'])]
-    public function register(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher, MailerInterface $mailer): Response
+    public function register(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher, MailerInterface $mailer, \Symfony\Component\Validator\Validator\ValidatorInterface $validator): Response
     {
         $user = new User();
         // Simulation d'un formulaire pour l'exemple
         if ($request->isMethod('POST')) {
             $user->setEmail($request->request->get('email'));
             $user->setUsername($request->request->get('username'));
-            
+            $user->setPassword($request->request->get('password')); // Temporaire pour validation
+
+            $errors = $validator->validate($user);
+            if (count($errors) > 0) {
+                foreach ($errors as $error) {
+                    $this->addFlash('error', $error->getMessage());
+                }
+                return $this->render('FrontOffice/user/register.html.twig', ['user' => $user]);
+            }
+
             // Hachage du mot de passe
-            $hashedPassword = $passwordHasher->hashPassword(
-                $user,
-                $request->request->get('password')
-            );
-            $user->setPassword($hashedPassword);
+            $user->setPassword($passwordHasher->hashPassword($user, $user->getPassword()));
 
             $user->setStatus('pending'); 
             $user->setRole('student'); 
             
             // Générer un code de vérification aléatoire à 6 chiffres
             $verificationCode = sprintf('%06d', random_int(0, 999999));
-            echo "==========================================================================================================\n";
-            dump($verificationCode); //a affichage dan,s le terminal 
             $user->setVerificationCode($verificationCode);
 
             $entityManager->persist($user);
@@ -75,11 +78,6 @@ class UserController extends AbstractController
             
             // Envoyer l'email de vérification
             try {
-                // Vérifier que l'email existe
-                if (empty($userEmail)) {
-                    throw new \Exception('L\'adresse email de l\'utilisateur est vide');
-                }
-                
                 $email = (new Email())
                     ->from('skillPathdonotreply@gmail.com')
                     ->to($userEmail)
@@ -88,20 +86,15 @@ class UserController extends AbstractController
                         '<h1>Bienvenue sur SkillPath!</h1>' .
                         '<p>Bonjour <strong>' . $user->getUsername() . '</strong>,</p>' .
                         '<p>Votre code de vérification est : <strong style="font-size: 24px; color: #1e88e5;">' . $verificationCode . '</strong></p>' .
-                        '<p>Veuillez entrer ce code pour activer votre compte.</p>' .
-                        '<p>Ce code est valable pendant 24 heures.</p>' .
-                        '<p style="color: #666; font-size: 12px;">Si vous n\'avez pas créé de compte, ignorez cet email.</p>'
+                        '<p>Veuillez entrer ce code pour activer votre compte.</p>'
                     );
 
                 $mailer->send($email);
-                
                 $this->addFlash('success', 'Un email de vérification a été envoyé à ' . $userEmail);
             } catch (\Exception $e) {
-                // En cas d'erreur, on affiche le message mais on permet quand même la vérification
-                $this->addFlash('warning', 'Erreur lors de l\'envoi de l\'email : ' . $e->getMessage() . '. Votre code de vérification est : ' . $verificationCode);
+                $this->addFlash('warning', 'Erreur lors de l\'envoi de l\'email : ' . $e->getMessage());
             }
 
-            // Rediriger vers la page de vérification
             return $this->redirectToRoute('app_user_verify', ['email' => $userEmail]);
         }
 
@@ -111,30 +104,30 @@ class UserController extends AbstractController
     }
 
     #[Route('/admin/create', name: 'app_user_admin_create', methods: ['GET', 'POST'])]
-    public function adminCreate(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
+    public function adminCreate(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher, \Symfony\Component\Validator\Validator\ValidatorInterface $validator): Response
     {
         $user = new User();
         
         if ($request->isMethod('POST')) {
             $user->setEmail($request->request->get('email'));
             $user->setUsername($request->request->get('username'));
-            
+            $user->setPassword($request->request->get('password'));
+
+            $errors = $validator->validate($user);
+            if (count($errors) > 0) {
+                foreach ($errors as $error) {
+                    $this->addFlash('error', $error->getMessage());
+                }
+                return $this->render('BackOffice/user/create.html.twig', ['user' => $user]);
+            }
+
             // Hachage du mot de passe
-            $hashedPassword = $passwordHasher->hashPassword(
-                $user,
-                $request->request->get('password')
-            );
-            $user->setPassword($hashedPassword);
+            $user->setPassword($passwordHasher->hashPassword($user, $user->getPassword()));
 
             $user->setStatus('active');
             
-            // L'admin choisit le rôle
             $role = $request->request->get('role');
-            if (in_array($role, ['student', 'admin'])) {
-                $user->setRole($role);
-            } else {
-                $user->setRole('student');
-            }
+            $user->setRole(in_array($role, ['student', 'admin']) ? $role : 'student');
 
             $entityManager->persist($user);
             $entityManager->flush();
