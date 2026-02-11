@@ -376,14 +376,14 @@
 
 {% endblock %}
 
-{{ parent() }}
+{% block javascripts %}
+    {{ parent() }}
     <script>
-        function deleteModule(id, csrfToken) {
+        function deleteModule(url, csrfToken) {
             const deleteForm = document.getElementById('deleteForm');
-            deleteForm.action = "/admin/modules/" + id; // ✅ ton prefix controller
+            deleteForm.action = url;
             document.getElementById('deleteToken').value = csrfToken;
-            document.getElem{% block javascripts %}
-    entById('deleteModal').classList.remove('hidden');
+            document.getElementById('deleteModal').classList.remove('hidden');
         }
 
         function closeDeleteModal() {
@@ -398,12 +398,10 @@
             if (e.target === this) closeDeleteModal();
         });
 
-        // Auto-submit filters
         document.querySelector('select[name="level"]')?.addEventListener('change', function() {
             this.closest('form').submit();
         });
 
-        // Search debounce
         let searchTimeout;
         const searchInput = document.querySelector('input[name="search"]');
         if (searchInput) {
@@ -416,3 +414,4 @@
         }
     </script>
 {% endblock %}
+
