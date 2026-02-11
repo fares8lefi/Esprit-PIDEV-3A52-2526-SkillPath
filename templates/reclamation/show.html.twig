@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Reclamation{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-neutral-100 p-8">
+    <div class="max-w-4xl mx-auto">
+        <a href="{{ path('app_reclamation_index') }}" class="inline-flex items-center mb-6 text-gray-600 hover:text-gray-900">
+            &larr; Back to list
+        </a>
+
+        <!-- Reclamation Details -->
+        <div class="bg-white rounded-lg shadow overflow-hidden mb-8">
+            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                <h1 class="text-2xl font-bold text-gray-900">{{ reclamation.sujet }}</h1>
+                <span class="px-3 py-1 text-sm font-semibold rounded-full 
+                    {% if reclamation.statut == 'Pending' %}bg-yellow-100 text-yellow-800{% elseif reclamation.statut == 'Resolved' %}bg-green-100 text-green-800{% else %}bg-gray-100 text-gray-800{% endif %}">
+                    {{ reclamation.statut }}
+                </span>
+            </div>
+            <div class="px-6 py-4">
+                <p class="text-gray-700 whitespace-pre-line">{{ reclamation.description }}</p>
+            </div>
+        </div>
+
+        <!-- Responses -->
+        <div class="space-y-6">
+            <h2 class="text-xl font-bold text-gray-900">Responses</h2>
+            
+            {% for response in reclamation.reponses %}
+                <div class="bg-white rounded-lg shadow p-4 {% if 'ADMIN' in response.user.roles %}border-l-4 border-red-500{% else %}border-l-4 border-blue-500{% endif %}">
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="font-bold {% if 'ADMIN' in response.user.roles %}text-red-600{% else %}text-blue-600{% endif %}">
+                            {{ response.user.username }} ({{ response.user.email }}) {% if 'ADMIN' in response.user.roles %}(Admin){% endif %}
+                        </span>
+                        <!-- You can add date here if existing -->
+                    </div>
+                    <p class="text-gray-700 whitespace-pre-line">{{ response.message }}</p>
+                </div>
+            {% else %}
+                <p class="text-gray-500 italic">No responses yet.</p>
+            {% endfor %}
+
+            <!-- Add Response Form -->
+            <div class="bg-white rounded-lg shadow p-6 mt-6">
+                <h3 class="text-lg font-bold text-gray-900 mb-4">Add a Response</h3>
+                {{ form_start(response_form) }}
+                    <div class="mb-4">
+                        {{ form_widget(response_form.message, {'attr': {'class': 'w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border'}}) }}
+                        {{ form_errors(response_form.message) }}
+                    </div>
+                    <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors">Submit Response</button>
+                {{ form_end(response_form) }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

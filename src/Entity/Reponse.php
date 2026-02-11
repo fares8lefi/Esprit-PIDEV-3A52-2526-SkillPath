@@ -17,7 +17,11 @@ class Reponse
     private ?string $message = null;
 
     #[ORM\ManyToOne(inversedBy: 'reponses')]
-    private ?reclamation $reclamation = null;
+    private ?Reclamation $reclamation = null;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
 
     public function getId(): ?int
     {
@@ -44,6 +48,18 @@ class Reponse
     public function setReclamation(?reclamation $reclamation): static
     {
         $this->reclamation = $reclamation;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }
