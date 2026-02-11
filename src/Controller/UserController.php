@@ -124,6 +124,7 @@ class UserController extends AbstractController
             $user->setPassword($passwordHasher->hashPassword($user, $user->getPassword()));
 
             $user->setStatus('active');
+            $user->setIsVerified(true);
             
             $role = $request->request->get('role');
             $user->setRole(in_array($role, ['student', 'admin']) ? $role : 'student');
@@ -329,6 +330,71 @@ class UserController extends AbstractController
 
         return $this->render('FrontOffice/user/profile.html.twig', [
             'user' => $user,
+        ]);
+    }
+
+    #[Route('/forgot-password', name: 'app_user_forgot_password', methods: ['GET', 'POST'])]
+    public function forgotPassword(Request $request, UserRepository $userRepository, EntityManagerInterface $entityManager, MailerInterface $mailer): Response
+    {
+        if ($request->isMethod('POST')) {
+            $emailRequested = $request->request->get('email');
+            $user = $userRepository->findOneBy(['email' => $emailRequested]);
+
+            if ($user) {
+                // Générer un code de réinitialisation
+                $resetCode = sprintf('%06d', random_int(0, 999999));
+                $user->setVerificationCode($resetCode);
+                $entityManager->flush();
+
+                // Envoyer l'email
+                $email = (new Email())
+                    ->from('skillPathdonotreply@gmail.com')
+                    ->to($user->getEmail())
+                    ->subject('Réinitialisation de votre mot de passe SkillPath')
+                    ->html(
+                        '<h1>Réinitialisation de mot de passe</h1>' .
+                        '<p>Bonjour <strong>' . $user->getUsername() . '</strong>,</p>' .
+                        '<p>Votre code de réinitialisation est : <strong style="font-size: 24px; color: #e53935;">' . $resetCode . '</strong></p>' .
+                        '<p>Veuillez entrer ce code pour réinitialiser votre mot de passe.</p>'
+                    );
+
+                $mailer->send($email);
+                $this->addFlash('success', 'Un code de réinitialisation a été envoyé à votre email.');
+                return $this->redirectToRoute('app_user_reset_password', ['email' => $emailRequested]);
+            }
+
+            $this->addFlash('error', 'Aucun compte trouvé avec cet email.');
+        }
+
+        return $this->render('FrontOffice/user/forgot_password.html.twig');
+    }
+
+    #[Route('/reset-password', name: 'app_user_reset_password', methods: ['GET', 'POST'])]
+    public function resetPassword(Request $request, UserRepository $userRepository, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
+    {
+        $emailParam = $request->query->get('email') ?? $request->request->get('email');
+        
+        if ($request->isMethod('POST')) {
+            $code = $request->request->get('code');
+            $newPassword = $request->request->get('password');
+            $user = $userRepository->findOneBy(['email' => $emailParam]);
+
+            if ($user && $user->getVerificationCode() === $code && !empty($code)) {
+                $user->setPassword($passwordHasher->hashPassword($user, $newPassword));
+                $user->setVerificationCode(null);
+                $user->setStatus('active');
+                $user->setIsVerified(true);
+                $entityManager->flush();
+
+                $this->addFlash('success', 'Votre mot de passe a été réinitialisé avec succès.');
+                return $this->redirectToRoute('app_user_login');
+            }
+
+            $this->addFlash('error', 'Code incorrect ou invalide.');
+        }
+
+        return $this->render('FrontOffice/user/reset_password.html.twig', [
+            'email' => $emailParam
         ]);
     }
 }
