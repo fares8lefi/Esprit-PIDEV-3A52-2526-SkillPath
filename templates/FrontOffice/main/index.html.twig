@@ -4,374 +4,382 @@
 
 {% block stylesheets %}
 <style>
-    .text-gradient {
-        background: linear-gradient(135deg, #1e88e5 0%, #3ca047 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+    @keyframes gradient-shift {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
     }
-    .bg-gradient-main {
-        background: linear-gradient(135deg, #1e88e5 0%, #3ca047 100%);
+    .hero-gradient-bg {
+        background: linear-gradient(135deg, rgba(124,58,237,0.06), rgba(6,182,212,0.04), rgba(245,158,11,0.03));
     }
-    .glass-nav {
-        background: rgba(255, 255, 255, 0.8);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    }
-    .dark .glass-nav {
-        background: rgba(15, 23, 42, 0.8);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    }
-    .hero-mesh {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 100%;
-        z-index: -1;
-        background-color: #ffffff;
-        background-image: 
-            radial-gradient(at 0% 0%, rgba(30, 136, 229, 0.15) 0px, transparent 50%),
-            radial-gradient(at 100% 0%, rgba(60, 160, 71, 0.1) 0px, transparent 50%),
-            radial-gradient(at 100% 100%, rgba(251, 192, 45, 0.05) 0px, transparent 50%);
-    }
-    .dark .hero-mesh {
-        background-color: #020617;
-        background-image: 
-            radial-gradient(at 0% 0%, rgba(30, 136, 229, 0.05) 0px, transparent 50%),
-            radial-gradient(at 100% 0%, rgba(60, 160, 71, 0.05) 0px, transparent 50%),
-            radial-gradient(at 100% 100%, rgba(251, 192, 45, 0.02) 0px, transparent 50%);
-    }
-    .card-hover {
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .card-hover:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
-    }
-    .dark .card-hover:hover {
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-    }
-    @keyframes float {
-        0% { transform: translateY(0px); }
-        50% { transform: translateY(-20px); }
-        100% { transform: translateY(0px); }
-    }
-    .float-anim {
-        animation: float 6s ease-in-out infinite;
+    .dark .hero-gradient-bg {
+        background: linear-gradient(135deg, rgba(124,58,237,0.08), rgba(6,182,212,0.04), rgba(245,158,11,0.02));
     }
 </style>
 {% endblock %}
 
 {% block body %}
-<div class="relative min-h-screen overflow-hidden">
-    <div class="hero-mesh"></div>
+<div class="relative min-h-screen mesh-light dark:mesh-dark overflow-hidden">
 
     <!-- Navigation -->
-    <nav class="glass-nav sticky top-0 z-[100] px-6 lg:px-12 py-4">
+    <nav class="glass sticky top-0 z-[100] px-6 lg:px-12 py-4">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-3 group cursor-pointer">
-                <div class="w-10 h-10 bg-gradient-main rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:scale-110 transition-transform">
+                <div class="w-10 h-10 gradient-primary rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/20 group-hover:scale-110 transition-transform">
                     <img src="{{ asset('images/logo.png') }}" alt="Logo" class="w-6 h-6 invert brightness-0">
                 </div>
-                <span class="text-2xl font-black tracking-tight text-slate-900 dark:text-white group-hover:text-blue-600 transition-colors">SkillPath</span>
+                <span class="text-2xl font-black tracking-tight text-slate-900 dark:text-white">Skill<span class="gradient-text">Path</span></span>
             </div>
 
-            <div class="hidden md:flex items-center gap-10">
-                <a href="#catalogue" class="text-sm font-bold text-slate-600 dark:text-slate-400 hover:text-blue-600 transition-colors">Catalogue</a>
-                <a href="#catalogue" class="text-sm font-bold text-slate-600 dark:text-slate-400 hover:text-blue-600 transition-colors">Cours</a>
-                <a href="#" class="text-sm font-bold text-slate-600 dark:text-slate-400 hover:text-blue-600 transition-colors">À propos</a>
+            <div class="hidden md:flex items-center gap-8">
+                <a href="#catalogue" class="text-sm font-semibold text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary-light transition-colors">Catalogue</a>
+                <a href="#catalogue" class="text-sm font-semibold text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary-light transition-colors">Cours</a>
+                <a href="#stats" class="text-sm font-semibold text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary-light transition-colors">À propos</a>
             </div>
 
             <div class="flex items-center gap-4">
                 {% if app.user %}
-                    <div class="flex items-center gap-4 pl-4 border-l border-slate-200 dark:border-slate-800">
+                    <div class="flex items-center gap-4 pl-4 border-l border-slate-200/50 dark:border-white/5">
                         <div class="text-right hidden sm:block">
-                            <p class="text-xs font-black text-slate-900 dark:text-white">{{ app.user.username }}</p>
-                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Compte {{ app.user.role }}</p>
+                            <p class="text-xs font-bold text-slate-900 dark:text-white">{{ app.user.username }}</p>
+                            <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Compte {{ app.user.role }}</p>
                         </div>
-                        <a href="{{ path('app_user_profile') }}" class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center border-2 border-white shadow-sm overflow-hidden hover:scale-105 transition-transform">
-                             <div class="w-full h-full bg-gradient-main flex items-center justify-center text-white font-black text-sm">
-                                {{ app.user.username|first|upper }}
-                             </div>
+                        <a href="{{ path('app_user_profile') }}" class="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center text-white font-bold text-sm shadow-md shadow-purple-500/15 hover:scale-105 transition-transform">
+                            {{ app.user.username|first|upper }}
                         </a>
-                        <a href="{{ path('app_logout') }}" class="p-2 text-slate-400 hover:text-red-500 transition-colors" title="Déconnexion">
+                        <a href="{{ path('app_logout') }}" class="p-2 text-slate-400 hover:text-red-400 transition-colors" title="Déconnexion">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
                         </a>
                     </div>
                 {% else %}
-                    <a href="{{ path('app_user_login') }}" class="text-sm font-bold text-slate-600 hover:text-blue-600 px-4 py-2 transition-colors">Connexion</a>
-                    <a href="{{ path('app_user_register') }}" class="text-sm font-bold bg-slate-900 text-white px-6 py-3 rounded-2xl shadow-xl shadow-slate-900/10 hover:bg-black hover:-translate-y-0.5 transition-all active:scale-95">S'inscrire</a>
+                    <a href="{{ path('app_user_login') }}" class="text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-primary px-4 py-2 transition-colors">Connexion</a>
+                    <a href="{{ path('app_user_register') }}" class="btn-primary text-sm !py-3 !px-6">S'inscrire</a>
                 {% endif %}
             </div>
         </div>
     </nav>
 
     <!-- Hero Section -->
-    <section class="max-w-7xl mx-auto px-6 lg:px-12 pt-20 pb-32">
+    <section class="max-w-7xl mx-auto px-6 lg:px-12 pt-20 pb-28">
         <div class="flex flex-col lg:flex-row items-center gap-16">
-            <div class="flex-1 text-center lg:text-left">
-                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 border border-blue-100 mb-8 animate-bounce">
-                    <span class="w-2 h-2 rounded-full bg-blue-500"></span>
-                    <span class="text-xs font-black text-blue-600 uppercase tracking-widest">Nouvelle plateforme 2.0</span>
+            <div class="flex-1 text-center lg:text-left animate-fade-up">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/8 dark:bg-primary/15 border border-primary/15 dark:border-primary/20 mb-8">
+                    <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                    <span class="text-[11px] font-bold text-primary dark:text-primary-light uppercase tracking-widest">Plateforme 2026</span>
                 </div>
-                <h1 class="text-6xl lg:text-8xl font-[900] text-slate-900 dark:text-white mb-8 leading-[1.05] tracking-tight">
+                <h1 class="text-5xl lg:text-[5.5rem] font-[900] text-slate-900 dark:text-white mb-8 leading-[1.05] tracking-tight">
                     Apprenez sans <br>
-                    <span class="text-gradient">limites.</span>
+                    <span class="gradient-text">limites.</span>
                 </h1>
-                <p class="text-xl text-slate-500 dark:text-slate-400 max-w-xl mb-12 font-medium leading-relaxed">
+                <p class="text-lg text-slate-500 dark:text-slate-400 max-w-xl mb-12 font-medium leading-relaxed">
                     Accédez à des formations de classe mondiale conçues par des experts du secteur pour booster votre carrière et maîtriser les technologies de demain.
                 </p>
-                <div class="flex flex-col sm:flex-row items-center gap-5 justify-center lg:justify-start">
-                    <a href="#" class="w-full sm:w-auto px-10 py-5 bg-gradient-main text-white font-black rounded-[2rem] shadow-2xl shadow-blue-500/30 hover:scale-105 active:scale-95 transition-all text-center">
+                <div class="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
+                    <a href="#catalogue" class="btn-primary w-full sm:w-auto text-center flex items-center justify-center gap-2 !py-4 !px-8">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                         Commencer l'aventure
                     </a>
-                    <a href="#" class="w-full sm:w-auto px-10 py-5 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-bold rounded-[2rem] border-2 border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all text-center flex items-center justify-center gap-2 group">
+                    <a href="#catalogue" class="btn-secondary w-full sm:w-auto text-center flex items-center justify-center gap-2 !py-4 !px-8 group">
                         Parcourir les cours
-                        <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                        <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                     </a>
                 </div>
             </div>
 
-            <div class="flex-1 relative hidden lg:block">
-                <div class="relative w-full aspect-square rounded-[3rem] bg-gradient-main shadow-3xl transform rotate-3 float-anim overflow-hidden">
-                    <div class="absolute inset-0 bg-white/10 backdrop-blur-3xl opacity-50"></div>
-                    <!-- Abstract shapes for visual interest -->
-                    <div class="absolute top-1/4 left-1/4 w-32 h-32 rounded-full bg-yellow-400 blur-3xl opacity-30"></div>
-                    <div class="absolute bottom-1/4 right-1/4 w-48 h-48 rounded-full bg-blue-300 blur-3xl opacity-30"></div>
-                    
-                    <!-- Content Overlay -->
-                    <div class="p-12 h-full flex flex-col justify-end">
-                        <div class="glass-nav p-6 rounded-3xl border border-white/20">
-                            <div class="flex items-center gap-4 mb-4">
-                                <div class="w-12 h-12 rounded-xl bg-blue-500 flex items-center justify-center text-white font-black">JS</div>
-                                <div>
-                                    <p class="text-slate-900 font-black">JavaScript Expert</p>
-                                    <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Cours Masterclass</p>
-                                </div>
+            <!-- Bento Hero Illustration -->
+            <div class="flex-1 relative hidden lg:block animate-fade-up delay-200">
+                <div class="grid grid-cols-2 gap-4">
+                    <!-- Card 1: Course Preview -->
+                    <div class="glass-card p-6 rounded-3xl col-span-2">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="w-12 h-12 rounded-xl gradient-primary flex items-center justify-center text-white font-black shadow-lg shadow-purple-500/20">JS</div>
+                            <div>
+                                <p class="text-sm font-bold text-slate-900 dark:text-white">JavaScript Expert</p>
+                                <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Cours Masterclass</p>
                             </div>
-                            <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
-                                <div class="bg-blue-500 h-2 w-3/4 rounded-full"></div>
-                            </div>
-                            <p class="text-right text-[10px] font-black text-slate-500 mt-2">75% Complété</p>
+                            <span class="badge badge-green ml-auto">Nouveau</span>
                         </div>
+                        <div class="progress-bar">
+                            <div class="progress-bar-fill" style="width: 75%"></div>
+                        </div>
+                        <p class="text-right text-[10px] font-bold text-slate-400 mt-2">75% Complété</p>
+                    </div>
+
+                    <!-- Card 2: Stats -->
+                    <div class="glass-card p-6 rounded-3xl animate-float">
+                        <div class="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center mb-3">
+                            <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                        </div>
+                        <p class="text-2xl font-black text-slate-900 dark:text-white">92%</p>
+                        <p class="text-xs font-semibold text-slate-400">Taux de réussite</p>
+                    </div>
+
+                    <!-- Card 3: Achievement -->
+                    <div class="glass-card p-6 rounded-3xl" style="animation-delay: 3s">
+                        <div class="w-10 h-10 rounded-xl bg-secondary/10 flex items-center justify-center mb-3">
+                            <svg class="w-5 h-5 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
+                        </div>
+                        <p class="text-2xl font-black text-slate-900 dark:text-white">12</p>
+                        <p class="text-xs font-semibold text-slate-400">Badges obtenus</p>
                     </div>
                 </div>
-                <!-- Decorative elements -->
-                <div class="absolute -top-10 -right-10 w-40 h-40 bg-skill-yellow/20 rounded-full blur-3xl -z-10 animate-pulse"></div>
+                <!-- Decorative blurs -->
+                <div class="absolute -top-10 -right-10 w-40 h-40 bg-primary/10 rounded-full blur-3xl -z-10 animate-pulse"></div>
+                <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-accent/10 rounded-full blur-3xl -z-10"></div>
             </div>
         </div>
     </section>
 
     <!-- Trusted By -->
-    <section class="border-y border-slate-100 bg-slate-50/50 py-12">
+    <section class="border-y border-slate-200/30 dark:border-white/5 bg-slate-50/30 dark:bg-white/[0.02] py-10">
         <div class="max-w-7xl mx-auto px-6 text-center">
-            <p class="text-xs font-black text-slate-400 uppercase tracking-[0.3em] mb-10">Reconnu par les meilleures entreprises</p>
-            <div class="flex flex-wrap justify-center gap-12 lg:gap-24 opacity-40 grayscale group hover:grayscale-0 transition-all">
-                <span class="text-2xl font-black text-slate-900">Google</span>
-                <span class="text-2xl font-black text-slate-900">Netflix</span>
-                <span class="text-2xl font-black text-slate-900">Adobe</span>
-                <span class="text-2xl font-black text-slate-900">Spotify</span>
-                <span class="text-2xl font-black text-slate-900">Vercel</span>
+            <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mb-8">Reconnu par les meilleures entreprises</p>
+            <div class="flex flex-wrap justify-center gap-12 lg:gap-20 opacity-30 dark:opacity-20 grayscale hover:grayscale-0 hover:opacity-60 transition-all duration-500">
+                <span class="text-xl font-black text-slate-700 dark:text-slate-300">Google</span>
+                <span class="text-xl font-black text-slate-700 dark:text-slate-300">Netflix</span>
+                <span class="text-xl font-black text-slate-700 dark:text-slate-300">Adobe</span>
+                <span class="text-xl font-black text-slate-700 dark:text-slate-300">Spotify</span>
+                <span class="text-xl font-black text-slate-700 dark:text-slate-300">Vercel</span>
             </div>
         </div>
     </section>
 
-    <!-- Modules & Courses Catalogue -->
-    <section id="catalogue" class="max-w-7xl mx-auto px-6 lg:px-12 py-32 bg-white/50 dark:bg-slate-900/50 rounded-[4rem] my-20 border border-white dark:border-slate-800">
-        <div class="text-center mb-20">
-            <h2 class="text-4xl lg:text-6xl font-black text-slate-900 dark:text-white mb-6 tracking-tight">Catalogue <span class="text-gradient">Premium</span></h2>
-            <p class="text-slate-500 dark:text-slate-400 font-medium max-w-2xl mx-auto text-lg leading-relaxed">Découvrez nos parcours d'apprentissage structurés pour maîtriser les compétences les plus demandées.</p>
+    <!-- Help & Reclamation CTA -->
+    {% if app.user %}
+    <section class="max-w-7xl mx-auto px-6 lg:px-12 py-16 animate-fade-up">
+        <div class="gradient-primary rounded-3xl p-10 lg:p-12 shadow-2xl shadow-purple-500/15 relative overflow-hidden">
+            <div class="absolute right-0 top-0 w-64 h-64 bg-white/5 rounded-full blur-3xl"></div>
+            <div class="absolute left-0 bottom-0 w-48 h-48 bg-black/5 rounded-full blur-2xl"></div>
+            
+            <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+                <div class="flex-1">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 bg-white/15 rounded-xl flex items-center justify-center">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+                        </div>
+                        <span class="text-[10px] font-bold text-white/70 uppercase tracking-widest">Support disponible 24/7</span>
+                    </div>
+                    <h2 class="text-3xl font-black text-white mb-2 tracking-tight">Besoin d'aide ?</h2>
+                    <p class="text-white/80 font-medium text-sm max-w-lg">Notre équipe vous accompagne. Créez une réclamation et recevez une réponse rapide.</p>
+                </div>
+                
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <a href="{{ path('app_reclamation_new') }}" class="px-6 py-3.5 bg-white text-primary font-bold rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:scale-95 transition-all flex items-center gap-2 text-sm">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                        Nouvelle réclamation
+                    </a>
+                    <a href="{{ path('app_reclamation_index') }}" class="px-6 py-3.5 bg-white/10 backdrop-blur-sm text-white font-semibold rounded-xl border border-white/15 hover:bg-white/20 transition-all flex items-center gap-2 text-sm">
+                        Mes réclamations
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Catalogue Section -->
+    <section id="catalogue" class="max-w-7xl mx-auto px-6 lg:px-12 py-24">
+        <div class="text-center mb-16 animate-fade-up">
+            <span class="badge badge-purple mb-4">Catalogue</span>
+            <h2 class="text-4xl lg:text-5xl font-black text-slate-900 dark:text-white mb-5 tracking-tight">Explorez notre catalogue <span class="gradient-text">Premium</span></h2>
+            <p class="text-slate-500 dark:text-slate-400 font-medium max-w-2xl mx-auto leading-relaxed">Découvrez nos parcours d'apprentissage structurés pour maîtriser les compétences les plus demandées.</p>
         </div>
 
         {% if app.user %}
-            <div class="space-y-24">
+            <div class="space-y-20">
                 {% for module in modules %}
-                    <div class="relative">
+                    <div class="relative animate-fade-up" style="animation-delay: {{ loop.index * 100 }}ms">
                         <!-- Module Header -->
-                        <div class="flex flex-col md:flex-row items-center gap-10 mb-12">
-                            <div class="w-32 h-32 rounded-[2.5rem] bg-white shadow-2xl shadow-blue-500/10 flex items-center justify-center border border-slate-100 p-6 group hover:scale-110 transition-transform duration-500">
+                        <div class="flex flex-col md:flex-row items-center gap-8 mb-10">
+                            <div class="w-24 h-24 rounded-2xl glass-card !hover:transform-none flex items-center justify-center p-4 group">
                                 {% if module.image %}
                                     <img src="{{ asset('uploads/' ~ module.image) }}" alt="{{ module.name }}" class="w-full h-full object-contain">
                                 {% else %}
-                                    <div class="w-full h-full rounded-2xl bg-gradient-main flex items-center justify-center text-3xl font-black text-white">
+                                    <div class="w-full h-full rounded-xl gradient-primary flex items-center justify-center text-2xl font-black text-white">
                                         {{ module.name|first }}
                                     </div>
                                 {% endif %}
                             </div>
                             <div class="flex-1 text-center md:text-left">
-                                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 mb-3">
-                                    <span class="text-[10px] font-black text-blue-600 uppercase tracking-widest">Niveau {{ module.level }}</span>
-                                </div>
-                                <h3 class="text-4xl font-black text-slate-900 dark:text-white mb-4 tracking-tight">{{ module.name }}</h3>
-                                <p class="text-slate-500 dark:text-slate-400 font-medium max-w-2xl leading-relaxed">{{ module.description }}</p>
+                                <span class="badge badge-purple mb-2">Niveau {{ module.level }}</span>
+                                <h3 class="text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">{{ module.name }}</h3>
+                                <p class="text-slate-500 dark:text-slate-400 font-medium max-w-2xl leading-relaxed text-sm">{{ module.description }}</p>
                             </div>
-                            <div class="hidden lg:block text-slate-100 dark:text-slate-800">
-                                <span class="text-6xl font-black tracking-tighter">{{ loop.index|format('%02d') }}</span>
+                            <div class="hidden lg:block">
+                                <span class="text-5xl font-black text-slate-100 dark:text-slate-800/50 tracking-tighter">{{ loop.index|format('%02d') }}</span>
                             </div>
                         </div>
 
-                        <!-- Courses Grid -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 ml-0 md:ml-12">
+                        <!-- Courses Bento Grid -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 ml-0 md:ml-8">
                             {% for cours in module.cours %}
-                                <div class="card-hover p-8 rounded-[2rem] bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-sm hover:border-blue-200 dark:hover:border-blue-800 group relative">
-                                    <div class="flex items-center justify-between mb-6">
-                                        {% set typeIcon = {
-                                            'video': '<svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>',
-                                            'quiz': '<svg class="w-6 h-6 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>',
-                                            'texte': '<svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>'
-                                        } %}
-                                        <div class="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center group-hover:bg-gradient-main group-hover:text-white transition-all duration-500 overflow-hidden">
-                                            {{ typeIcon[cours.type]|default('<svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>')|raw }}
-                                        </div>
-                                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">{{ cours.type }}</span>
+                                <div class="glass-card p-7 rounded-2xl group relative overflow-hidden">
+                                    <!-- Type glow -->
+                                    <div class="absolute top-0 right-0 w-24 h-24 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500
+                                        {% if cours.type == 'video' %}bg-primary/10{% elseif cours.type == 'quiz' %}bg-accent/10{% else %}bg-mint/10{% endif %}">
                                     </div>
-                                    <h4 class="text-xl font-black text-slate-900 dark:text-white mb-3 group-hover:text-blue-600 transition-colors">{{ cours.titre }}</h4>
-                                    <p class="text-slate-500 dark:text-slate-400 text-sm font-medium leading-relaxed mb-6 line-clamp-2">{{ cours.contenu }}</p>
-                                    
-                                    <div class="pt-6 border-t border-slate-50 dark:border-slate-800 flex items-center justify-between">
-                                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Durée : 45 min</span>
-                                        <a href="#" class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-900 dark:text-white hover:bg-blue-600 hover:text-white transition-all">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                                        </a>
+
+                                    <div class="relative z-10">
+                                        <div class="flex items-center justify-between mb-5">
+                                            {% set typeIcon = {
+                                                'video': '<svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>',
+                                                'quiz': '<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>',
+                                                'texte': '<svg class="w-5 h-5 text-mint" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>'
+                                            } %}
+                                            <div class="w-10 h-10 rounded-xl {% if cours.type == 'video' %}bg-primary/8{% elseif cours.type == 'quiz' %}bg-accent/8{% else %}bg-mint/8{% endif %} flex items-center justify-center">
+                                                {{ typeIcon[cours.type]|default('<svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>')|raw }}
+                                            </div>
+                                            <span class="badge {% if cours.type == 'video' %}badge-purple{% elseif cours.type == 'quiz' %}badge-cyan{% else %}badge-green{% endif %}">{{ cours.type }}</span>
+                                        </div>
+                                        <h4 class="text-lg font-bold text-slate-900 dark:text-white mb-2 group-hover:text-primary dark:group-hover:text-primary-light transition-colors">{{ cours.titre }}</h4>
+                                        <p class="text-slate-500 dark:text-slate-400 text-sm font-medium leading-relaxed mb-5 line-clamp-2">{{ cours.contenu }}</p>
+                                        
+                                        <div class="pt-5 border-t border-slate-100/50 dark:border-white/5 flex items-center justify-between">
+                                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Durée : 45 min</span>
+                                            <a href="#" class="w-9 h-9 rounded-xl bg-primary/8 dark:bg-primary/15 flex items-center justify-center text-primary dark:text-primary-light hover:gradient-primary hover:text-white transition-all hover:shadow-lg hover:shadow-purple-500/20">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
                             {% else %}
-                                <div class="col-span-full py-12 text-center bg-slate-50/50 rounded-3xl border-2 border-dashed border-slate-100">
-                                    <p class="text-slate-400 font-bold">Aucun cours disponible pour ce module pour le moment.</p>
+                                <div class="col-span-full py-12 text-center glass-card rounded-2xl border-2 border-dashed border-slate-200/50 dark:border-white/5">
+                                    <div class="w-12 h-12 rounded-xl bg-slate-100 dark:bg-white/5 flex items-center justify-center mx-auto mb-3">
+                                        <svg class="w-6 h-6 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                                    </div>
+                                    <p class="text-slate-400 font-semibold text-sm">Aucun cours disponible pour le moment.</p>
                                 </div>
                             {% endfor %}
                         </div>
 
-                        <!-- Background decoration for alternating modules -->
+                        <!-- Background glow -->
                         {% if loop.index is odd %}
-                            <div class="absolute -right-20 top-20 w-64 h-64 bg-blue-500/5 rounded-full blur-[100px] -z-10"></div>
+                            <div class="absolute -right-20 top-20 w-64 h-64 bg-primary/5 rounded-full blur-[100px] -z-10"></div>
                         {% else %}
-                            <div class="absolute -left-20 top-20 w-64 h-64 bg-green-500/5 rounded-full blur-[100px] -z-10"></div>
+                            <div class="absolute -left-20 top-20 w-64 h-64 bg-accent/5 rounded-full blur-[100px] -z-10"></div>
                         {% endif %}
                     </div>
                 {% else %}
                     <div class="py-20 text-center">
-                        <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <svg class="w-10 h-10 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg>
+                        <div class="w-16 h-16 bg-primary/8 rounded-2xl flex items-center justify-center mx-auto mb-5">
+                            <svg class="w-8 h-8 text-primary/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg>
                         </div>
-                        <h3 class="text-2xl font-black text-slate-900 mb-2">Catalogue vide</h3>
-                        <p class="text-slate-500 font-medium">Revenez bientôt pour découvrir nos nouveaux contenus.</p>
+                        <h3 class="text-xl font-black text-slate-900 dark:text-white mb-2">Catalogue vide</h3>
+                        <p class="text-slate-500 font-medium text-sm">Revenez bientôt pour découvrir nos nouveaux contenus.</p>
                     </div>
                 {% endfor %}
             </div>
         {% else %}
-            <!-- Cta to login for non-logged users -->
-            <div class="max-w-4xl mx-auto rounded-[3rem] bg-slate-900 p-12 lg:p-20 text-center relative overflow-hidden shadow-2xl">
-                <div class="absolute inset-0 bg-gradient-main opacity-10"></div>
-                <div class="relative z-10">
-                    <h3 class="text-3xl lg:text-4xl font-black text-white mb-6">Prêt à débloquer votre potentiel ?</h3>
-                    <p class="text-slate-400 text-lg mb-10 max-w-xl mx-auto font-medium">Connectez-vous pour accéder à l'intégralité de notre catalogue de cours et commencer votre formation dès aujourd'hui.</p>
-                    <div class="flex flex-col sm:flex-row items-center justify-center gap-6">
-                        <a href="{{ path('app_user_login') }}" class="w-full sm:w-auto px-10 py-5 bg-gradient-main text-white font-black rounded-2xl shadow-xl shadow-blue-500/20 hover:scale-105 active:scale-95 transition-all">
-                            Se connecter maintenant
-                        </a>
-                        <a href="{{ path('app_user_register') }}" class="w-full sm:w-auto px-10 py-5 bg-white/10 text-white font-black rounded-2xl border border-white/20 hover:bg-white/20 transition-all">
-                            Créer un compte gratuit
-                        </a>
+            <!-- CTA for non-logged users -->
+            <div class="max-w-3xl mx-auto rounded-3xl overflow-hidden relative shadow-2xl">
+                <div class="gradient-primary p-12 lg:p-16 text-center relative">
+                    <div class="absolute inset-0 bg-[url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22 width=%2232%22 height=%2232%22 fill=%22none%22 stroke=%22rgba(255,255,255,0.05)%22><path d=%22M0 .5H31.5V32%22/></svg>')] opacity-50"></div>
+                    <div class="relative z-10">
+                        <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                        </div>
+                        <h3 class="text-3xl font-black text-white mb-4">Prêt à débloquer votre potentiel ?</h3>
+                        <p class="text-white/70 mb-8 max-w-md mx-auto font-medium">Connectez-vous pour accéder à notre catalogue complet et commencer votre formation.</p>
+                        <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                            <a href="{{ path('app_user_login') }}" class="w-full sm:w-auto px-8 py-4 bg-white text-primary font-bold rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:scale-95 transition-all">
+                                Se connecter
+                            </a>
+                            <a href="{{ path('app_user_register') }}" class="w-full sm:w-auto px-8 py-4 bg-white/10 text-white font-bold rounded-xl border border-white/15 hover:bg-white/20 transition-all">
+                                Créer un compte
+                            </a>
+                        </div>
                     </div>
                 </div>
-                <!-- Animated circles -->
-                <div class="absolute -top-10 -right-10 w-40 h-40 bg-blue-500/30 rounded-full blur-3xl animate-pulse"></div>
-                <div class="absolute -bottom-20 -left-10 w-60 h-60 bg-green-500/20 rounded-full blur-[100px] animate-pulse"></div>
             </div>
         {% endif %}
     </section>
 
     <!-- Stats -->
-    <section class="max-w-7xl mx-auto px-6 lg:px-12 pb-32">
-        <div class="bg-slate-900 rounded-[3rem] p-12 lg:p-20 relative overflow-hidden">
-            <div class="absolute top-0 right-0 w-96 h-96 bg-blue-500/20 rounded-full blur-[120px]"></div>
-            <div class="absolute bottom-0 left-0 w-96 h-96 bg-green-500/10 rounded-full blur-[120px]"></div>
+    <section id="stats" class="max-w-7xl mx-auto px-6 lg:px-12 pb-28">
+        <div class="gradient-primary rounded-3xl p-12 lg:p-16 relative overflow-hidden shadow-2xl shadow-purple-500/10">
+            <div class="absolute top-0 right-0 w-80 h-80 bg-accent/15 rounded-full blur-[100px]"></div>
+            <div class="absolute bottom-0 left-0 w-80 h-80 bg-secondary/10 rounded-full blur-[100px]"></div>
             
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-12 relative z-10 text-center">
-                <div>
-                    <h4 class="text-5xl font-black text-white mb-2">50k+</h4>
-                    <p class="text-xs font-black text-slate-400 uppercase tracking-widest">Élèves</p>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-10 relative z-10 text-center">
+                <div class="animate-fade-up">
+                    <h4 class="text-4xl lg:text-5xl font-black text-white mb-2">50k+</h4>
+                    <p class="text-xs font-bold text-white/50 uppercase tracking-widest">Élèves</p>
                 </div>
-                <div>
-                    <h4 class="text-5xl font-black text-white mb-2">120</h4>
-                    <p class="text-xs font-black text-slate-400 uppercase tracking-widest">Formateurs</p>
+                <div class="animate-fade-up delay-100">
+                    <h4 class="text-4xl lg:text-5xl font-black text-white mb-2">120</h4>
+                    <p class="text-xs font-bold text-white/50 uppercase tracking-widest">Formateurs</p>
                 </div>
-                <div>
-                    <h4 class="text-5xl font-black text-white mb-2">4.9</h4>
-                    <p class="text-xs font-black text-slate-400 uppercase tracking-widest">Note Moyenne</p>
+                <div class="animate-fade-up delay-200">
+                    <h4 class="text-4xl lg:text-5xl font-black text-white mb-2">4.9</h4>
+                    <p class="text-xs font-bold text-white/50 uppercase tracking-widest">Note Moyenne</p>
                 </div>
-                <div>
-                    <h4 class="text-5xl font-black text-white mb-2">98%</h4>
-                    <p class="text-xs font-black text-slate-400 uppercase tracking-widest">Succès</p>
+                <div class="animate-fade-up delay-300">
+                    <h4 class="text-4xl lg:text-5xl font-black text-white mb-2">98%</h4>
+                    <p class="text-xs font-bold text-white/50 uppercase tracking-widest">Succès</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="bg-white dark:bg-slate-950 border-t border-slate-100 dark:border-slate-900 pt-20 pb-10">
+    <footer class="border-t border-slate-200/30 dark:border-white/5 pt-16 pb-8">
         <div class="max-w-7xl mx-auto px-6 lg:px-12">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-20">
-                <div class="col-span-1 md:col-span-1">
-                    <div class="flex items-center gap-3 mb-6">
-                        <div class="w-8 h-8 bg-gradient-main rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-16">
+                <div>
+                    <div class="flex items-center gap-3 mb-5">
+                        <div class="w-8 h-8 gradient-primary rounded-lg flex items-center justify-center shadow-lg shadow-purple-500/15">
                             <img src="{{ asset('images/logo.png') }}" alt="Logo" class="w-5 h-5 invert brightness-0">
                         </div>
-                        <span class="text-xl font-black tracking-tight text-slate-900 dark:text-white">SkillPath</span>
+                        <span class="text-lg font-black tracking-tight text-slate-900 dark:text-white">Skill<span class="gradient-text">Path</span></span>
                     </div>
-                    <p class="text-slate-500 text-sm font-medium leading-relaxed mb-6">
+                    <p class="text-slate-500 dark:text-slate-400 text-sm font-medium leading-relaxed mb-5">
                         Transformer l'éducation par la technologie pour tout le monde, partout.
                     </p>
-                    <div class="flex gap-4">
-                        <a href="#" class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-blue-500 hover:text-white transition-all">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/></svg>
-                        </a>
-                        <a href="#" class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-blue-600 hover:text-white transition-all">
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-                        </a>
+                    <div class="flex gap-3">
+                        <a href="#" class="w-9 h-9 rounded-xl bg-slate-100/60 dark:bg-white/5 flex items-center justify-center text-slate-400 hover:bg-primary hover:text-white transition-all"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/></svg></a>
+                        <a href="#" class="w-9 h-9 rounded-xl bg-slate-100/60 dark:bg-white/5 flex items-center justify-center text-slate-400 hover:bg-primary hover:text-white transition-all"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
                     </div>
                 </div>
 
                 <div>
-                    <h5 class="text-sm font-black text-slate-900 uppercase tracking-widest mb-6">Plateforme</h5>
-                    <ul class="space-y-4">
-                        <li><a href="#" class="text-slate-500 text-sm font-medium hover:text-blue-600 transition-colors">Tous les cours</a></li>
-                        <li><a href="#" class="text-slate-500 text-sm font-medium hover:text-blue-600 transition-colors">Abonnements</a></li>
-                        <li><a href="#" class="text-slate-500 text-sm font-medium hover:text-blue-600 transition-colors">Parrainage</a></li>
-                        <li><a href="#" class="text-slate-500 text-sm font-medium hover:text-blue-600 transition-colors">IA Guidance</a></li>
+                    <h5 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-widest mb-5">Plateforme</h5>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-slate-500 dark:text-slate-400 text-sm font-medium hover:text-primary dark:hover:text-primary-light transition-colors">Tous les cours</a></li>
+                        <li><a href="#" class="text-slate-500 dark:text-slate-400 text-sm font-medium hover:text-primary dark:hover:text-primary-light transition-colors">Abonnements</a></li>
+                        <li><a href="#" class="text-slate-500 dark:text-slate-400 text-sm font-medium hover:text-primary dark:hover:text-primary-light transition-colors">Parrainage</a></li>
+                        <li><a href="#" class="text-slate-500 dark:text-slate-400 text-sm font-medium hover:text-primary dark:hover:text-primary-light transition-colors">IA Guidance</a></li>
                     </ul>
                 </div>
 
                 <div>
-                    <h5 class="text-sm font-black text-slate-900 uppercase tracking-widest mb-6">Société</h5>
-                    <ul class="space-y-4">
-                        <li><a href="#" class="text-slate-500 text-sm font-medium hover:text-blue-600 transition-colors">Notre équipe</a></li>
-                        <li><a href="#" class="text-slate-500 text-sm font-medium hover:text-blue-600 transition-colors">Carrières</a></li>
-                        <li><a href="#" class="text-slate-500 text-sm font-medium hover:text-blue-600 transition-colors">Blog</a></li>
-                        <li><a href="#" class="text-slate-500 text-sm font-medium hover:text-blue-600 transition-colors">Contact</a></li>
+                    <h5 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-widest mb-5">Société</h5>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-slate-500 dark:text-slate-400 text-sm font-medium hover:text-primary dark:hover:text-primary-light transition-colors">Notre équipe</a></li>
+                        <li><a href="#" class="text-slate-500 dark:text-slate-400 text-sm font-medium hover:text-primary dark:hover:text-primary-light transition-colors">Carrières</a></li>
+                        <li><a href="#" class="text-slate-500 dark:text-slate-400 text-sm font-medium hover:text-primary dark:hover:text-primary-light transition-colors">Blog</a></li>
+                        <li><a href="#" class="text-slate-500 dark:text-slate-400 text-sm font-medium hover:text-primary dark:hover:text-primary-light transition-colors">Contact</a></li>
                     </ul>
                 </div>
 
                 <div>
-                    <h5 class="text-sm font-black text-slate-900 uppercase tracking-widest mb-6">Support</h5>
-                    <ul class="space-y-4">
-                        <li><a href="#" class="text-slate-500 text-sm font-medium hover:text-blue-600 transition-colors">FAQ</a></li>
-                        <li><a href="#" class="text-slate-500 text-sm font-medium hover:text-blue-600 transition-colors">Centre d'aide</a></li>
-                        <li><a href="#" class="text-slate-500 text-sm font-medium hover:text-blue-600 transition-colors">Sécurité</a></li>
+                    <h5 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-widest mb-5">Support</h5>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-slate-500 dark:text-slate-400 text-sm font-medium hover:text-primary dark:hover:text-primary-light transition-colors">FAQ</a></li>
+                        <li><a href="#" class="text-slate-500 dark:text-slate-400 text-sm font-medium hover:text-primary dark:hover:text-primary-light transition-colors">Centre d'aide</a></li>
+                        <li><a href="#" class="text-slate-500 dark:text-slate-400 text-sm font-medium hover:text-primary dark:hover:text-primary-light transition-colors">Sécurité</a></li>
                     </ul>
                 </div>
             </div>
 
-            <div class="flex flex-col md:flex-row justify-between items-center gap-6 pt-10 border-t border-slate-100">
-                <p class="text-xs font-bold text-slate-400">© 2026 SkillPath Inc. Tous droits réservés.</p>
-                <div class="flex gap-8">
-                    <a href="#" class="text-xs font-bold text-slate-400 hover:text-slate-600">Confidentialité</a>
-                    <a href="#" class="text-xs font-bold text-slate-400 hover:text-slate-600">Conditions</a>
+            <div class="flex flex-col md:flex-row justify-between items-center gap-5 pt-8 border-t border-slate-200/30 dark:border-white/5">
+                <p class="text-xs font-semibold text-slate-400">© 2026 SkillPath Inc. Tous droits réservés.</p>
+                <div class="flex gap-6">
+                    <a href="#" class="text-xs font-semibold text-slate-400 hover:text-primary transition-colors">Confidentialité</a>
+                    <a href="#" class="text-xs font-semibold text-slate-400 hover:text-primary transition-colors">Conditions</a>
                 </div>
             </div>
         </div>
     </footer>
+
 </div>
 {% endblock %}

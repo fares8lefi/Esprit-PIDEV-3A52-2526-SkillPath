@@ -1,43 +1,9 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Inscription - SkillPath Premium{% endblock %}
+{% block title %}Inscription - SkillPath{% endblock %}
 
 {% block stylesheets %}
 <style>
-    .mesh-background {
-        background-color: #ffffff;
-        background-image: 
-            radial-gradient(at 0% 0%, rgba(30, 136, 229, 0.1) 0px, transparent 50%),
-            radial-gradient(at 100% 0%, rgba(67, 160, 71, 0.1) 0px, transparent 50%),
-            radial-gradient(at 50% 50%, rgba(251, 192, 45, 0.05) 0px, transparent 50%),
-            radial-gradient(at 100% 100%, rgba(30, 136, 229, 0.1) 0px, transparent 50%);
-    }
-    .dark .mesh-background {
-        background-color: #020617;
-        background-image: 
-            radial-gradient(at 0% 0%, rgba(30, 136, 229, 0.05) 0px, transparent 50%),
-            radial-gradient(at 100% 0%, rgba(67, 160, 71, 0.05) 0px, transparent 50%),
-            radial-gradient(at 50% 50%, rgba(251, 192, 45, 0.02) 0px, transparent 50%),
-            radial-gradient(at 100% 100%, rgba(30, 136, 229, 0.05) 0px, transparent 50%);
-    }
-    .glass-login {
-        background: rgba(255, 255, 255, 0.7);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 255, 255, 0.4);
-    }
-    .dark .glass-login {
-        background: rgba(15, 23, 42, 0.7);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-    }
-    .vibrant-shimmer {
-        background: linear-gradient(135deg, #1E88E5 0%, #43A047 100%);
-        box-shadow: 0 10px 40px rgba(30, 136, 229, 0.3);
-    }
-    @keyframes pulse-soft {
-        0%, 100% { transform: scale(1); opacity: 0.1; }
-        50% { transform: scale(1.1); opacity: 0.15; }
-    }
     /* Autofill Fix */
     input:-webkit-autofill,
     input:-webkit-autofill:hover, 
@@ -51,7 +17,7 @@
     .dark input:-webkit-autofill:hover, 
     .dark input:-webkit-autofill:focus, 
     .dark input:-webkit-autofill:active{
-        -webkit-box-shadow: 0 0 0 30px #020617 inset !important;
+        -webkit-box-shadow: 0 0 0 30px #0B0F1A inset !important;
         -webkit-text-fill-color: white !important;
         transition: background-color 5000s ease-in-out 0s;
     }
@@ -59,116 +25,125 @@
 {% endblock %}
 
 {% block body %}
-<div class="min-h-screen mesh-background flex items-center justify-center p-6 relative overflow-hidden">
-    <!-- Abstract shapes -->
-    <div class="absolute -top-24 -right-24 w-96 h-96 bg-blue-400 rounded-full blur-3xl opacity-10 animate-pulse"></div>
-    <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-green-400 rounded-full blur-3xl opacity-10 animate-pulse" style="animation-delay: 2s"></div>
+<div class="min-h-screen mesh-light dark:mesh-dark flex items-center justify-center p-6 relative overflow-hidden">
+    <!-- Decorative blurs -->
+    <div class="absolute -top-24 -right-24 w-96 h-96 bg-accent/8 rounded-full blur-3xl animate-pulse"></div>
+    <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-primary/8 rounded-full blur-3xl animate-pulse" style="animation-delay: 2s"></div>
     
-    <div class="max-w-6xl w-full flex flex-col lg:flex-row items-center gap-12 relative z-10 animate-in fade-in slide-in-from-bottom-12 duration-1000">
+    <div class="max-w-6xl w-full flex flex-col lg:flex-row items-center gap-12 relative z-10 animate-fade-up">
         
         <!-- Creative Side -->
         <div class="flex-1 hidden lg:flex flex-col text-left">
             <div class="flex items-center gap-4 mb-20 group cursor-pointer">
-                <div class="w-14 h-14 vibrant-shimmer rounded-2xl flex items-center justify-center transform group-hover:-rotate-12 transition-transform">
+                <div class="w-14 h-14 gradient-primary rounded-2xl flex items-center justify-center shadow-lg shadow-purple-500/20 group-hover:-rotate-6 transition-transform">
                     <img src="{{ asset('images/logo.png') }}" alt="Logo" class="w-8 h-8 invert brightness-0">
                 </div>
                 <div>
-                    <span class="text-3xl font-black tracking-tighter text-slate-900 dark:text-white">SkillPath</span>
-                    <span class="block text-[10px] font-black uppercase tracking-[0.3em] text-blue-600 dark:text-blue-400">Start your journey</span>
+                    <span class="text-3xl font-black tracking-tighter text-slate-900 dark:text-white">Skill<span class="gradient-text">Path</span></span>
+                    <span class="block text-[10px] font-bold uppercase tracking-[0.25em] text-primary dark:text-primary-light">Start your journey</span>
                 </div>
             </div>
 
-            <h1 class="text-6xl font-black text-slate-900 dark:text-white leading-tight mb-8">
+            <h1 class="text-5xl font-black text-slate-900 dark:text-white leading-tight mb-6">
                 Rejoignez la <br>
-                <span class="text-transparent bg-clip-text vibrant-shimmer">communauté !</span>
+                <span class="gradient-text">communauté !</span>
             </h1>
             
-            <p class="text-lg text-slate-500 dark:text-slate-400 font-medium max-w-sm leading-relaxed mb-12">
+            <p class="text-base text-slate-500 dark:text-slate-400 font-medium max-w-sm leading-relaxed mb-12">
                 Commencez à apprendre gratuitement et accédez à des centaines de cours spécialisés.
             </p>
 
-            <div class="space-y-6">
-                <div class="flex items-center gap-6">
-                    <div class="w-12 h-12 rounded-2xl bg-white dark:bg-slate-900 shadow-xl flex items-center justify-center text-blue-600 dark:text-blue-400">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            <div class="space-y-4">
+                <div class="flex items-center gap-5">
+                    <div class="w-11 h-11 rounded-xl glass-card flex items-center justify-center text-primary">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                     </div>
                     <div>
-                        <p class="text-sm font-black text-slate-900 dark:text-white">Apprentissage rapide</p>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">Parcours optimisés par IA</p>
+                        <p class="text-sm font-bold text-slate-900 dark:text-white">Apprentissage rapide</p>
+                        <p class="text-xs text-slate-400 font-medium">Parcours optimisés par IA</p>
                     </div>
                 </div>
-                <div class="flex items-center gap-6">
-                    <div class="w-12 h-12 rounded-2xl bg-white dark:bg-slate-900 shadow-xl flex items-center justify-center text-green-600 dark:text-green-400">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                <div class="flex items-center gap-5">
+                    <div class="w-11 h-11 rounded-xl glass-card flex items-center justify-center text-accent">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                     </div>
                     <div>
-                        <p class="text-sm font-black text-slate-900 dark:text-white">Support Entraide</p>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">Apprenez avec les autres</p>
+                        <p class="text-sm font-bold text-slate-900 dark:text-white">Support Entraide</p>
+                        <p class="text-xs text-slate-400 font-medium">Apprenez avec les autres</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-5">
+                    <div class="w-11 h-11 rounded-xl glass-card flex items-center justify-center text-secondary">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
+                    </div>
+                    <div>
+                        <p class="text-sm font-bold text-slate-900 dark:text-white">Badges & Récompenses</p>
+                        <p class="text-xs text-slate-400 font-medium">Célébrez vos progrès</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Glass Register Card -->
+        <!-- Register Card -->
         <div class="w-full max-w-lg">
-            <div class="glass-login p-10 lg:p-12 rounded-[3.5rem] shadow-2xl relative overflow-hidden border-blue-50">
-                <div class="absolute -top-12 -right-12 w-32 h-32 bg-green-500/5 rounded-full blur-2xl"></div>
+            <div class="glass-card p-10 lg:p-12 rounded-3xl shadow-2xl relative overflow-hidden">
+                <div class="absolute -top-12 -right-12 w-32 h-32 bg-accent/5 rounded-full blur-2xl"></div>
                 
                 <div class="relative z-10">
                     <div class="mb-10 text-center lg:text-left">
-                        <h2 class="text-4xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">Inscription</h2>
-                        <p class="text-slate-500 dark:text-slate-400 font-medium">Créez votre compte en quelques secondes.</p>
+                        <h2 class="text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">Inscription</h2>
+                        <p class="text-slate-500 dark:text-slate-400 font-medium text-sm">Créez votre compte en quelques secondes.</p>
                     </div>
 
                     <form action="{{ path('app_user_register') }}" method="POST" class="space-y-5">
                         <div class="space-y-2">
-                            <label class="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Nom d'utilisateur</label>
+                            <label class="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">Nom d'utilisateur</label>
                             <div class="relative group">
-                                <input type="text" name="username" placeholder="Choisissez un pseudo unique (ex: DevCraft2026)" required
-                                       class="w-full bg-white/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-2xl py-4 px-6 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/5 transition-all outline-none dark:text-white placeholder-slate-300 dark:placeholder-slate-600">
-                                <span class="absolute right-5 top-4 text-slate-300 group-focus-within:text-blue-500 transition-colors">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                                <input type="text" name="username" placeholder="Ex: DevCraft2026" required
+                                       class="form-input pr-12">
+                                <span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 dark:text-slate-600 group-focus-within:text-primary transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                                 </span>
                             </div>
                         </div>
 
                         <div class="space-y-2">
-                            <label class="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Adresse Email</label>
+                            <label class="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">Adresse Email</label>
                             <div class="relative group">
-                                <input type="email" name="email" placeholder="votre.email@professionnel.com" required
-                                       class="w-full bg-white/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-2xl py-4 px-6 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/5 transition-all outline-none dark:text-white placeholder-slate-300 dark:placeholder-slate-600">
-                                <span class="absolute right-5 top-4 text-slate-300 group-focus-within:text-blue-500 transition-colors">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                                <input type="email" name="email" placeholder="votre.email@exemple.com" required
+                                       class="form-input pr-12">
+                                <span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 dark:text-slate-600 group-focus-within:text-primary transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                                 </span>
                             </div>
                         </div>
 
                         <div class="space-y-2">
-                            <label class="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Mot de Passe</label>
+                            <label class="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">Mot de Passe</label>
                             <div class="relative group">
-                                <input type="password" name="password" placeholder="8 caractères minimum, mélangez chiffres et lettres" required
-                                       class="w-full bg-white/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-2xl py-4 px-6 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/5 transition-all outline-none dark:text-white placeholder-slate-300 dark:placeholder-slate-600">
-                                <span class="absolute right-5 top-4 text-slate-300 group-focus-within:text-blue-500 transition-colors">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                                <input type="password" name="password" placeholder="8 caractères minimum" required
+                                       class="form-input pr-12">
+                                <span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 dark:text-slate-600 group-focus-within:text-primary transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                                 </span>
                             </div>
                         </div>
 
                         <div class="flex items-start gap-3 px-1 py-2">
-                            <input type="checkbox" id="terms" required class="mt-1 w-4 h-4 rounded border-slate-300 dark:border-slate-700 text-blue-600 focus:ring-blue-500 bg-white/50 dark:bg-slate-900/50">
-                            <label for="terms" class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider leading-relaxed">
-                                J'accepte les <a href="#" class="text-blue-600 dark:text-blue-400 hover:underline">conditions d'utilisation</a> & la <a href="#" class="text-blue-600 dark:text-blue-400 hover:underline">politique de données</a>.
+                            <input type="checkbox" id="terms" required class="mt-0.5 w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-primary focus:ring-primary/30 bg-transparent">
+                            <label for="terms" class="text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider leading-relaxed">
+                                J'accepte les <a href="#" class="text-primary dark:text-primary-light hover:underline">conditions d'utilisation</a> & la <a href="#" class="text-primary dark:text-primary-light hover:underline">politique de données</a>.
                             </label>
                         </div>
 
-                        <button type="submit" class="w-full vibrant-shimmer text-white font-black py-4 rounded-2xl transform active:scale-95 transition-all shadow-xl mt-4">
+                        <button type="submit" class="btn-primary w-full !py-4 !text-sm mt-2">
                             Créer mon profil gratuit
                         </button>
                     </form>
 
-                    <p class="text-center text-sm font-medium text-slate-500 dark:text-slate-400 mt-10 p-6 border-t border-slate-50 dark:border-slate-800">
+                    <p class="text-center text-sm font-medium text-slate-500 dark:text-slate-400 mt-10 pt-8 border-t border-slate-100/50 dark:border-white/5">
                         Déjà inscrit ? 
-                        <a href="{{ path('app_user_login') }}" class="text-blue-600 dark:text-blue-400 font-black hover:underline ml-1">Se connecter</a>
+                        <a href="{{ path('app_user_login') }}" class="text-primary dark:text-primary-light font-bold hover:underline ml-1">Se connecter</a>
                     </p>
                 </div>
             </div>

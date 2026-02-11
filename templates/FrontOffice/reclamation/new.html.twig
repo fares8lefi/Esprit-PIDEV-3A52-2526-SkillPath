@@ -1,0 +1,76 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvelle Réclamation{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .mesh-background {
+        background-color: #ffffff;
+        background-image: 
+            radial-gradient(at 0% 0%, rgba(30, 136, 229, 0.08) 0px, transparent 50%),
+            radial-gradient(at 100% 0%, rgba(67, 160, 71, 0.08) 0px, transparent 50%),
+            radial-gradient(at 50% 50%, rgba(251, 192, 45, 0.03) 0px, transparent 50%);
+    }
+    .dark .mesh-background {
+        background-color: #020617;
+        background-image: 
+            radial-gradient(at 0% 0%, rgba(30, 136, 229, 0.04) 0px, transparent 50%),
+            radial-gradient(at 100% 0%, rgba(67, 160, 71, 0.04) 0px, transparent 50%),
+            radial-gradient(at 50% 50%, rgba(251, 192, 45, 0.01) 0px, transparent 50%);
+    }
+    .glass-card {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+    .dark .glass-card {
+        background: rgba(15, 23, 42, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .vibrant-shimmer {
+        background: linear-gradient(135deg, #1E88E5 0%, #43A047 100%);
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="min-h-screen mesh-background flex items-center justify-center p-6">
+    <div class="max-w-2xl w-full">
+        <!-- Back Link -->
+        <a href="{{ path('app_reclamation_index') }}" class="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-blue-600 mb-8 transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+            Retour aux réclamations
+        </a>
+
+        <div class="glass-card p-10 lg:p-14 rounded-[3rem] shadow-2xl animate-in fade-in zoom-in duration-700 relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+            
+            <div class="relative z-10">
+                <div class="mb-10">
+                    <h1 class="text-4xl font-black text-slate-900 dark:text-white mb-4 tracking-tight">Nouvelle <span class="text-transparent bg-clip-text vibrant-shimmer">Réclamation</span></h1>
+                    <p class="text-slate-500 dark:text-slate-400 font-medium">Décrivez votre problème en détail pour que notre équipe puisse vous aider efficacement.</p>
+                </div>
+
+                {{ form_start(form, {'attr': {'class': 'space-y-8'}}) }}
+                    <div class="space-y-3">
+                        {{ form_label(form.sujet, 'Sujet ou Titre', {'label_attr': {'class': 'text-xs font-black uppercase tracking-widest text-slate-400 ml-1'}}) }}
+                        {{ form_widget(form.sujet, {'attr': {'class': 'w-full bg-white/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-2xl py-4 px-6 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/5 transition-all outline-none text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-600 font-bold', 'placeholder': 'Ex: Problème d\'accès au cours...'}}) }}
+                        {{ form_errors(form.sujet, {'attr': {'class': 'text-red-500 text-sm font-bold mt-2 ml-1'}}) }}
+                    </div>
+
+                    <div class="space-y-3">
+                        {{ form_label(form.description, 'Description détaillée', {'label_attr': {'class': 'text-xs font-black uppercase tracking-widest text-slate-400 ml-1'}}) }}
+                        {{ form_widget(form.description, {'attr': {'class': 'w-full bg-white/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-2xl py-4 px-6 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/5 transition-all outline-none text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-600 font-medium min-h-[150px]', 'placeholder': 'Expliquez ce qui s\'est passé...'}}) }}
+                        {{ form_errors(form.description, {'attr': {'class': 'text-red-500 text-sm font-bold mt-2 ml-1'}}) }}
+                    </div>
+                    
+                    <button type="submit" class="w-full vibrant-shimmer text-white font-black py-5 rounded-2xl shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all text-lg tracking-tight mt-6">
+                        Envoyer ma demande
+                    </button>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

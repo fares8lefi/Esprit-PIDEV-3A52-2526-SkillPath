@@ -3,155 +3,147 @@
 {% block title %}Admin Dashboard - SkillPath{% endblock %}
 
 {% block content %}
-    <div class="space-y-8 animate-in fade-in duration-500">
-        <!-- Welcome Section -->
-        <section class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+    <div class="space-y-8">
+        <!-- Welcome -->
+        <section class="flex flex-col md:flex-row md:items-center justify-between gap-6 animate-fade-up">
             <div>
-                <h1 class="text-4xl font-extrabold text-white tracking-tight">Tableau de <span class="vibrant-text">Bord</span></h1>
-                <p class="text-neutral-500 mt-2 font-medium">Bienvenue, {{ app.user.username }}. Voici l'état actuel de votre plateforme.</p>
+                <h1 class="text-3xl font-black text-slate-900 dark:text-white tracking-tight">Tableau de <span class="gradient-text">Bord</span></h1>
+                <p class="text-slate-500 dark:text-slate-400 mt-1 font-medium text-sm">Bienvenue, {{ app.user.username }}. Voici l'état actuel de votre plateforme.</p>
             </div>
             <div class="flex gap-3">
-                <button class="px-6 py-3 glass-card rounded-2xl text-sm font-bold flex items-center gap-2 hover:bg-neutral-800/80">
-                    <svg class="w-4 h-4 text-skillpath-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                <button class="btn-secondary !py-2.5 !px-5 text-sm flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
                     Rapports
                 </button>
-                <a href="{{ path('app_user_admin_create') }}" class="px-6 py-3 vibrant-gradient rounded-2xl text-sm font-bold text-white shadow-lg shadow-skill-blue/25 flex items-center gap-2 transform hover:scale-105 active:scale-95 transition-all">
+                <a href="{{ path('app_user_admin_create') }}" class="btn-primary !py-2.5 !px-5 text-sm flex items-center gap-2 !rounded-xl">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
                     Nouvel Utilisateur
                 </a>
             </div>
         </section>
 
-        <!-- Stats Grid -->
-        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div class="glass-card p-6 rounded-[2.5rem]">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="w-12 h-12 bg-blue-500/20 text-blue-500 rounded-2xl flex items-center justify-center">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+        <!-- Stats Bento Grid -->
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 animate-fade-up delay-100">
+            <!-- Users -->
+            <div class="glass-card p-6 rounded-2xl">
+                <div class="flex justify-between items-start mb-5">
+                    <div class="w-11 h-11 bg-primary/8 dark:bg-primary/15 text-primary dark:text-primary-light rounded-xl flex items-center justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
                     </div>
-                    <span class="text-xs font-bold text-blue-400 bg-blue-500/10 px-2.5 py-1 rounded-full">Global</span>
+                    <span class="badge badge-purple">Global</span>
                 </div>
-                <p class="text-neutral-500 text-sm font-bold uppercase tracking-widest">Utilisateurs</p>
-                <h3 class="text-3xl font-black text-white mt-1">{{ userCount }}</h3>
-                <div class="w-full bg-neutral-800 h-1.5 rounded-full mt-4 overflow-hidden">
-                    <div class="bg-blue-500 h-1.5 rounded-full" style="width: 65%"></div>
-                </div>
+                <p class="text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase tracking-widest">Utilisateurs</p>
+                <h3 class="text-3xl font-black text-slate-900 dark:text-white mt-1">{{ userCount }}</h3>
+                <div class="progress-bar mt-4"><div class="progress-bar-fill" style="width: 65%"></div></div>
             </div>
 
-            <div class="glass-card p-6 rounded-[2.5rem]">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="w-12 h-12 bg-orange-500/20 text-orange-500 rounded-2xl flex items-center justify-center">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+            <!-- Modules -->
+            <div class="glass-card p-6 rounded-2xl">
+                <div class="flex justify-between items-start mb-5">
+                    <div class="w-11 h-11 bg-secondary/10 text-secondary rounded-xl flex items-center justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
                     </div>
-                    <span class="text-xs font-bold text-orange-400 bg-orange-500/10 px-2.5 py-1 rounded-full">Modules</span>
+                    <span class="badge badge-amber">Modules</span>
                 </div>
-                <p class="text-neutral-500 text-sm font-bold uppercase tracking-widest">Modules</p>
-                <h3 class="text-3xl font-black text-white mt-1">{{ moduleCount }}</h3>
-                <div class="w-full bg-neutral-800 h-1.5 rounded-full mt-4 overflow-hidden">
-                    <div class="bg-orange-500 h-1.5 rounded-full" style="width: 45%"></div>
-                </div>
+                <p class="text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase tracking-widest">Modules</p>
+                <h3 class="text-3xl font-black text-slate-900 dark:text-white mt-1">{{ moduleCount }}</h3>
+                <div class="progress-bar mt-4"><div class="progress-bar-fill" style="width: 45%"></div></div>
             </div>
 
-            <div class="glass-card p-6 rounded-[2.5rem]">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="w-12 h-12 bg-purple-500/20 text-purple-500 rounded-2xl flex items-center justify-center">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+            <!-- Courses -->
+            <div class="glass-card p-6 rounded-2xl">
+                <div class="flex justify-between items-start mb-5">
+                    <div class="w-11 h-11 bg-accent/10 text-accent rounded-xl flex items-center justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
                     </div>
-                    <span class="text-xs font-bold text-purple-400 bg-purple-500/10 px-2.5 py-1 rounded-full">Contenu</span>
+                    <span class="badge badge-cyan">Contenu</span>
                 </div>
-                <p class="text-neutral-500 text-sm font-bold uppercase tracking-widest">Cours</p>
-                <h3 class="text-3xl font-black text-white mt-1">{{ coursCount }}</h3>
-                <div class="w-full bg-neutral-800 h-1.5 rounded-full mt-4 overflow-hidden">
-                    <div class="bg-purple-500 h-1.5 rounded-full" style="width: 80%"></div>
-                </div>
+                <p class="text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase tracking-widest">Cours</p>
+                <h3 class="text-3xl font-black text-slate-900 dark:text-white mt-1">{{ coursCount }}</h3>
+                <div class="progress-bar mt-4"><div class="progress-bar-fill" style="width: 80%"></div></div>
             </div>
 
-            <div class="glass-card p-6 rounded-[2.5rem]">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="w-12 h-12 bg-green-500/20 text-green-500 rounded-2xl flex items-center justify-center">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <!-- Status -->
+            <div class="glass-card p-6 rounded-2xl">
+                <div class="flex justify-between items-start mb-5">
+                    <div class="w-11 h-11 bg-mint/10 text-mint rounded-xl flex items-center justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     </div>
-                    <span class="text-xs font-bold text-green-400 bg-green-500/10 px-2.5 py-1 rounded-full">En ligne</span>
+                    <span class="badge badge-green">En ligne</span>
                 </div>
-                <p class="text-neutral-500 text-sm font-bold uppercase tracking-widest">Statut</p>
-                <h3 class="text-3xl font-black text-white mt-1">Actif</h3>
-                <div class="w-full bg-neutral-800 h-1.5 rounded-full mt-4 overflow-hidden">
-                    <div class="bg-green-500/50 h-1.5 rounded-full animate-pulse" style="width: 100%"></div>
-                </div>
+                <p class="text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase tracking-widest">Statut</p>
+                <h3 class="text-3xl font-black text-slate-900 dark:text-white mt-1">Actif</h3>
+                <div class="progress-bar mt-4"><div class="progress-bar-fill animate-pulse" style="width: 100%; background: linear-gradient(90deg, #10B981, #34D399)"></div></div>
             </div>
         </section>
 
         <!-- Bottom Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <!-- Activity Feed -->
-            <div class="lg:col-span-2 glass-card rounded-[2.5rem] p-8 overflow-hidden">
-                <div class="flex justify-between items-center mb-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-fade-up delay-200">
+            <!-- Recent Users -->
+            <div class="lg:col-span-2 glass-card rounded-2xl p-7 overflow-hidden">
+                <div class="flex justify-between items-center mb-6">
                     <div>
-                        <h3 class="text-2xl font-bold text-white">Derniers Utilisateurs</h3>
-                        <p class="text-neutral-500 text-sm mt-1">Les membres récemment inscrits.</p>
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white">Derniers Utilisateurs</h3>
+                        <p class="text-slate-500 dark:text-slate-400 text-xs mt-0.5 font-medium">Les membres récemment inscrits.</p>
                     </div>
-                    <a href="{{ path('app_user_index') }}" class="text-skillpath-blue hover:text-skillpath-blue-light font-bold text-sm transition-colors">Voir tout</a>
+                    <a href="{{ path('app_user_index') }}" class="text-primary dark:text-primary-light hover:underline font-bold text-xs transition-colors">Voir tout →</a>
                 </div>
 
-                <div class="space-y-6">
+                <div class="space-y-4">
                     {% for user in recentUsers %}
                     <div class="flex items-center gap-4 group cursor-pointer">
-                        <div class="w-12 h-12 rounded-2xl bg-neutral-800/50 border border-neutral-700/50 flex items-center justify-center group-hover:border-skillpath-blue/30 transition-all">
-                            <div class="w-9 h-9 rounded-xl vibrant-gradient flex items-center justify-center text-xs font-black text-white shadow-inner">
-                                {{ user.username|first|upper }}
-                            </div>
+                        <div class="w-11 h-11 rounded-xl gradient-primary flex items-center justify-center text-xs font-bold text-white shadow-md shadow-purple-500/10 group-hover:scale-105 transition-transform">
+                            {{ user.username|first|upper }}
                         </div>
-                        <div class="flex-1 flex justify-between items-center border-b border-neutral-800/50 pb-4 group-last:border-0">
+                        <div class="flex-1 flex justify-between items-center border-b border-slate-100/50 dark:border-white/5 pb-4 group-last:border-0">
                             <div>
-                                <p class="text-white font-bold group-hover:text-skillpath-blue transition-colors">{{ user.username }}</p>
-                                <p class="text-xs text-neutral-500 font-medium">{{ user.email }}</p>
+                                <p class="text-sm font-bold text-slate-900 dark:text-white group-hover:text-primary dark:group-hover:text-primary-light transition-colors">{{ user.username }}</p>
+                                <p class="text-xs text-slate-400 font-medium">{{ user.email }}</p>
                             </div>
                             <div class="text-right">
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-neutral-800 text-neutral-400 border border-neutral-700">
-                                    ID: #{{ user.id }}
-                                </span>
-                                <p class="text-[10px] text-neutral-600 mt-1 font-bold italic">
+                                <span class="badge badge-purple text-[9px]">ID: #{{ user.id }}</span>
+                                <p class="text-[10px] text-slate-400 mt-1 font-medium">
                                     {{ user.createdAt ? user.createdAt|date('d/m/Y H:i') : 'Ancien Membre' }}
                                 </p>
                             </div>
                         </div>
                     </div>
                     {% else %}
-                    <p class="text-neutral-500 text-center py-12 font-medium">Aucun utilisateur récent.</p>
+                    <p class="text-slate-400 text-center py-10 font-medium text-sm">Aucun utilisateur récent.</p>
                     {% endfor %}
                 </div>
             </div>
 
             <!-- Info Column -->
-            <div class="space-y-8">
-                <div class="vibrant-gradient rounded-[2.5rem] p-8 relative overflow-hidden shadow-2xl shadow-skillpath-blue/20 group">
+            <div class="space-y-6">
+                <!-- CTA Card -->
+                <div class="gradient-primary rounded-2xl p-7 relative overflow-hidden shadow-xl shadow-purple-500/15 group">
                     <div class="relative z-10">
-                        <h3 class="text-2xl font-black text-white leading-tight">Gérez vos <br>modules</h3>
-                        <p class="text-white/80 mt-2 text-sm font-medium">Accédez à l'édition rapide des contenus pédagogiques.</p>
-                        <a href="{{ path('module_list') }}" class="mt-6 block w-full py-3 bg-white text-skillpath-blue-dark text-center font-black rounded-2xl hover:bg-neutral-100 transition-all active:scale-95 shadow-xl">Accéder aux modules</a>
+                        <h3 class="text-xl font-black text-white leading-tight">Gérez vos <br>modules</h3>
+                        <p class="text-white/70 mt-2 text-sm font-medium">Accédez à l'édition rapide des contenus pédagogiques.</p>
+                        <a href="{{ path('module_list') }}" class="mt-5 block w-full py-3 bg-white text-primary text-center font-bold rounded-xl hover:bg-slate-50 transition-all active:scale-95 shadow-lg text-sm">Accéder aux modules</a>
                     </div>
-                    <!-- Abstract items -->
-                    <div class="absolute -right-12 -bottom-12 w-48 h-48 bg-white/10 rounded-full blur-3xl group-hover:scale-125 transition-transform duration-700"></div>
-                    <div class="absolute -left-12 -top-12 w-40 h-40 bg-black/10 rounded-full blur-2xl group-hover:translate-x-4 transition-transform duration-700"></div>
+                    <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-white/5 rounded-full blur-3xl group-hover:scale-125 transition-transform duration-700"></div>
                 </div>
 
-                <div class="glass-card rounded-[2.5rem] p-8">
-                    <h3 class="text-xl font-bold text-white mb-6">Résumé Système</h3>
-                    <div class="space-y-4">
-                        <div class="flex items-center justify-between p-4 bg-neutral-900/50 rounded-2xl border border-neutral-800">
-                            <span class="text-neutral-400 text-xs font-bold uppercase tracking-wider">Serveur</span>
-                            <span class="flex items-center gap-1.5 text-green-400 text-xs font-black">
-                                <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
+                <!-- System Status -->
+                <div class="glass-card rounded-2xl p-7">
+                    <h3 class="text-base font-bold text-slate-900 dark:text-white mb-5">Résumé Système</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-3.5 bg-slate-50/50 dark:bg-white/3 rounded-xl">
+                            <span class="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Serveur</span>
+                            <span class="flex items-center gap-1.5 text-mint text-[10px] font-bold">
+                                <span class="w-1.5 h-1.5 bg-mint rounded-full animate-pulse"></span>
                                 OPÉRATIONNEL
                             </span>
                         </div>
-                        <div class="flex items-center justify-between p-4 bg-neutral-900/50 rounded-2xl border border-neutral-800">
-                            <span class="text-neutral-400 text-xs font-bold uppercase tracking-wider">Base de données</span>
-                            <span class="text-white text-xs font-black italic">MariaDB 10.4</span>
+                        <div class="flex items-center justify-between p-3.5 bg-slate-50/50 dark:bg-white/3 rounded-xl">
+                            <span class="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Base de données</span>
+                            <span class="text-slate-900 dark:text-white text-[10px] font-bold">MariaDB 10.4</span>
                         </div>
-                        <div class="flex items-center justify-between p-4 bg-neutral-900/50 rounded-2xl border border-neutral-800">
-                            <span class="text-neutral-400 text-xs font-bold uppercase tracking-wider">Storage</span>
-                            <span class="text-white text-xs font-black">74%</span>
+                        <div class="flex items-center justify-between p-3.5 bg-slate-50/50 dark:bg-white/3 rounded-xl">
+                            <span class="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Storage</span>
+                            <span class="text-slate-900 dark:text-white text-[10px] font-bold">74%</span>
                         </div>
                     </div>
                 </div>

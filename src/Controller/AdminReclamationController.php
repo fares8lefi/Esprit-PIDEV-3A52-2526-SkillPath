@@ -21,7 +21,7 @@ class AdminReclamationController extends AbstractController
     #[Route('/', name: 'app_admin_reclamation_index', methods: ['GET'])]
     public function index(ReclamationRepository $reclamationRepository): Response
     {
-        return $this->render('admin/reclamation/index.html.twig', [
+        return $this->render('BackOffice/reclamation/index.html.twig', [
             'reclamations' => $reclamationRepository->findAll(),
         ]);
     }
@@ -50,7 +50,7 @@ class AdminReclamationController extends AbstractController
             return $this->redirectToRoute('app_admin_reclamation_show', ['id' => $reclamation->getId()], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->render('admin/reclamation/show.html.twig', [
+        return $this->render('BackOffice/reclamation/show.html.twig', [
             'reclamation' => $reclamation,
             'response_form' => $responseForm,
             'status_form' => $statusForm,
