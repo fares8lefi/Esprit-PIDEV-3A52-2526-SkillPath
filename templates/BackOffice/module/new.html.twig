@@ -1,44 +1,42 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Ajouter module{% endblock %}
+{% block title %}Ajouter un Module - SkillPath{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Outfit', sans-serif; }
+        .gradient-text {
+            background: linear-gradient(135deg, #1E88E5 0%, #43A047 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+{% endblock %}
 
 {% block body %}
 
-<div style="width:60%; margin:auto; margin-top:40px;">
+<div class="min-h-screen bg-gray-50">
 
-    <h1>➕ Ajouter un module</h1>
+    <div class="max-w-5xl mx-auto p-6">
+        <div class="flex items-center justify-between mb-6">
+            <div>
+                <h1 class="text-2xl font-extrabold gradient-text">Ajouter un module</h1>
+                <p class="text-sm text-gray-600">Crée un nouveau module avec image, niveau et description.</p>
+            </div>
 
-    <form method="post">
+            <a href="{{ path('admin_module_list') }}" class="px-5 py-2.5 border border-gray-300 rounded-xl font-semibold text-gray-700 hover:bg-gray-100 transition-all">
+                Retour
+            </a>
+        </div>
 
-        <label>Nom :</label>
-        <input type="text" name="name" required class="form-control"><br>
-
-        <label>Description :</label>
-        <input type="text" name="description" required class="form-control"><br>
-
-        <label>Date :</label>
-        <input type="date" name="dateCreation" required class="form-control"><br>
-
-        <label>Level :</label>
-        <input type="text" name="level" required class="form-control"><br>
-
-        <label>Image :</label>
-        <input type="text" name="image" class="form-control"><br><br>
-
-        <button style="
-            background:#4CAF50;
-            color:white;
-            padding:10px 15px;
-            border:none;
-            border-radius:5px;">
-            💾 Enregistrer
-        </button>
-
-        <a href="{{ path('module_list') }}" style="margin-left:10px;">
-            ⬅ Retour
-        </a>
-
-    </form>
+        <div class="bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
+            {% include 'BackOffice/module/_form.html.twig' with {form: form, module: module, button_label: 'Créer'} %}
+        </div>
+    </div>
 
 </div>
 

@@ -1,0 +1,92 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails Module - SkillPath{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Outfit', sans-serif; }
+        .gradient-text {
+            background: linear-gradient(135deg, #1E88E5 0%, #43A047 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+
+<div class="min-h-screen bg-gray-50">
+    <div class="max-w-5xl mx-auto p-6">
+
+        <div class="flex items-center justify-between mb-6">
+            <div>
+                <h1 class="text-2xl font-extrabold gradient-text">{{ module.name }}</h1>
+                <p class="text-sm text-gray-600">Détails du module</p>
+            </div>
+
+            <div class="flex gap-2">
+                <a href="{{ path('admin_module_edit', {id: module.id}) }}" class="px-5 py-2.5 bg-skillpath-green text-white rounded-xl font-semibold hover:bg-skillpath-green-dark transition-all">
+                    Modifier
+                </a>
+                <a href="{{ path('admin_module_list') }}" class="px-5 py-2.5 border border-gray-300 rounded-xl font-semibold text-gray-700 hover:bg-gray-100 transition-all">
+                    Retour
+                </a>
+            </div>
+        </div>
+
+        <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+            <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="md:col-span-1">
+                    {% if module.image %}
+                        <img src="{{ asset('uploads/modules/' ~ module.image) }}" class="w-full h-56 object-cover rounded-2xl border border-gray-200" alt="">
+                    {% else %}
+                        <div class="w-full h-56 rounded-2xl bg-gray-100 flex items-center justify-center text-gray-500 font-bold text-5xl">
+                            {{ module.name|slice(0,1)|upper }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="md:col-span-2">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold
+                            {% if module.level == 'Débutant' %}bg-green-100 text-green-700
+                            {% elseif module.level == 'Intermédiaire' %}bg-yellow-100 text-yellow-700
+                            {% else %}bg-red-100 text-red-700{% endif %}">
+                            {{ module.level }}
+                        </span>
+
+                        <span class="text-sm text-gray-500">
+                            Créé le {{ module.dateCreation|date('d/m/Y H:i') }}
+                        </span>
+                    </div>
+
+                    <h2 class="text-lg font-bold text-gray-900 mb-2">Description</h2>
+                    <p class="text-gray-700 leading-relaxed">
+                        {{ module.description ? module.description : 'Aucune description.' }}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delete card -->
+        <div class="mt-6 bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
+            <h3 class="text-lg font-bold text-gray-900 mb-2">Zone dangereuse</h3>
+            <p class="text-sm text-gray-600 mb-4">Supprimer le module définitivement.</p>
+
+            <form method="post" action="{{ path('admin_module_delete', {id: module.id}) }}"
+                  onsubmit="return confirm('Supprimer ce module ?');">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete_module' ~ module.id) }}">
+                <button class="px-6 py-3 bg-red-600 text-white rounded-xl font-semibold hover:bg-red-700 transition-all">
+                    Supprimer
+                </button>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
