@@ -46,11 +46,10 @@ class UserController extends AbstractController
     public function register(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher, MailerInterface $mailer, \Symfony\Component\Validator\Validator\ValidatorInterface $validator): Response
     {
         $user = new User();
-        // Simulation d'un formulaire pour l'exemple
         if ($request->isMethod('POST')) {
             $user->setEmail($request->request->get('email'));
             $user->setUsername($request->request->get('username'));
-            $user->setPassword($request->request->get('password')); // Temporaire pour validation
+            $user->setPassword($request->request->get('password')); 
 
             $errors = $validator->validate($user);
             if (count($errors) > 0) {
