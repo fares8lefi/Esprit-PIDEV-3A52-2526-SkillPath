@@ -5,9 +5,11 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>{% block title %}Welcome!{% endblock %}</title>
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
+        
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+        
         <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
         <style type="text/tailwindcss">
             @theme {
@@ -19,15 +21,36 @@
                 font-family: 'Outfit', sans-serif;
             }
         </style>
+
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        colors: {
+                            'skillpath-blue': '#1E88E5',
+                            'skillpath-blue-dark': '#1565C0',
+                            'skillpath-blue-light': '#42A5F5',
+                            'skillpath-green': '#43A047',
+                            'skillpath-green-dark': '#2E7D32',
+                            'skillpath-green-light': '#66BB6A',
+                            'skillpath-yellow': '#FBC02D',
+                            'skillpath-yellow-dark': '#F9A825',
+                            'skillpath-yellow-light': '#FFEB3B',
+                        }
+                    }
+                }
+            }
+        </script>
+
         {% block stylesheets %}
         {% endblock %}
 
         {% block javascripts %}
-                                                                                           
             {% block importmap %}{{ importmap('app') }}{% endblock %}
         {% endblock %}
     </head>
-    <body>
-        {% block body %}{% endblock %}
-    </body>
+
+<body>
+    {% block body %}{% endblock %}
+</body>
 </html>
