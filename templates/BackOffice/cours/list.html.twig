@@ -127,7 +127,7 @@
                     <span>Gestion des cours</span>
                 </a>
                 
-                <a href="{{ path('module_list') }}" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-xl font-medium transition-all duration-300">
+                <a href="{{ path('admin_module_list') }}" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-xl font-medium transition-all duration-300">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
                     </svg>
@@ -331,17 +331,17 @@
                 </div>
                 
                 <!-- Pagination -->
-                {% if courss.haveToPaginate is defined and courss.haveToPaginate %}
+                {% if cours.haveToPaginate is defined and cours.haveToPaginate %}
                     <div class="bg-gray-50 px-6 py-4 border-t border-gray-200">
                         <div class="flex items-center justify-between">
                             <div class="text-sm text-gray-600">
-                                Affichage de <span class="font-semibold">{{ courss.currentItemCount > 0 ? ((courss.currentPageNumber - 1) * courss.itemNumberPerPage + 1) : 0 }}</span> 
-                                à <span class="font-semibold">{{ (courss.currentPageNumber - 1) * courss.itemNumberPerPage + courss.currentItemCount }}</span> 
-                                sur <span class="font-semibold">{{ courss.totalItemCount }}</span> résultats
+                                Affichage de <span class="font-semibold">{{ cours.currentItemCount > 0 ? ((cours.currentPageNumber - 1) * cours.itemNumberPerPage + 1) : 0 }}</span> 
+                                à <span class="font-semibold">{{ (cours.currentPageNumber - 1) * cours.itemNumberPerPage + cours.currentItemCount }}</span> 
+                                sur <span class="font-semibold">{{ cours.totalItemCount }}</span> résultats
                             </div>
                             <div class="flex gap-2">
-                                {% if courss.currentPageNumber > 1 %}
-                                    <a href="{{ path('admin_cours_list', app.request.query.all|merge({page: courss.currentPageNumber - 1})) }}" class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 transition-all">
+                                {% if cours.currentPageNumber > 1 %}
+                                    <a href="{{ path('admin_cours_list', app.request.query.all|merge({page: cours.currentPageNumber - 1})) }}" class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 transition-all">
                                         Précédent
                                     </a>
                                 {% else %}
@@ -350,18 +350,18 @@
                                     </span>
                                 {% endif %}
                                 
-                                {% for page in 1..courss.paginationData.pageCount %}
-                                    {% if page == courss.currentPageNumber %}
+                                {% for page in 1..cours.paginationData.pageCount %}
+                                    {% if page == cours.currentPageNumber %}
                                         <span class="px-4 py-2 bg-skillpath-blue text-white rounded-lg text-sm font-medium">{{ page }}</span>
-                                    {% elseif page >= courss.currentPageNumber - 2 and page <= courss.currentPageNumber + 2 %}
+                                    {% elseif page >= cours.currentPageNumber - 2 and page <= cours.currentPageNumber + 2 %}
                                         <a href="{{ path('admin_cours_list', app.request.query.all|merge({page: page})) }}" class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 transition-all">
                                             {{ page }}
                                         </a>
                                     {% endif %}
                                 {% endfor %}
                                 
-                                {% if courss.currentPageNumber < courss.paginationData.pageCount %}
-                                    <a href="{{ path('admin_cours_list', app.request.query.all|merge({page: courss.currentPageNumber + 1})) }}" class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 transition-all">
+                                {% if cours.currentPageNumber < cours.paginationData.pageCount %}
+                                    <a href="{{ path('admin_cours_list', app.request.query.all|merge({page: cours.currentPageNumber + 1})) }}" class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 transition-all">
                                         Suivant
                                     </a>
                                 {% else %}
