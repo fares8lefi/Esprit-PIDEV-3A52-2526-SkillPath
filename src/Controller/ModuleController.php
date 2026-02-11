@@ -4,8 +4,10 @@ namespace App\Controller;
 
 use App\Entity\Module;
 use App\Repository\ModuleRepository;
+use App\Form\ModuleType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -22,50 +24,50 @@ class ModuleController extends AbstractController
 
     // AJOUT
     #[Route('/modules/new', name: 'module_new')]
-    public function new(EntityManagerInterface $em): Response
+    public function new(Request $request, EntityManagerInterface $em): Response
     {
         $module = new Module();
-        $module->setName('Nouveau module');
-        $module->setDescription('Description exemple');
-        $module->setDateCreation(new \DateTime());
-        $module->setLevel('Débutant');
-        $module->setImage('image.png');
+        $form = $this->createForm(ModuleType::class, $module);
+        
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->persist($module);
+            $em->flush();
+            $this->addFlash('success', 'Le module a été créé avec succès.');
+            return $this->redirectToRoute('module_list');
+        }
 
-        $em->persist($module);
-        $em->flush();
-
-        return $this->redirectToRoute('module_list');
+        return $this->render('BackOffice/module/new.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
 
     // DELETE
     #[Route('/modules/delete/{id}', name: 'module_delete')]
-    public function delete($id, ModuleRepository $repo, EntityManagerInterface $em): Response
+    public function delete(Module $module, EntityManagerInterface $em): Response
     {
-        $module = $repo->find($id);
-
-        if (!$module) {
-            return new Response('Module introuvable');
-        }
-
         $em->remove($module);
         $em->flush();
-
+        $this->addFlash('success', 'Le module a été supprimé.');
         return $this->redirectToRoute('module_list');
     }
 
     // EDIT
     #[Route('/modules/edit/{id}', name: 'module_edit')]
-    public function edit($id, ModuleRepository $repo, EntityManagerInterface $em): Response
+    public function edit(Request $request, Module $module, EntityManagerInterface $em): Response
     {
-        $module = $repo->find($id);
-
-        if (!$module) {
-            return new Response('Module introuvable');
+        $form = $this->createForm(ModuleType::class, $module);
+        
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->flush();
+            $this->addFlash('success', 'Le module a été mis à jour.');
+            return $this->redirectToRoute('module_list');
         }
 
-        $module->setName('Nom modifié');
-        $em->flush();
-
-        return $this->redirectToRoute('module_list');
+        return $this->render('BackOffice/module/edit.html.twig', [
+            'form' => $form->createView(),
+            'module' => $module
+        ]);
     }
 }

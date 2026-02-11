@@ -1,125 +1,192 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Mon Profil - SkillPath{% endblock %}
+{% block title %}Mon Profil Premium - SkillPath{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .mesh-background {
+        background-color: #ffffff;
+        background-image: 
+            radial-gradient(at 0% 0%, rgba(30, 136, 229, 0.08) 0px, transparent 50%),
+            radial-gradient(at 100% 0%, rgba(67, 160, 71, 0.08) 0px, transparent 50%),
+            radial-gradient(at 50% 50%, rgba(251, 192, 45, 0.03) 0px, transparent 50%);
+    }
+    .dark .mesh-background {
+        background-color: #020617;
+        background-image: 
+            radial-gradient(at 0% 0%, rgba(30, 136, 229, 0.04) 0px, transparent 50%),
+            radial-gradient(at 100% 0%, rgba(67, 160, 71, 0.04) 0px, transparent 50%),
+            radial-gradient(at 50% 50%, rgba(251, 192, 45, 0.01) 0px, transparent 50%);
+    }
+    .glass-card {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+    .dark .glass-card {
+        background: rgba(15, 23, 42, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .profile-glow {
+        position: relative;
+    }
+    .profile-glow::after {
+        content: '';
+        position: absolute;
+        inset: -2px;
+        background: linear-gradient(135deg, #1E88E5, #43A047);
+        z-index: -1;
+        border-radius: 2.5rem;
+        opacity: 0.3;
+        filter: blur(10px);
+    }
+    .vibrant-shimmer {
+        background: linear-gradient(135deg, #1E88E5 0%, #43A047 100%);
+    }
+</style>
+{% endblock %}
 
 {% block body %}
-<div class="min-h-screen bg-gray-50 flex flex-col">
-    <!-- Header/Navbar -->
-    <header class="bg-white shadow-sm border-b border-gray-200 py-4 px-8 flex justify-between items-center sticky top-0 z-50">
-        <div class="flex items-center">
-            <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-10 w-auto mr-3">
-            <span class="text-2xl font-bold text-skill-blue">SkillPath</span>
-        </div>
-        <div class="flex items-center space-x-6">
-            <a href="{{ path('app_user_login') }}" class="text-sm font-bold text-gray-500 hover:text-skill-blue transition-colors">Accueil</a>
-            <div class="h-8 w-8 rounded-full bg-gradient-to-br from-skill-blue to-skill-green flex items-center justify-center text-white text-xs font-bold shadow-md">
-                {{ user.username|first|upper }}
-            </div>
-            <a href="{{ path('app_logout') }}" class="text-xs font-bold text-red-500 hover:text-red-700 uppercase tracking-wider">Déconnexion</a>
-        </div>
-    </header>
-
-    <main class="flex-1 p-8">
-        <div class="max-w-4xl mx-auto">
-            <div class="mb-8">
-                <h1 class="text-3xl font-extrabold text-gray-900 border-b-4 border-skill-blue inline-block pb-2">Paramètres du Profil</h1>
-                <p class="text-gray-500 mt-4 leading-relaxed italic">
-                    Gérez vos informations personnelles et sécurisez votre compte.
-                </p>
-            </div>
-
-            {% for message in app.flashes('success') %}
-                <div class="bg-green-100 border border-green-200 text-green-700 px-6 py-4 rounded-2xl mb-8 flex items-center shadow-sm">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3 text-green-500" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                    </svg>
-                    <span class="font-bold">{{ message }}</span>
+<div class="min-h-screen mesh-background pb-20">
+    <!-- Premium Header -->
+    <nav class="sticky top-0 z-[100] px-6 lg:px-12 py-4 bg-white/50 dark:bg-slate-950/50 backdrop-blur-md border-b border-white/20 dark:border-slate-800/50">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="{{ path('app_home') }}" class="flex items-center gap-3 group transition-transform hover:scale-105">
+                <div class="w-10 h-10 vibrant-shimmer rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
+                    <img src="{{ asset('images/logo.png') }}" alt="Logo" class="w-6 h-6 invert brightness-0">
                 </div>
-            {% endfor %}
+                <span class="text-2xl font-black tracking-tight text-slate-900 dark:text-white">SkillPath</span>
+            </a>
 
-            {% for message in app.flashes('error') %}
-                <div class="bg-red-100 border border-red-200 text-red-700 px-6 py-4 rounded-2xl mb-8 flex items-center shadow-sm">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3 text-red-500" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
-                    </svg>
-                    <span class="font-bold">{{ message }}</span>
-                </div>
-            {% endfor %}
+            <div class="flex items-center gap-6">
+                <a href="{{ path('app_home') }}" class="text-xs font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Accueil</a>
+                <div class="h-8 w-[1px] bg-slate-200 dark:bg-slate-800"></div>
+                <a href="{{ path('app_logout') }}" class="text-xs font-black uppercase tracking-widest text-red-500 hover:text-red-600 transition-colors">Déconnexion</a>
+            </div>
+        </div>
+    </nav>
 
-            <div class="bg-white rounded-[2.5rem] shadow-2xl overflow-hidden border border-gray-100 flex flex-col md:flex-row">
-                <!-- Sidebar Decor -->
-                <div class="md:w-1/3 bg-gradient-to-b from-skill-blue to-skill-green p-10 text-white flex flex-col justify-between">
-                    <div>
-                        <div class="w-24 h-24 rounded-3xl bg-white/20 backdrop-blur-md p-1 mb-6 shadow-xl border border-white/30 mx-auto md:mx-0">
-                            <div class="w-full h-full rounded-2xl bg-white flex items-center justify-center text-skill-blue text-4xl font-black">
+    <main class="max-w-7xl mx-auto px-6 lg:px-12 pt-16">
+        <!-- Dashboard Header -->
+        <div class="mb-16 animate-in fade-in slide-in-from-left-8 duration-700">
+            <h1 class="text-5xl font-black text-slate-900 dark:text-white mb-4 tracking-tight">Mon <span class="text-transparent bg-clip-text vibrant-shimmer">Espace Personnel</span></h1>
+            <p class="text-slate-500 dark:text-slate-400 font-medium text-lg">Gérez votre profil et suivez votre évolution sur la plateforme.</p>
+        </div>
+
+        {% for message in app.flashes('success') %}
+            <div class="max-w-3xl bg-green-50 text-green-600 px-6 py-4 rounded-3xl mb-8 font-bold border border-green-100 flex items-center gap-4 animate-in slide-in-from-top-4">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        {% for message in app.flashes('error') %}
+            <div class="max-w-3xl bg-red-50 text-red-600 px-6 py-4 rounded-3xl mb-8 font-bold border border-red-100 flex items-center gap-4 animate-in slide-in-from-top-4">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+            <!-- Profile Sidebar -->
+            <div class="lg:col-span-1 space-y-8 animate-in fade-in zoom-in duration-1000">
+                <div class="glass-card p-10 rounded-[3rem] text-center profile-glow overflow-hidden relative">
+                    <div class="absolute top-0 left-0 w-full h-24 vibrant-shimmer opacity-10"></div>
+                    
+                    <div class="relative z-10">
+                        <div class="w-32 h-32 rounded-[2.5rem] vibrant-shimmer p-1 shadow-2xl mx-auto mb-6 transform hover:rotate-6 transition-transform">
+                            <div class="w-full h-full rounded-[2.2rem] bg-white dark:bg-slate-900 flex items-center justify-center text-4xl font-black text-slate-900 dark:text-white">
                                 {{ user.username|first|upper }}
                             </div>
                         </div>
-                        <h3 class="text-xl font-bold mb-1 text-center md:text-left">{{ user.username }}</h3>
-                        <p class="text-white/70 text-sm text-center md:text-left">{{ user.email }}</p>
-                        <div class="mt-8 space-y-4 hidden md:block">
-                            <div class="flex items-center text-sm font-medium text-white/90">
-                                <span class="w-2 h-2 rounded-full bg-skill-yellow mr-3"></span>
-                                Membre depuis {{ "now"|date("Y") }}
+                        <h3 class="text-2xl font-black text-slate-900 dark:text-white mb-1">{{ user.username }}</h3>
+                        <p class="text-slate-500 dark:text-slate-400 font-medium mb-8">{{ user.email }}</p>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-blue-50/50 dark:bg-blue-900/10 p-4 rounded-2xl border border-blue-50 dark:border-blue-900/30">
+                                <p class="text-[10px] font-black uppercase tracking-widest text-blue-600 dark:text-blue-400 mb-1">Rangement</p>
+                                <p class="text-xl font-black text-slate-900 dark:text-white">#42</p>
                             </div>
-                            
+                            <div class="bg-green-50/50 dark:bg-green-900/10 p-4 rounded-2xl border border-green-50 dark:border-green-900/30">
+                                <p class="text-[10px] font-black uppercase tracking-widest text-green-600 dark:text-green-400 mb-1">Badge</p>
+                                <p class="text-xl font-black text-slate-900 dark:text-white">Starter</p>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Form Area -->
-                <div class="md:w-2/3 p-10 md:p-12">
-                    <form action="{{ path('app_user_profile') }}" method="POST" class="space-y-8">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div>
-                                <label for="username" class="block text-sm font-black text-gray-700 mb-3 uppercase tracking-wider">Nom d'utilisateur</label>
-                                <input type="text" id="username" name="username" value="{{ user.username }}" required
-                                    class="w-full bg-gray-50 border-2 border-gray-100 rounded-2xl px-5 py-4 focus:bg-white focus:border-skill-blue focus:outline-none transition-all font-medium text-gray-900 shadow-sm"
-                                    placeholder="ex: phares_lefi">
+                <div class="glass-card p-8 rounded-[2.5rem] border-white/50">
+                    <h4 class="text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-6 px-2">Statistiques de formation</h4>
+                    <div class="space-y-6">
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-xs font-black text-slate-600 dark:text-slate-400 uppercase">
+                                <span>Progression globale</span>
+                                <span>65%</span>
                             </div>
-                            <div>
-                                <label for="email" class="block text-sm font-black text-gray-700 mb-3 uppercase tracking-wider">Adresse Email</label>
-                                <input type="email" id="email" name="email" value="{{ user.email }}" required
-                                    class="w-full bg-gray-50 border-2 border-gray-100 rounded-2xl px-5 py-4 focus:bg-white focus:border-skill-blue focus:outline-none transition-all font-medium text-gray-900 shadow-sm"
-                                    placeholder="ex: contact@skillpath.tn">
+                            <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                                <div class="h-full vibrant-shimmer w-2/3 rounded-full"></div>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-xs font-black text-slate-600 dark:text-slate-400 uppercase">
+                                <span>Modules complétés</span>
+                                <span>4/12</span>
+                            </div>
+                            <div class="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                                <div class="h-full bg-slate-300 w-1/3 rounded-full"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Form -->
+            <div class="lg:col-span-2 animate-in fade-in slide-in-from-right-8 duration-1000">
+                <div class="glass-card p-10 lg:p-14 rounded-[3.5rem] shadow-2xl relative overflow-hidden">
+                    <form action="{{ path('app_user_profile') }}" method="POST" class="space-y-10">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="space-y-2">
+                                <label class="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Nom d'utilisateur</label>
+                                <input type="text" name="username" value="{{ user.username }}" required
+                                       class="w-full bg-white/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-2xl py-4 px-6 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/5 transition-all outline-none font-bold text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-600"
+                                       placeholder="ex: Jean_Duplication">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Adresse Email</label>
+                                <input type="email" name="email" value="{{ user.email }}" required
+                                       class="w-full bg-white/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-2xl py-4 px-6 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/5 transition-all outline-none font-bold text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-600"
+                                       placeholder="ex: jean@skillpath.net">
                             </div>
                         </div>
 
-                        <div class="space-y-8 pt-6 border-t border-gray-100">
-                            <div>
-                                <label for="new_password" class="block text-sm font-black text-gray-700 mb-3 uppercase tracking-wider">Nouveau Mot de Passe (optionnel)</label>
-                                <input type="password" id="new_password" name="new_password"
-                                    class="w-full bg-gray-50 border-2 border-gray-100 rounded-2xl px-5 py-4 focus:bg-white focus:border-skill-blue focus:outline-none transition-all placeholder-gray-300 shadow-sm"
-                                    placeholder="Laissez vide pour conserver l'actuel">
-                            </div>
+                        <div class="space-y-2">
+                            <label class="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Changer le mot de passe (si nécessaire)</label>
+                            <input type="password" name="new_password" 
+                                   class="w-full bg-white/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-2xl py-4 px-6 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/5 transition-all outline-none dark:text-white placeholder-slate-400 dark:placeholder-slate-600"
+                                   placeholder="8 caractères minimum — Laissez vide pour ne pas changer">
+                        </div>
 
-                            <div class="bg-skill-blue/5 p-8 rounded-3xl border-2 border-skill-blue/10">
-                                <label for="current_password" class="block text-sm font-black text-skill-blue mb-3 uppercase tracking-wider flex items-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
-                                    </svg>
+                        <div class="bg-slate-900 rounded-3xl p-8 relative overflow-hidden group">
+                            <div class="absolute inset-0 vibrant-shimmer opacity-0 group-hover:opacity-5 transition-opacity"></div>
+                            <div class="relative z-10">
+                                <label class="flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-blue-400 mb-4">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                                     Vérification de sécurité
                                 </label>
-                                <input type="password" id="current_password" name="current_password" required
-                                    class="w-full bg-white border-2 border-skill-blue/20 rounded-2xl px-5 py-4 focus:border-skill-blue focus:outline-none transition-all shadow-md focus:ring-4 focus:ring-skill-blue/10"
-                                    placeholder="Entrez votre mot de passe actuel pour valider">
-                                <p class="text-[10px] text-gray-400 mt-3 font-bold uppercase tracking-tighter">Votre mot de passe est nécessaire pour toute modification</p>
+                                <input type="password" name="current_password" required
+                                       class="w-full bg-white/10 border border-white/10 rounded-2xl py-4 px-6 focus:bg-white/20 focus:outline-none focus:border-white/20 transition-all outline-none text-white placeholder-slate-500"
+                                       placeholder="Saisissez votre mot de passe actuel pour valider les changements">
                             </div>
                         </div>
 
-                        <div class="pt-6">
-                            <button type="submit" class="w-full bg-gradient-to-r from-skill-blue to-skill-green text-white font-black py-5 rounded-3xl shadow-xl shadow-skill-blue/30 transform transition-all active:scale-[0.98] hover:shadow-2xl hover:-translate-y-1 text-lg">
-                                Enregistrer les modifications
-                            </button>
-                        </div>
+                        <button type="submit" class="w-full vibrant-shimmer text-white font-black py-5 rounded-2xl shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all text-lg tracking-tight">
+                            Enregistrer les modifications
+                        </button>
                     </form>
                 </div>
             </div>
         </div>
     </main>
-
-    <footer class="bg-white border-t border-gray-200 py-6 px-8 text-center text-gray-400 text-xs">
-        &copy; {{ "now"|date("Y") }} SkillPath — Tous droits réservés.
-    </footer>
 </div>
 {% endblock %}

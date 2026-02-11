@@ -12,9 +12,11 @@ use App\Repository\ModuleRepository;
 class MainController extends AbstractController
 {
     #[Route('/', name: 'app_home')]
-    public function index(): Response
+    public function index(ModuleRepository $moduleRepository): Response
     {
-        return $this->render('FrontOffice/main/index.html.twig');
+        return $this->render('FrontOffice/main/index.html.twig', [
+            'modules' => $moduleRepository->findAll(),
+        ]);
     }
 
     #[Route('/admin', name: 'app_admin_dashboard')]
