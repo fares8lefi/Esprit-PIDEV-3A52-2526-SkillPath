@@ -24,7 +24,7 @@ class CoursRepository extends ServiceEntityRepository
      * @param string|null $category
      * @return Cours[]
      */
-    public function findByFilters(?string $search = null, ?string $level = null, ?string $category = null): array
+    public function findByFilters(?string $search = null, ?string $level = null, ?string $category = null, ?string $sort = 'date_desc'): array
     {
         $qb = $this->createQueryBuilder('c');
 
@@ -43,8 +43,24 @@ class CoursRepository extends ServiceEntityRepository
                ->setParameter('category', $category);
         }
 
-        return $qb->orderBy('c.id', 'DESC')
-                  ->getQuery()
+        // Sorting logic
+        switch ($sort) {
+            case 'date_asc':
+                $qb->orderBy('c.createdAt', 'ASC');
+                break;
+            case 'title_asc':
+                $qb->orderBy('c.titre', 'ASC');
+                break;
+            case 'title_desc':
+                $qb->orderBy('c.titre', 'DESC');
+                break;
+            case 'date_desc':
+            default:
+                $qb->orderBy('c.createdAt', 'DESC');
+                break;
+        }
+
+        return $qb->getQuery()
                   ->getResult();
     }
 

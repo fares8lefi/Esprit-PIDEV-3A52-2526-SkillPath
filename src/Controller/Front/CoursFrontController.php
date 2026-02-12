@@ -18,8 +18,9 @@ class CoursFrontController extends AbstractController
         $search = $request->query->get('search');
         $level = $request->query->get('level');
         $category = $request->query->get('category');
+        $sort = $request->query->get('sort', 'date_desc');
 
-        $courses = $coursRepository->findByFilters($search, $level, $category);
+        $courses = $coursRepository->findByFilters($search, $level, $category, $sort);
         $categoriesCount = $coursRepository->countByCategories();
 
         return $this->render('front/cours/index.html.twig', [
@@ -28,6 +29,7 @@ class CoursFrontController extends AbstractController
             'currentSearch' => $search,
             'currentLevel' => $level,
             'currentCategory' => $category,
+            'currentSort' => $sort,
         ]);
     }
 
