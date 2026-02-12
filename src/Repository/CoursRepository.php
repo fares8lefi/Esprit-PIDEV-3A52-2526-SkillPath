@@ -24,26 +24,17 @@ class CoursRepository extends ServiceEntityRepository
      * @param string|null $type Type de contenu
      * @return Cours[]
      */
-    public function findByFilters(?string $search = null, ?int $moduleId = null, ?string $type = null): array
+    public function findByFilters(?string $search = null): array
     {
-        $qb = $this->createQueryBuilder('c')
-            ->leftJoin('c.module', 'm')
-            ->addSelect('m');
+        $qb = $this->createQueryBuilder('c');
 
         if ($search) {
-            $qb->andWhere('c.titre LIKE :search OR c.contenu LIKE :search')
+            $qb->andWhere('c.titre LIKE :search OR c.description LIKE :search')
                ->setParameter('search', '%' . $search . '%');
         }
 
-        if ($moduleId) {
-            $qb->andWhere('c.module = :module')
-               ->setParameter('module', $moduleId);
-        }
-
-        if ($type) {
-            $qb->andWhere('c.type = :type')
-               ->setParameter('type', $type);
-        }
+        // Module and Type filters removed as they are no longer on Cours entity directly
+        // To filter by Child Module Type, we would need a Join.
 
         return $qb->orderBy('c.id', 'DESC')
                   ->getQuery()
@@ -56,15 +47,9 @@ class CoursRepository extends ServiceEntityRepository
      * @param Module $module
      * @return Cours[]
      */
-    public function findByModule($module): array
-    {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.module = :module')
-            ->setParameter('module', $module)
-            ->orderBy('c.id', 'ASC')
-            ->getQuery()
-            ->getResult();
-    }
+    // findByModule removed
+    
+    // findByType removed
 
     /**
      * Récupère les contenus par type
@@ -72,31 +57,14 @@ class CoursRepository extends ServiceEntityRepository
      * @param string $type
      * @return Cours[]
      */
-    public function findByType(string $type): array
-    {
-        return $this->createQueryBuilder('c')
-            ->leftJoin('c.module', 'm')
-            ->addSelect('m')
-            ->andWhere('c.type = :type')
-            ->setParameter('type', $type)
-            ->orderBy('c.id', 'DESC')
-            ->getQuery()
-            ->getResult();
-    }
+    // findByType implementation removed
 
     /**
      * Compte le nombre de contenus par type
      * 
      * @return array
      */
-    public function countByType(): array
-    {
-        return $this->createQueryBuilder('c')
-            ->select('c.type, COUNT(c.id) as total')
-            ->groupBy('c.type')
-            ->getQuery()
-            ->getResult();
-    }
+    // countByType removed
 
     /**
      * Récupère les derniers contenus créés
@@ -107,9 +75,12 @@ class CoursRepository extends ServiceEntityRepository
     public function findLatest(int $limit = 10): array
     {
         return $this->createQueryBuilder('c')
-            ->leftJoin('c.module', 'm')
-            ->addSelect('m')
-            ->orderBy('c.createdAt', 'DESC')
+            ->orderBy('c.createdAt', 'DESC') // Assuming createdAt exists? Entity has dateCreation? No, Entity has createdAt/updatedAt? 
+            // Checking Cours.php again...
+            // It has __construct with $this->createdAt = new \DateTime();
+            // It has getters for createdAt.
+            // But wait, the previous code used c.createdAt?
+            // Yes.
             ->setMaxResults($limit)
             ->getQuery()
             ->getResult();

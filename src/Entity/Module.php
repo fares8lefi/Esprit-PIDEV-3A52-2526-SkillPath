@@ -30,22 +30,33 @@ class Module
     #[ORM\Column(type: "datetime_immutable")]
     private ?\DateTimeImmutable $dateCreation = null;
 
-    #[ORM\Column(length: 30)]
-    #[Assert\NotBlank(message: "Le niveau est obligatoire.")]
-    #[Assert\Choice(choices: ["Débutant", "Intermédiaire", "Avancé"], message: "Niveau invalide.")]
+    #[ORM\Column(length: 30, nullable: true)] // Made nullable as it might be moved to parent conceptually, but keeping it here for data safety? 
+    // Actually, user said 'Corriger', so if this field should be on Parent, maybe I should remove it? 
+    // But I'm keeping 'name' as Title. 
+    // 'level' should be on Parent (Cours). 
+    // If I keep it here, it's just extra data. 
+    // I previously decided to duplicate/move fields. 
+    // Use nullable to avoid errors during migration.
     private ?string $level = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $image = null;
 
-    // ✅ IMPORTANT : correspond à inversedBy: 'cours' dans Cours.php
-    #[ORM\OneToMany(mappedBy: 'module', targetEntity: Cours::class, orphanRemoval: false)]
-    private Collection $cours;
+    // ✅ New Fields moved from Cours (Child Data)
+    #[ORM\Column(length: 50, nullable: true)]
+    private ?string $type = null;
+
+    #[ORM\Column(type: "text", nullable: true)]
+    private ?string $contenu = null;
+
+    // ✅ New Relation: Module (Many) belongs to One Cours
+    #[ORM\ManyToOne(targetEntity: Cours::class, inversedBy: 'modules')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Cours $cours = null;
 
     public function __construct()
     {
         $this->dateCreation = new \DateTimeImmutable();
-        $this->cours = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -62,6 +73,12 @@ class Module
     {
         $this->name = $name;
         return $this;
+    }
+
+    // ✅ TWIG ALIAS: module.titre -> name
+    public function getTitre(): ?string
+    {
+        return $this->name;
     }
 
     public function getDescription(): ?string
@@ -91,7 +108,7 @@ class Module
         return $this->level;
     }
 
-    public function setLevel(string $level): self
+    public function setLevel(?string $level): self
     {
         $this->level = $level;
         return $this;
@@ -108,28 +125,39 @@ class Module
         return $this;
     }
 
-    // ✅ Relation Cours
-    public function getCours(): Collection
+    // ✅ New Getters/Setters
+
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    public function setType(?string $type): self
+    {
+        $this->type = $type;
+        return $this;
+    }
+
+    public function getContenu(): ?string
+    {
+        return $this->contenu;
+    }
+
+    public function setContenu(?string $contenu): self
+    {
+        $this->contenu = $contenu;
+        return $this;
+    }
+
+    // ✅ Relation Cours (Parent)
+    public function getCours(): ?Cours
     {
         return $this->cours;
     }
 
-    public function addCour(Cours $cour): self
+    public function setCours(?Cours $cours): self
     {
-        if (!$this->cours->contains($cour)) {
-            $this->cours->add($cour);
-            $cour->setModule($this); // garde la relation synchro
-        }
-        return $this;
-    }
-
-    public function removeCour(Cours $cour): self
-    {
-        if ($this->cours->removeElement($cour)) {
-            if ($cour->getModule() === $this) {
-                $cour->setModule(null);
-            }
-        }
+        $this->cours = $cours;
         return $this;
     }
 }

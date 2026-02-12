@@ -14,7 +14,7 @@ class ModuleRepository extends ServiceEntityRepository
         parent::__construct($registry, Module::class);
     }
 
-    public function qbSearch(?string $search, ?string $level): QueryBuilder
+    public function qbSearch(?string $search): QueryBuilder
     {
         $qb = $this->createQueryBuilder('m');
 
@@ -23,10 +23,7 @@ class ModuleRepository extends ServiceEntityRepository
                ->setParameter('s', '%' . $search . '%');
         }
 
-        if ($level) {
-            $qb->andWhere('m.level = :lvl')
-               ->setParameter('lvl', $level);
-        }
+        // Level filter removed
 
         return $qb->orderBy('m.id', 'DESC');
     }
