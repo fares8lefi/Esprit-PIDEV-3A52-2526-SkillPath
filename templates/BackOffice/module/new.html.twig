@@ -1,23 +1,61 @@
 {% extends 'BackOffice/layout.html.twig' %}
 
-{% block title %}Nouveau Module - SkillPath{% endblock %}
+{% block title %}Brouillon Nouvelle Unité - Admin{% endblock %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-700">
-    <div class="mb-10 flex items-center gap-6">
-        <a href="{{ path('admin_module_list') }}" class="w-14 h-14 rounded-2xl glass border border-slate-200/50 dark:border-white/5 flex items-center justify-center text-slate-400 hover:text-primary hover:border-primary/30 transition-all group">
-            <svg class="w-6 h-6 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+<div class="max-w-4xl mx-auto space-y-8 animate-fade-up">
+    {# Breadcrumbs #}
+    <div class="flex items-center gap-4">
+        <a href="{{ path('admin_module_index') }}" class="w-10 h-10 rounded-xl glass flex items-center justify-center text-slate-400 hover:text-primary transition-all">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
         </a>
         <div>
-            <h1 class="text-4xl font-black text-slate-900 dark:text-white tracking-tight">Nouveau <span class="gradient-text">Module</span></h1>
-            <p class="text-slate-500 dark:text-slate-500 font-medium">Créez un nouveau chapitre interactif pour vos apprenants.</p>
+            <p class="text-[10px] font-black uppercase tracking-widest text-slate-500">Retour au Curriculum</p>
+            <h1 class="text-2xl font-black text-slate-900 dark:text-white">Architecturer un Nouveau Module</h1>
         </div>
     </div>
 
-    <div class="glass-card rounded-[2.5rem] border-none overflow-hidden relative p-10">
-        <div class="absolute top-0 left-0 w-full h-1 gradient-primary opacity-50"></div>
-        
-        {% include 'BackOffice/module/_form.html.twig' with {'button_label': 'Créer le module'} %}
+    {# Form #}
+    <div class="glass p-10 rounded-3xl border border-slate-200/50 dark:border-white/5 relative overflow-hidden">
+        {{ form_start(form, {'attr': {'class': 'space-y-8 relative z-10'}}) }}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="md:col-span-2">
+                    <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Titre de l'Unité</label>
+                    {{ form_widget(form.title) }}
+                    {{ form_errors(form.title) }}
+                </div>
+                
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Cours Cible</label>
+                    {{ form_widget(form.course) }}
+                    {{ form_errors(form.course) }}
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Format du Contenu</label>
+                    {{ form_widget(form.type) }}
+                    {{ form_errors(form.type) }}
+                </div>
+
+                <div class="md:col-span-2">
+                    <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Description du Module (Synopsis)</label>
+                    {{ form_widget(form.description) }}
+                    {{ form_errors(form.description) }}
+                </div>
+
+                <div class="md:col-span-2">
+                    <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Contenu Principal / Ressources</label>
+                    {{ form_widget(form.content) }}
+                    {{ form_errors(form.content) }}
+                    <p class="text-[10px] text-slate-400 mt-2 italic italic">Supporte le Markdown, texte enrichi, ou URLs de ressources.</p>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end gap-4 pt-8 border-t border-slate-200/50 dark:border-white/5">
+                <a href="{{ path('admin_module_index') }}" class="btn-secondary !text-sm !py-3 !px-6">Abandonner</a>
+                <button type="submit" class="btn-primary !text-sm !py-3 !px-8">Finaliser l'Unité</button>
+            </div>
+        {{ form_end(form) }}
     </div>
 </div>
 {% endblock %}

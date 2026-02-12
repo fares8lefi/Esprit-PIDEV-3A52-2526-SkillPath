@@ -1,18 +1,18 @@
 {% extends 'BackOffice/layout.html.twig' %}
 
-{% block title %}Réclamations - Admin{% endblock %}
+{% block title %}Demandes des Membres - Admin{% endblock %}
 
 {% block content %}
 <div class="space-y-6 animate-fade-up">
     <!-- Header -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-            <h1 class="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Réclamations</h1>
-            <p class="text-slate-500 dark:text-slate-400 text-sm font-medium mt-1">Gérez les demandes et réclamations des utilisateurs.</p>
+            <h1 class="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Demandes des <span class="gradient-text">Membres</span></h1>
+            <p class="text-slate-500 dark:text-slate-400 text-sm font-medium mt-1">Superviser et résoudre les demandes et retours des utilisateurs.</p>
         </div>
         <div class="flex items-center gap-3">
             <span class="badge badge-purple">{{ reclamations|length }} Total</span>
-            <span class="badge badge-amber">{{ reclamations|filter(r => r.statut == 'pending')|length }} En attente</span>
+            <span class="badge badge-amber">{{ reclamations|filter(r => r.statut == 'pending')|length }} En Attente</span>
         </div>
     </div>
 
@@ -22,7 +22,7 @@
             <thead>
                 <tr class="border-b border-slate-100/50 dark:border-white/5">
                     <th class="text-left py-4 px-6 text-[10px] font-bold uppercase tracking-widest text-slate-400">ID</th>
-                    <th class="text-left py-4 px-6 text-[10px] font-bold uppercase tracking-widest text-slate-400">Utilisateur</th>
+                    <th class="text-left py-4 px-6 text-[10px] font-bold uppercase tracking-widest text-slate-400">Membre</th>
                     <th class="text-left py-4 px-6 text-[10px] font-bold uppercase tracking-widest text-slate-400">Sujet</th>
                     <th class="text-left py-4 px-6 text-[10px] font-bold uppercase tracking-widest text-slate-400">Statut</th>
                     <th class="text-right py-4 px-6 text-[10px] font-bold uppercase tracking-widest text-slate-400">Actions</th>
@@ -40,7 +40,7 @@
                                 {{ reclamation.user ? reclamation.user.username|first|upper : '?' }}
                             </div>
                             <div>
-                                <p class="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-primary transition-colors">{{ reclamation.user ? reclamation.user.username : 'N/A' }}</p>
+                                <p class="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-primary transition-colors">{{ reclamation.user ? reclamation.user.username : 'Anonyme' }}</p>
                                 <p class="text-[11px] text-slate-400 font-medium">{{ reclamation.user ? reclamation.user.email : '' }}</p>
                             </div>
                         </div>
@@ -50,11 +50,11 @@
                     </td>
                     <td class="py-4 px-6">
                         {% if reclamation.statut == 'pending' %}
-                            <span class="badge badge-amber">En attente</span>
+                            <span class="badge badge-amber">En Attente</span>
                         {% elseif reclamation.statut == 'resolved' %}
                             <span class="badge badge-green">Résolu</span>
                         {% else %}
-                            <span class="badge badge-purple">{{ reclamation.statut }}</span>
+                            <span class="badge badge-purple">{{ reclamation.statut|capitalize }}</span>
                         {% endif %}
                     </td>
                     <td class="py-4 px-6 text-right">
@@ -70,7 +70,7 @@
                         <div class="w-14 h-14 rounded-2xl bg-primary/8 flex items-center justify-center mx-auto mb-4">
                             <svg class="w-7 h-7 text-primary/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
                         </div>
-                        <p class="text-slate-400 font-semibold text-sm">Aucune réclamation pour le moment.</p>
+                        <p class="text-slate-400 font-semibold text-sm">Aucune demande active trouvée.</p>
                     </td>
                 </tr>
                 {% endfor %}

@@ -51,10 +51,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?\DateTimeInterface $createdAt = null;
 
     /**
-     * @var Collection<int, Cours>
+     * @var Collection<int, Course>
      */
-    #[ORM\ManyToMany(targetEntity: Cours::class, inversedBy: 'users')]
-    private Collection $cours;
+    #[ORM\ManyToMany(targetEntity: Course::class, inversedBy: 'users')]
+    private Collection $courses;
 
     
     public function __construct()
@@ -128,25 +128,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, Cours>
+     * @return Collection<int, Course>
      */
-    public function getCours(): Collection
+    public function getCourses(): Collection
     {
-        return $this->cours;
+        return $this->courses;
     }
 
-    public function addCour(Cours $cour): static
+    public function addCourse(Course $course): static
     {
-        if (!$this->cours->contains($cour)) {
-            $this->cours->add($cour);
+        if (!$this->courses->contains($course)) {
+            $this->courses->add($course);
         }
 
         return $this;
     }
 
-    public function removeCour(Cours $cour): static
+    public function removeCourse(Course $course): static
     {
-        $this->cours->removeElement($cour);
+        $this->courses->removeElement($course);
 
         return $this;
     }

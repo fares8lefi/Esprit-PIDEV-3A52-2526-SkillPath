@@ -1,139 +1,81 @@
 {% extends 'BackOffice/layout.html.twig' %}
 
-{% block title %}Détails Module - SkillPath{% endblock %}
+{% block title %}Module Explorer: {{ module.title }} - Admin{% endblock %}
 
 {% block content %}
-<div class="max-w-5xl mx-auto animate-in fade-in duration-700">
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
-        <div class="flex items-center gap-6">
-            <a href="{{ path('admin_module_list') }}" class="w-14 h-14 rounded-2xl glass border border-slate-200/50 dark:border-white/5 flex items-center justify-center text-slate-400 hover:text-primary hover:border-primary/30 transition-all group">
-                <svg class="w-6 h-6 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+<div class="max-w-5xl mx-auto space-y-8 animate-fade-up">
+    {# Header #}
+    <div class="flex items-center justify-between">
+        <div class="flex items-center gap-4">
+            <a href="{{ path('admin_module_index') }}" class="w-10 h-10 rounded-xl glass flex items-center justify-center text-slate-400 hover:text-primary transition-all">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
             </a>
-            <div>
-                <h1 class="text-4xl font-black text-slate-900 dark:text-white tracking-tight">{{ module.name }}</h1>
-                <p class="text-slate-500 font-medium">Consultation du chapitre n°{{ module.id }}</p>
-            </div>
+            <h1 class="text-3xl font-black text-slate-900 dark:text-white">{{ module.title }}</h1>
         </div>
-
         <div class="flex gap-3">
-            <a href="{{ path('admin_module_edit', {id: module.id}) }}" class="btn-primary">
-                Modifier
-            </a>
+             <a href="{{ path('admin_module_edit', {id: module.id}) }}" class="btn-secondary !py-2.5 !px-5 !text-xs">Adjust Unit</a>
+             <a href="{{ path('admin_module_edit', {id: module.id}) }}" class="btn-secondary !py-2.5 !px-5 !text-xs">Ajuster l'Unité</a>
+             {% if module.course is defined and module.course is not null %}
+                 <a href="{{ path('admin_course_show', {id: module.course.id}) }}" class="btn-primary !py-2.5 !px-5 !text-xs">Voir le Contexte du Cours</a>
+             {% else %}
+                 <span class="btn-secondary !py-2.5 !px-5 !text-xs opacity-50 cursor-not-allowed">Cours Manquant</span>
+             {% endif %}
         </div>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <!-- Main Content -->
         <div class="lg:col-span-2 space-y-8">
-            <div class="glass-card p-10 rounded-[2.5rem]">
-                <div class="flex flex-wrap gap-3 mb-8">
-                    <span class="badge badge-purple px-4 py-2 text-[10px]">
-                        Formation : {{ module.cours.titre|default('Non assigné') }}
-                    </span>
-                    <span class="badge badge-cyan px-4 py-2 text-[10px]">
-                        Type : {{ module.type|default('texte')|upper }}
-                    </span>
+            {# Content #}
+            <div class="glass p-10 rounded-3xl border border-slate-200/50 dark:border-white/5">
+                <div class="flex items-center gap-4 mb-8">
+                     <span class="badge {{ module.type == 'video' ? 'badge-purple' : 'badge-cyan' }}">{{ module.type|upper }}</span>
+                     <span class="text-xs font-bold text-slate-400 uppercase tracking-widest italic italic">Architecturé le {{ module.createdAt|date('d M Y') }}</span>
                 </div>
 
-                <div class="space-y-8">
-                    <div>
-                        <h2 class="text-xs font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 mb-4 font-bold flex items-center gap-2">
-                            <span class="w-1 h-4 bg-primary rounded-full"></span>
-                            Description
-                        </h2>
-                        <div class="text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
-                            {{ module.description ? module.description|nl2br : 'Aucune description.' }}
-                        </div>
+                <div class="prose dark:prose-invert max-w-none text-slate-600 dark:text-slate-400 leading-relaxed min-h-[400px]">
+                     <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-6">Contenu d'Apprentissage</h3>
+                    <div class="p-6 rounded-2xl bg-slate-50 dark:bg-white/2 border border-slate-200/50 dark:border-white/5 font-mono text-sm">
+                        {{ module.content|nl2br }}
                     </div>
 
-                    <div>
-                        <h2 class="text-xs font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 mb-4 font-bold flex items-center gap-2">
-                           <span class="w-1 h-4 bg-emerald-500 rounded-full"></span>
-                           Contenu Pédagogique
-                        </h2>
-                        <div class="p-8 bg-slate-50 dark:bg-black/20 rounded-[2rem] border border-slate-100 dark:border-white/5 font-mono text-sm leading-relaxed text-slate-800 dark:text-slate-200 whitespace-pre-wrap shadow-inner">
-                            {{ module.contenu ? module.contenu : '— Aucun contenu disponible —' }}
-                        </div>
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-white mt-12 mb-6">Description de l'Unité</h3>
+                    <div class="whitespace-pre-line">
+                        {{ module.description }}
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Sidebar Details -->
+        {# Meta #}
         <div class="space-y-6">
-            <div class="glass-card p-8 rounded-[2rem]">
-                <h3 class="text-xs font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 mb-6 font-bold">Informations</h3>
-                
-                <div class="space-y-6">
-                    <div class="flex justify-between items-center pb-4 border-b border-slate-100 dark:border-white/5">
-                        <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">Créé le</span>
-                        <span class="text-sm font-bold text-slate-900 dark:text-white">{{ module.dateCreation ? module.dateCreation|date('d/m/Y') : '—' }}</span>
-                    </div>
-                    <div class="flex justify-between items-center pb-4 border-b border-slate-100 dark:border-white/5">
-                        <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">Identifiant</span>
-                        <span class="text-sm font-mono font-bold text-primary">MODULE_{{ module.id }}</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">État</span>
-                        <span class="badge badge-green">Actif</span>
-                    </div>
+            <div class="glass p-8 rounded-3xl border border-slate-200/50 dark:border-white/5">
+                <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-6">Affiliation</p>
+                <div class="p-6 rounded-2xl bg-primary/5 border border-primary/10">
+                    <p class="text-[10px] font-bold text-primary uppercase tracking-widest mb-2">Member of Course</p>
+                <p class="text-[10px] font-bold text-primary uppercase tracking-widest mb-2">Member of Course</p>
+                {% if module.course is defined and module.course is not null %}
+                    <p class="font-bold text-slate-900 dark:text-white mb-4">{{ module.course.title }}</p>
+                    <a href="{{ path('admin_course_show', {id: module.course.id}) }}" class="text-xs font-bold text-primary hover:underline">View Roadmap →</a>
+                {% else %}
+                    <p class="font-bold text-slate-400 italic mb-4">Non Assigné (Cours Supprimé)</p>
+                {% endif %}
                 </div>
             </div>
 
-            <!-- Danger Zone -->
-            <div class="glass-card p-8 rounded-[2rem] border-red-500/10 bg-red-500/[0.02]">
-                <h3 class="text-xs font-black uppercase tracking-[0.2em] text-red-500/60 mb-6 font-bold">Zone de danger</h3>
-                <button type="button" 
-                        onclick="openDeleteModal('{{ path('admin_module_delete', {id: module.id}) }}', '{{ csrf_token('delete_module' ~ module.id) }}')"
-                        class="w-full py-4 bg-white dark:bg-red-500/10 border-2 border-red-500/20 text-red-500 font-bold rounded-2xl hover:bg-red-500 hover:text-white transition-all shadow-sm">
-                    Supprimer le module
-                </button>
+            <div class="glass p-8 rounded-3xl border border-slate-200/50 dark:border-white/5">
+                <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-6">Paramètres</p>
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-slate-400 font-medium">Démarrage Auto</span>
+                        <span class="text-success font-black text-[10px] uppercase tracking-widest">Actif</span>
+                    </div>
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-slate-400 font-medium">Certification</span>
+                        <span class="text-primary font-black text-[10px] uppercase tracking-widest">Activé</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
-
-<!-- Modal Suppression (Identique à list.html.twig) -->
-<div id="deleteModal" class="fixed inset-0 z-[100] hidden">
-    <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
-    <div class="absolute inset-0 flex items-center justify-center p-4">
-        <div class="glass-card max-w-md w-full p-8 rounded-[2.5rem] shadow-2xl relative animate-scale-in">
-            <div class="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-red-500/20">
-                <svg class="w-10 h-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-            </div>
-            <h3 class="text-2xl font-black text-slate-900 dark:text-white text-center mb-2 tracking-tight">Supprimer définitivement ?</h3>
-            <p class="text-slate-500 dark:text-slate-400 text-center mb-8 font-medium">Toutes les données liées à ce chapitre seront perdues.</p>
-            
-            <form id="deleteForm" method="POST">
-                <input type="hidden" name="_token" id="deleteToken">
-                <div class="grid grid-cols-2 gap-4">
-                    <button type="button" onclick="closeDeleteModal()" class="btn-secondary">Annuler</button>
-                    <button type="submit" class="w-full py-4 bg-red-500 text-white font-bold rounded-2xl shadow-lg shadow-red-500/20 hover:bg-red-600 transition-all">Supprimer</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-{% endblock %}
-
-{% block javascripts %}
-<script>
-    function openDeleteModal(url, token) {
-        const modal = document.getElementById('deleteModal');
-        const form = document.getElementById('deleteForm');
-        const tokenInput = document.getElementById('deleteToken');
-        
-        form.action = url;
-        tokenInput.value = token;
-        
-        modal.classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-    }
-
-    function closeDeleteModal() {
-        const modal = document.getElementById('deleteModal');
-        modal.classList.add('hidden');
-        document.body.style.overflow = '';
-    }
-</script>
 {% endblock %}

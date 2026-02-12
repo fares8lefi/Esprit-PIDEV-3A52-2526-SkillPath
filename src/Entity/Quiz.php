@@ -56,7 +56,7 @@ class Quiz
 
     #[ORM\ManyToOne(inversedBy: 'quizzes')]
     #[ORM\JoinColumn(nullable: true)]
-    private ?Cours $cours = null;
+    private ?Course $course = null;
 
     public function __construct()
     {
@@ -196,14 +196,14 @@ class Quiz
         return $this;
     }
 
-    public function getCours(): ?Cours
+    public function getCourse(): ?Course
     {
-        return $this->cours;
+        return $this->course;
     }
 
-    public function setCours(?Cours $cours): static
+    public function setCourse(?Course $course): static
     {
-        $this->cours = $cours;
+        $this->course = $course;
         return $this;
     }
 }

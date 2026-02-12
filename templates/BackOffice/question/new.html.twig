@@ -1,47 +1,56 @@
 {% extends 'BackOffice/layout.html.twig' %}
 
-{% block title %}Nouvelle Question - SkillPath{% endblock %}
+{% block title %}Nouveau Vecteur - {{ quiz.titre }}{% endblock %}
 
 {% block content %}
-    <!-- Breadcrumb -->
-    <nav class="mb-6">
-        <ol class="flex items-center gap-2 text-sm">
-            <li><a href="{{ path('app_back_office_quiz_index') }}" class="text-slate-400 dark:text-slate-500 hover:text-primary transition-colors font-medium">Quiz</a></li>
-            <li class="text-slate-300 dark:text-slate-600">/</li>
-            <li><a href="{{ path('app_back_office_quiz_show', {'id': quiz.id}) }}" class="text-slate-400 dark:text-slate-500 hover:text-primary transition-colors font-medium">{{ quiz.titre }}</a></li>
-            <li class="text-slate-300 dark:text-slate-600">/</li>
-            <li class="text-slate-700 dark:text-slate-300 font-semibold">Nouvelle Question</li>
-        </ol>
-    </nav>
+    <div class="mb-12 animate-fade-up">
+        <a href="{{ path('app_back_office_quiz_show', {'id': quiz.id}) }}" class="flex items-center gap-2 text-slate-400 hover:text-primary transition-colors mb-4 group">
+            <svg class="w-5 h-5 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            <span class="text-xs font-bold uppercase tracking-widest">Retour au Panneau d'Évaluation</span>
+        </a>
+        <h1 class="text-2xl font-black text-slate-900 dark:text-white mb-2">Injecter un Nouveau <span class="gradient-text">Vecteur</span></h1>
+        <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-8 flex items-center gap-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+            Contexte de l'Actif: <span class="text-primary">{{ quiz.titre }}</span>
+        </p>
 
-    <div class="max-w-2xl">
-        <h1 class="text-2xl font-black text-slate-900 dark:text-white mb-2">Ajouter une Question</h1>
-        <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">Quiz : <span class="font-bold text-primary">{{ quiz.titre }}</span></p>
-
-        <div class="glass-card rounded-2xl p-8">
+        <div class="glass-card rounded-[2rem] p-10 border border-white/5 shadow-2xl shadow-purple-500/5">
             {{ form_start(form, {'attr': {'class': 'space-y-6', 'novalidate': 'novalidate'}}) }}
-                {% for field in form %}
-                    {% if field.vars.name != '_token' %}
-                    <div>
-                        <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">{{ field.vars.label|default(field.vars.name|capitalize) }}</label>
-                        {{ form_widget(field, {'attr': {'class': 'form-input'}}) }}
-                        {% if field.vars.errors|length > 0 %}
-                            <div class="mt-1.5">
-                            {% for error in field.vars.errors %}
-                                <p class="text-xs font-semibold text-red-500">{{ error.message }}</p>
-                            {% endfor %}
-                            </div>
-                        {% endif %}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Énoncé du Vecteur (Question)</label>
+                        {{ form_widget(form.enonce) }}
+                        {{ form_errors(form.enonce) }}
                     </div>
-                    {% endif %}
-                {% endfor %}
+                    
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Valeur de Rendement (Points)</label>
+                        <div class="relative">
+                            {{ form_widget(form.points) }}
+                            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                <span class="text-slate-400 text-xs font-bold">PTS</span>
+                            </div>
+                        </div>
+                    </div>
 
-                <div class="flex items-center gap-3 pt-4">
-                    <button type="submit" class="btn-primary text-sm !py-3 !px-6 inline-flex items-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                        Ajouter la Question
-                    </button>
-                    <a href="{{ path('app_back_office_quiz_show', {'id': quiz.id}) }}" class="btn-secondary text-sm !py-3 !px-6">Annuler</a>
+                    <div class="md:col-span-2 space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-200/50 dark:border-white/5 pb-2">
+                            <label class="text-xs font-bold uppercase tracking-widest text-slate-500">Configuration des Réponses</label>
+                            <span class="text-[10px] text-primary font-black bg-primary/10 px-2 py-1 rounded">CHOIX MULTIPLES</span>
+                        </div>
+                        <div class="p-4 rounded-xl bg-slate-50 dark:bg-white/2 border border-slate-200/50 dark:border-white/5 border-l-4 !border-l-green-500">
+                             <div class="flex justify-between items-center mb-2">
+                                <span class="text-[10px] font-black text-green-600 dark:text-green-400 block">SOLUTION CIBLE</span>
+                                <svg class="w-3 h-3 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                             </div>
+                            {{ form_widget(form.reponseCorrecte) }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-end gap-4 pt-8 border-t border-slate-200/50 dark:border-white/5">
+                    <a href="{{ path('app_back_office_quiz_show', {'id': quiz.id}) }}" class="btn-secondary !text-sm !py-3 !px-6">Abandonner</a>
+                    <button type="submit" class="btn-primary !text-sm !py-3 !px-8">Initialiser le Vecteur</button>
                 </div>
             {{ form_end(form) }}
         </div>

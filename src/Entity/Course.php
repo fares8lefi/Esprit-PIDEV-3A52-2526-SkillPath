@@ -2,16 +2,15 @@
 
 namespace App\Entity;
 
-use App\Repository\CoursRepository;
+use App\Repository\CourseRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity(repositoryClass: CoursRepository::class)]
-#[ORM\Table(name: 'cours')]
-class Cours
+#[ORM\Entity(repositoryClass: CourseRepository::class)]
+#[ORM\Table(name: 'course')]
+class Course
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -20,7 +19,7 @@ class Cours
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: 'Le titre est obligatoire')]
-    private ?string $titre = null;
+    private ?string $title = null;
 
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $description = null;
@@ -32,7 +31,7 @@ class Cours
     private ?string $image = null;
 
     #[ORM\Column(length: 50, nullable: true)]
-    private ?string $categorie = null;
+    private ?string $category = null;
 
     #[ORM\Column(type: 'datetime')]
     private ?\DateTimeInterface $createdAt = null;
@@ -43,19 +42,19 @@ class Cours
     /**
      * @var Collection<int, Module>
      */
-    #[ORM\OneToMany(mappedBy: 'cours', targetEntity: Module::class, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(mappedBy: 'course', targetEntity: Module::class, cascade: ['persist', 'remove'])]
     private Collection $modules;
 
     /**
      * @var Collection<int, Quiz>
      */
-    #[ORM\OneToMany(targetEntity: Quiz::class, mappedBy: 'cours')]
+    #[ORM\OneToMany(targetEntity: Quiz::class, mappedBy: 'course')]
     private Collection $quizzes;
 
     /**
      * @var Collection<int, User>
      */
-    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'cours')]
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'courses')]
     private Collection $users;
 
     public function __construct()
@@ -71,21 +70,15 @@ class Cours
         return $this->id;
     }
 
-    public function getTitre(): ?string
+    public function getTitle(): ?string
     {
-        return $this->titre;
+        return $this->title;
     }
 
-    public function setTitre(string $titre): static
+    public function setTitle(string $title): static
     {
-        $this->titre = $titre;
+        $this->title = $title;
         return $this;
-    }
-
-    // ✅ TWIG ALIAS: course.name -> titre
-    public function getName(): ?string
-    {
-        return $this->titre;
     }
 
     public function getDescription(): ?string
@@ -121,14 +114,14 @@ class Cours
         return $this;
     }
 
-    public function getCategorie(): ?string
+    public function getCategory(): ?string
     {
-        return $this->categorie;
+        return $this->category;
     }
 
-    public function setCategorie(?string $categorie): static
+    public function setCategory(?string $category): static
     {
-        $this->categorie = $categorie;
+        $this->category = $category;
         return $this;
     }
 
@@ -166,7 +159,7 @@ class Cours
     {
         if (!$this->modules->contains($module)) {
             $this->modules->add($module);
-            $module->setCours($this);
+            $module->setCourse($this);
         }
         return $this;
     }
@@ -174,23 +167,11 @@ class Cours
     public function removeModule(Module $module): static
     {
         if ($this->modules->removeElement($module)) {
-            if ($module->getCours() === $this) {
-                $module->setCours(null);
+            if ($module->getCourse() === $this) {
+                $module->setCourse(null);
             }
         }
         return $this;
-    }
-
-    // ✅ TWIG ALIAS: course.cours -> modules
-    public function getCours(): Collection
-    {
-        return $this->modules;
-    }
-
-    // ✅ TWIG ALIAS: course.dateCreation -> createdAt
-    public function getDateCreation(): ?\DateTimeInterface
-    {
-        return $this->createdAt;
     }
 
     /**
@@ -205,7 +186,7 @@ class Cours
     {
         if (!$this->quizzes->contains($quiz)) {
             $this->quizzes->add($quiz);
-            $quiz->setCours($this);
+            $quiz->setCourse($this);
         }
         return $this;
     }
@@ -213,8 +194,8 @@ class Cours
     public function removeQuiz(Quiz $quiz): static
     {
         if ($this->quizzes->removeElement($quiz)) {
-            if ($quiz->getCours() === $this) {
-                $quiz->setCours(null);
+            if ($quiz->getCourse() === $this) {
+                $quiz->setCourse(null);
             }
         }
         return $this;
@@ -232,7 +213,7 @@ class Cours
     {
         if (!$this->users->contains($user)) {
             $this->users->add($user);
-            $user->addCour($this);
+            $user->addCourse($this);
         }
         return $this;
     }
@@ -240,13 +221,13 @@ class Cours
     public function removeUser(User $user): static
     {
         if ($this->users->removeElement($user)) {
-            $user->removeCour($this);
+            $user->removeCourse($this);
         }
         return $this;
     }
 
     public function __toString(): string
     {
-        return $this->titre ?? '';
+        return $this->title ?? '';
     }
 }

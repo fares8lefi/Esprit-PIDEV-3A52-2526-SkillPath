@@ -52,4 +52,16 @@ class QuizRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    public function findAllWithRelations(): array
+    {
+        return $this->createQueryBuilder('q')
+            ->leftJoin('q.course', 'c')
+            ->addSelect('c')
+            ->leftJoin('q.questions', 'qu')
+            ->addSelect('qu')
+            ->orderBy('q.dateCreation', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
 }

@@ -1,0 +1,124 @@
+{% extends 'BackOffice/layout.html.twig' %}
+
+{% block title %}Aperçu du Cours: {{ course.title }} - Admin{% endblock %}
+
+{% block content %}
+<div class="space-y-8 animate-fade-up">
+    {# Header #}
+    <div class="flex items-center justify-between">
+        <div class="flex items-center gap-4">
+            <a href="{{ path('admin_course_index') }}" class="w-10 h-10 rounded-xl glass flex items-center justify-center text-slate-400 hover:text-primary transition-all">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            </a>
+            <h1 class="text-3xl font-black text-slate-900 dark:text-white">{{ course.title }}</h1>
+        </div>
+        <div class="flex gap-3">
+             <a href="{{ path('admin_course_edit', {id: course.id}) }}" class="btn-secondary !py-2.5 !px-5 !text-xs">
+                Modifier le Cours
+             </a>
+             <form method="post" action="{{ path('admin_course_delete', {'id': course.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce cours ?');" style="display: inline-block;">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ course.id) }}">
+                <button class="btn-primary !py-2.5 !px-5 !text-xs bg-red-500 hover:bg-red-600 border-red-500 hover:border-red-600 text-white">
+                    Supprimer
+                </button>
+             </form>
+        </div>
+    </div>
+
+    {# Stats Grid #}
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div class="glass p-6 rounded-2xl border border-slate-200/50 dark:border-white/5">
+            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Catégorie</p>
+            <p class="text-xl font-bold text-primary">{{ course.category }}</p>
+        </div>
+        <div class="glass p-6 rounded-2xl border border-slate-200/50 dark:border-white/5">
+            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Niveau</p>
+            <p class="text-xl font-bold text-cyan-500">{{ course.level }}</p>
+        </div>
+        <div class="glass p-6 rounded-2xl border border-slate-200/50 dark:border-white/5">
+            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Modules</p>
+            <p class="text-xl font-bold">{{ course.modules|length }} Unités</p>
+        </div>
+        <div class="glass p-6 rounded-2xl border border-slate-200/50 dark:border-white/5">
+            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Étudiants</p>
+            <p class="text-xl font-bold text-amber-500">{{ course.users|length }} Inscrits</p>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {# Left: Details #}
+        <div class="lg:col-span-2 space-y-8">
+            <div class="glass p-8 rounded-3xl border border-slate-200/50 dark:border-white/5">
+                <h3 class="text-xl font-bold mb-6 flex items-center gap-3">
+                    <span class="w-1.5 h-6 bg-primary rounded-full"></span>
+                    Description
+                </h3>
+                <div class="text-slate-600 dark:text-slate-400 leading-relaxed whitespace-pre-line">
+                    {{ course.description }}
+                </div>
+            </div>
+
+            {# Modules List #}
+            <div class="glass p-8 rounded-3xl border border-slate-200/50 dark:border-white/5">
+                <div class="flex items-center justify-between mb-8">
+                    <h3 class="text-xl font-bold flex items-center gap-3">
+                        <span class="w-1.5 h-6 bg-cyan-500 rounded-full"></span>
+                        Programme
+                    </h3>
+                    <a href="{{ path('admin_module_new', {course: course.id}) }}" class="text-xs font-bold text-primary hover:underline">+ Ajouter Module</a>
+                </div>
+                
+                <div class="space-y-4">
+                    {% for module in course.modules %}
+                        <div class="flex items-center justify-between p-5 rounded-2xl bg-slate-50 dark:bg-white/2 border border-slate-200/50 dark:border-white/5 hover:border-primary/30 transition-all group">
+                            <div class="flex items-center gap-5">
+                                <div class="w-10 h-10 rounded-xl bg-white dark:bg-white/5 shadow-sm flex items-center justify-center font-bold text-sm text-slate-400 group-hover:text-primary transition-colors">
+                                    {{ loop.index }}
+                                </div>
+                                <div>
+                                    <p class="font-bold text-slate-900 dark:text-white">{{ module.title }}</p>
+                                    <p class="text-[10px] font-bold uppercase tracking-widest text-slate-500">{{ module.type }}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <a href="{{ path('admin_module_edit', {id: module.id}) }}" class="p-2 text-slate-400 hover:text-amber-500 transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                </a>
+                                <a href="{{ path('admin_module_show', {id: module.id}) }}" class="p-2 text-slate-400 hover:text-primary transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-12 text-slate-500 italic text-sm">Aucun module pour le moment.</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        {# Right: Metadata #}
+        <div class="space-y-8">
+            <div class="glass p-6 rounded-3xl border border-slate-200/50 dark:border-white/5 overflow-hidden">
+                <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-4">Identité du Cours</p>
+                {% if course.image %}
+                    <img src="{{ asset('uploads/modules/' + course.image) }}" class="w-full h-48 object-cover rounded-2xl mb-6">
+                {% else %}
+                    <div class="w-full h-48 gradient-primary opacity-20 rounded-2xl mb-6 flex items-center justify-center">
+                        <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    </div>
+                {% endif %}
+                <div class="space-y-4 pt-4 border-t border-slate-200/50 dark:border-white/5">
+                    <div class="flex justify-between text-xs">
+                        <span class="text-slate-500 font-bold uppercase tracking-widest">Créé</span>
+                        <span class="font-bold">{{ course.createdAt|date('M d, Y') }}</span>
+                    </div>
+                    <div class="flex justify-between text-xs">
+                        <span class="text-slate-500 font-bold uppercase tracking-widest">Visibilité</span>
+                        <span class="text-success font-black tracking-widest uppercase">Public</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

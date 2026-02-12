@@ -2,7 +2,7 @@
 
 namespace App\Form;
 
-use App\Entity\Cours;
+use App\Entity\Course;
 use App\Entity\Quiz;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -17,28 +17,28 @@ class QuizType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('titre', TextType::class, [
-                'label' => 'Titre',
-                'attr' => ['class' => 'form-input', 'placeholder' => 'Nom du quiz']
+            ->add('title', TextType::class, [
+                'label' => 'Title',
+                'attr' => ['class' => 'form-input', 'placeholder' => 'Quiz Name']
             ])
             ->add('description', TextareaType::class, [
                 'label' => 'Description',
                 'required' => false,
-                'attr' => ['class' => 'form-input', 'rows' => 4, 'placeholder' => 'Description du quiz']
+                'attr' => ['class' => 'form-input', 'rows' => 4, 'placeholder' => 'Quiz Description']
             ])
             ->add('duree', IntegerType::class, [
-                'label' => 'Durée (minutes)',
+                'label' => 'Duration (minutes)',
                 'attr' => ['class' => 'form-input', 'placeholder' => 'Ex: 30']
             ])
             ->add('noteMax', IntegerType::class, [
-                'label' => 'Note maximale',
+                'label' => 'Max Score',
                 'attr' => ['class' => 'form-input', 'placeholder' => 'Ex: 100']
             ])
-            ->add('cours', EntityType::class, [
-                'class' => Cours::class,
-                'choice_label' => 'titre',
-                'label' => 'Cours associé',
-                'placeholder' => '-- Sélectionner un cours --',
+            ->add('course', EntityType::class, [
+                'class' => Course::class,
+                'choice_label' => 'title',
+                'label' => 'Associated Course',
+                'placeholder' => '-- Select a course --',
                 'required' => false,
                 'attr' => ['class' => 'form-input']
             ])

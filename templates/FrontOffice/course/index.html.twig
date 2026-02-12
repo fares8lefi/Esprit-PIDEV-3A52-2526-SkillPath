@@ -1,0 +1,171 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}SkillPath - Premium Learning{% endblock %}
+
+{% block body %}
+<div class="min-h-screen mesh-dark text-white pt-24 pb-12">
+    <div class="container mx-auto px-6">
+        {# Header #}
+        <div class="mb-12 animate-fade-up">
+            <h1 class="text-5xl font-extrabold mb-4 gradient-text">Explore Premium Courses</h1>
+            <p class="text-slate-400 text-lg max-w-2xl">Master new skills with our high-end curriculum. Transparent, structured, and immersive.</p>
+        </div>
+
+        {# Filters & Search #}
+        <form method="GET" action="{{ path('front_course_index') }}" class="mb-12 flex flex-col md:flex-row gap-6 items-end animate-fade-up delay-100">
+            <div class="flex-grow w-full">
+                <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Search Course</label>
+                <div class="relative group">
+                    <input type="text" name="search" value="{{ currentSearch }}" placeholder="What do you want to learn today?" 
+                           class="form-input !bg-white/5 !border-white/10 focus:!border-primary !text-white w-full h-14 pl-12 glass transition-all">
+                    <svg class="w-5 h-5 absolute left-4 top-4.5 text-slate-500 group-focus-within:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </div>
+            </div>
+            <div class="w-full md:w-64">
+                <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Level</label>
+                <select name="level" onchange="this.form.submit()" class="form-input !bg-white/5 !border-white/10 focus:!border-primary !text-white h-14 glass">
+                    <option value="" class="bg-slate-900">All Levels</option>
+                    {% for lvl in ['Débutant', 'Intermédiaire', 'Avancé'] %}
+                        <option value="{{ lvl }}" {{ currentLevel == lvl ? 'selected' : '' }} class="bg-slate-900">{{ lvl }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+             <div class="w-full md:w-64">
+                <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Category</label>
+                <select name="category" onchange="this.form.submit()" class="form-input !bg-white/5 !border-white/10 focus:!border-primary !text-white h-14 glass">
+                    <option value="" class="bg-slate-900">All Categories</option>
+                    {% for cat in categoriesCount %}
+                        <option value="{{ cat.name }}" {{ currentCategory == cat.name ? 'selected' : '' }} class="bg-slate-900">{{ cat.name }} ({{ cat.count }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </form>
+
+        {# Course Grid #}
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-fade-up delay-200">
+            {% for course in courses %}
+                <div class="group relative bg-[#121622] rounded-3xl border border-white/5 overflow-hidden hover:border-primary/30 transition-all duration-500 flex flex-col">
+                    {# Glass decoration #}
+                    <div class="absolute -top-24 -right-24 w-48 h-48 bg-primary/10 blur-[80px] rounded-full group-hover:bg-primary/20 transition-all"></div>
+                    
+                    <div class="flex flex-col md:flex-row h-full">
+                        {# Course Image #}
+                        <div class="w-full md:w-56 h-56 md:h-auto overflow-hidden relative">
+                            {% if course.image %}
+                                <img src="{{ asset('uploads/modules/' ~ course.image) }}" alt="{{ course.title }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                            {% else %}
+                                <div class="w-full h-full gradient-primary opacity-20 flex items-center justify-center">
+                                    <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                                </div>
+                            {% endif %}
+                            <div class="absolute top-4 left-4">
+                                <span class="badge badge-purple glass !bg-primary/20 !text-white !backdrop-blur-md">{{ course.category|default('General') }}</span>
+                            </div>
+                        </div>
+
+                        {# Course Info #}
+                        <div class="flex-grow p-8 flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-start mb-4">
+                                    <div class="flex items-center gap-1 text-secondary">
+                                        {% for i in 1..5 %}
+                                            <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                        {% endfor %}
+                                    </div>
+                                    <span class="text-xs font-bold text-slate-500 uppercase tracking-widest">{{ course.level }}</span>
+                                </div>
+
+                                <h2 class="text-2xl font-bold mb-3 group-hover:text-primary transition-colors">
+                                    <a href="{{ path('front_course_show', {id: course.id}) }}">{{ course.title }}</a>
+                                </h2>
+                                <p class="text-slate-400 text-sm line-clamp-2 mb-6">{{ course.description }}</p>
+
+                                {# Module Count & Quick Meta #}
+                                <div class="flex items-center gap-6 text-xs font-semibold text-slate-400">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
+                                        <span>{{ course.modules|length }} Chapters</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <svg class="w-4 h-4 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                        <span>Certified</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-8 flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <img src="https://ui-avatars.com/api/?name=Skill+Path&background=7C3AED&color=fff" class="w-10 h-10 rounded-full border border-white/10">
+                                    <div>
+                                        <p class="text-sm font-bold">SkillPath Experts</p>
+                                        <p class="text-[10px] text-slate-500 uppercase tracking-widest">Instructors</p>
+                                    </div>
+                                </div>
+                                <a href="{{ path('front_course_show', {id: course.id}) }}" class="btn-primary !px-6 !py-3 !text-sm">Start Learning</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    {# Nested Modules UX Section #}
+                    <div class="border-t border-white/5 bg-black/20 overflow-hidden">
+                        <button onclick="toggleModules('modules-{{ course.id }}', this)" class="w-full px-8 py-4 flex items-center justify-between text-xs font-bold uppercase tracking-widest text-slate-500 hover:text-white transition-colors group/btn">
+                            <span>Show Course Content</span>
+                            <svg class="w-4 h-4 transform transition-transform group-hover/btn:translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div id="modules-{{ course.id }}" class="hidden max-h-[300px] overflow-y-auto px-8 pb-8 space-y-3">
+                            {% for module in course.modules %}
+                                <div class="flex items-center justify-between p-4 bg-white/5 border border-white/5 rounded-2xl hover:bg-white/10 transition-colors">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center text-primary font-bold text-xs">
+                                            {{ loop.index }}
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-bold">{{ module.title }}</p>
+                                            <p class="text-[10px] text-slate-500 uppercase">{{ module.type }}</p>
+                                        </div>
+                                    </div>
+                                    <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                                </div>
+                            {% else %}
+                                <p class="text-center text-slate-600 italic text-sm py-4">No modules added yet.</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-span-full py-24 text-center glass rounded-3xl border border-white/10">
+                    <h3 class="text-2xl font-bold mb-4">No courses matched your criteria</h3>
+                    <p class="text-slate-400 mb-8">Try adjusting your filters or search keywords.</p>
+                    <a href="{{ path('front_course_index') }}" class="btn-secondary">Reset All Filters</a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleModules(id, btn) {
+        const el = document.getElementById(id);
+        const svg = btn.querySelector('svg');
+        if (el.classList.contains('hidden')) {
+            el.classList.remove('hidden');
+            el.classList.add('animate-fade-in');
+            svg.style.transform = 'rotate(180deg)';
+        } else {
+            el.classList.add('hidden');
+            svg.style.transform = 'rotate(0deg)';
+        }
+    }
+</script>
+
+<style>
+    .glass {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .mesh-dark {
+        background: radial-gradient(circle at 0% 0%, #0B0F1A 0%, #05070A 100%);
+    }
+</style>
+{% endblock %}

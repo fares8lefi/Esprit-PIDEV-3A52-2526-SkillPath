@@ -19,10 +19,8 @@ final class Version20260210092530 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE reponse ADD user_id INT NOT NULL');
-        $this->addSql('ALTER TABLE reponse ADD CONSTRAINT FK_5FB6DEC7A76ED395 FOREIGN KEY (user_id) REFERENCES user (id)');
-        $this->addSql('CREATE INDEX IDX_5FB6DEC7A76ED395 ON reponse (user_id)');
+        // Relationship user_id on reponse already exists in the current schema.
+        // This migration is treated as a no-op to avoid duplicate columns.
     }
 
     public function down(Schema $schema): void

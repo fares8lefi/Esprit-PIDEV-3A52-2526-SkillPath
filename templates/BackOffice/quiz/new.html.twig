@@ -1,31 +1,34 @@
 {% extends 'BackOffice/layout.html.twig' %}
 
-{% block title %}Nouveau Quiz - SkillPath{% endblock %}
+{% block title %}Deploy Assessment - SkillPath{% endblock %}
 
 {% block content %}
     <!-- Breadcrumb -->
     <nav class="mb-6">
-        <ol class="flex items-center gap-2 text-sm">
-            <li><a href="{{ path('app_back_office_quiz_index') }}" class="text-slate-400 dark:text-slate-500 hover:text-primary transition-colors font-medium">Quiz</a></li>
+        <ol class="flex items-center gap-2 text-sm font-medium">
+            <li><a href="{{ path('app_back_office_quiz_index') }}" class="text-slate-400 dark:text-slate-500 hover:text-primary transition-colors">Assessment Center</a></li>
             <li class="text-slate-300 dark:text-slate-600">/</li>
-            <li class="text-slate-700 dark:text-slate-300 font-semibold">Nouveau</li>
+            <li class="text-slate-700 dark:text-slate-300">Deployment</li>
         </ol>
     </nav>
 
-    <div class="max-w-2xl">
-        <h1 class="text-2xl font-black text-slate-900 dark:text-white mb-6">Créer un Quiz</h1>
+    <div class="max-w-2xl animate-fade-up">
+        <h1 class="text-2xl font-black text-slate-900 dark:text-white mb-6">Initialize <span class="gradient-text">New Assessment</span></h1>
 
-        <div class="glass-card rounded-2xl p-8">
+        <div class="glass-card rounded-[2rem] p-10 border border-white/5 shadow-2xl shadow-purple-500/5">
             {{ form_start(form, {'attr': {'class': 'space-y-6', 'novalidate': 'novalidate'}}) }}
                 {% for field in form %}
                     {% if field.vars.name != '_token' %}
-                    <div>
-                        <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">{{ field.vars.label|default(field.vars.name|capitalize) }}</label>
-                        {{ form_widget(field, {'attr': {'class': 'form-input'}}) }}
+                    <div class="group">
+                        <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2 group-focus-within:text-primary transition-colors">
+                            {{ field.vars.label|default(field.vars.name|capitalize) }}
+                        </label>
+                        {{ form_widget(field, {'attr': {'class': 'form-input !rounded-2xl !bg-slate-50/50 dark:!bg-white/2 !border-slate-100 dark:!border-white/5 focus:!border-primary/30 transition-all'}}) }}
                         {% if field.vars.errors|length > 0 %}
-                            <div class="mt-1.5">
+                            <div class="mt-2 flex items-center gap-2">
+                                <svg class="w-3 h-3 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
                             {% for error in field.vars.errors %}
-                                <p class="text-xs font-semibold text-red-500">{{ error.message }}</p>
+                                <p class="text-[10px] font-black uppercase tracking-widest text-red-500">{{ error.message }}</p>
                             {% endfor %}
                             </div>
                         {% endif %}
@@ -33,12 +36,12 @@
                     {% endif %}
                 {% endfor %}
 
-                <div class="flex items-center gap-3 pt-4">
-                    <button type="submit" class="btn-primary text-sm !py-3 !px-6 inline-flex items-center gap-2">
+                <div class="flex items-center gap-4 pt-8">
+                    <button type="submit" class="btn-primary text-xs font-black uppercase tracking-[0.2em] !py-4 !px-8 inline-flex items-center gap-3 !rounded-2xl shadow-lg shadow-purple-500/20 hover:scale-[1.02] active:scale-95 transition-all">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                        Créer le Quiz
+                        Confirm Deployment
                     </button>
-                    <a href="{{ path('app_back_office_quiz_index') }}" class="btn-secondary text-sm !py-3 !px-6">Annuler</a>
+                    <a href="{{ path('app_back_office_quiz_index') }}" class="px-8 py-4 text-xs font-black uppercase tracking-[0.2em] text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors">Abort Operation</a>
                 </div>
             {{ form_end(form) }}
         </div>

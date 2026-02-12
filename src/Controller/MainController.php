@@ -7,26 +7,26 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use App\Repository\UserRepository;
-use App\Repository\CoursRepository;
+use App\Repository\CourseRepository;
 use App\Repository\ModuleRepository;
+
 class MainController extends AbstractController
 {
     #[Route('/', name: 'app_home')]
-    public function index(CoursRepository $coursRepository): Response
+    public function index(CourseRepository $courseRepository): Response
     {
         return $this->render('FrontOffice/main/index.html.twig', [
-            'courses' => $coursRepository->findAll(),
+            'courses' => $courseRepository->findAll(),
         ]);
     }
 
     #[Route('/admin', name: 'app_admin_dashboard')]
     #[IsGranted('ROLE_ADMIN')]
-    public function adminDashboard(UserRepository $userRepository,CoursRepository $coursRepository,ModuleRepository $moduleRepository
-    ): Response
+    public function adminDashboard(UserRepository $userRepository, CourseRepository $courseRepository, ModuleRepository $moduleRepository): Response
     {
         return $this->render('BackOffice/main/dashboard.html.twig', [
             'userCount' => $userRepository->count([]),
-            'coursCount' => $coursRepository->count([]),
+            'courseCount' => $courseRepository->count([]),
             'moduleCount' => $moduleRepository->count([]),
             'recentUsers' => $userRepository->findBy([], ['id' => 'DESC'], 3),
         ]);

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Admin;
 
 use App\Entity\Module;
 use App\Form\ModuleType;
@@ -10,13 +10,13 @@ use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/admin/modules', name: 'admin_module_')]
+#[Route('/admin/module', name: 'admin_module_')]
 class ModuleController extends AbstractController
 {
-    #[Route('/', name: 'list', methods: ['GET'])]
-    public function list(
+    #[Route('/', name: 'index', methods: ['GET'])]
+    public function index(
         Request $request,
         ModuleRepository $moduleRepository,
         PaginatorInterface $paginator
@@ -31,7 +31,7 @@ class ModuleController extends AbstractController
             10
         );
 
-        return $this->render('BackOffice/module/list.html.twig', [
+        return $this->render('BackOffice/module/index.html.twig', [
             'modules' => $modules,
         ]);
     }
@@ -49,8 +49,8 @@ class ModuleController extends AbstractController
             $em->persist($module);
             $em->flush();
 
-            $this->addFlash('success', 'Module ajouté avec succès.');
-            return $this->redirectToRoute('admin_module_list');
+            $this->addFlash('success', 'Module created successfully.');
+            return $this->redirectToRoute('admin_module_index');
         }
 
         return $this->render('BackOffice/module/new.html.twig', [
@@ -79,8 +79,8 @@ class ModuleController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $em->flush();
 
-            $this->addFlash('success', 'Module modifié avec succès.');
-            return $this->redirectToRoute('admin_module_list');
+            $this->addFlash('success', 'Module updated successfully.');
+            return $this->redirectToRoute('admin_module_index');
         }
 
         return $this->render('BackOffice/module/edit.html.twig', [
@@ -98,10 +98,10 @@ class ModuleController extends AbstractController
         if ($this->isCsrfTokenValid('delete_module' . $module->getId(), $request->request->get('_token'))) {
             $em->remove($module);
             $em->flush();
-            $this->addFlash('success', 'Module supprimé.');
+            $this->addFlash('success', 'Module deleted.');
         }
 
-        return $this->redirectToRoute('admin_module_list');
+        return $this->redirectToRoute('admin_module_index');
     }
 }
 

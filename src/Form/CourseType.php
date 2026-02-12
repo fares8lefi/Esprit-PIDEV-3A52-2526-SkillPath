@@ -2,7 +2,7 @@
 
 namespace App\Form;
 
-use App\Entity\Cours;
+use App\Entity\Course;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -13,12 +13,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-class CoursType extends AbstractType
+class CourseType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('titre', TextType::class, [
+            ->add('title', TextType::class, [
                 'label' => 'Titre de la formation',
                 'attr' => [
                     'class' => 'w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-skillpath-blue focus:border-transparent transition-all',
@@ -43,7 +43,7 @@ class CoursType extends AbstractType
                     new NotBlank(['message' => 'Le niveau est obligatoire'])
                 ]
             ])
-            ->add('categorie', ChoiceType::class, [
+            ->add('category', ChoiceType::class, [
                 'label' => 'Catégorie',
                 'choices' => [
                     'Sélectionner une catégorie' => '',
@@ -87,7 +87,7 @@ class CoursType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Cours::class,
+            'data_class' => Course::class,
         ]);
     }
 }

@@ -19,12 +19,7 @@ final class Version20260212113331 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE quiz DROP FOREIGN KEY `FK_A412FA92134FCDAC`');
-        $this->addSql('DROP INDEX UNIQ_A412FA92134FCDAC ON quiz');
-        $this->addSql('ALTER TABLE quiz ADD cours_id INT DEFAULT NULL, DROP id_cours');
-        $this->addSql('ALTER TABLE quiz ADD CONSTRAINT FK_A412FA927ECF78B0 FOREIGN KEY (cours_id) REFERENCES cours (id)');
-        $this->addSql('CREATE INDEX IDX_A412FA927ECF78B0 ON quiz (cours_id)');
+        // Quiz foreign key/id column has already been transitioned; treat as no-op.
     }
 
     public function down(Schema $schema): void

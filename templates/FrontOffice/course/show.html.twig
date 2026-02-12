@@ -1,0 +1,141 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ course.title }} - Learning Mode{% endblock %}
+
+{% block body %}
+<div class="flex h-screen overflow-hidden bg-[#05070A] text-slate-200">
+    {# Sleek Sidebar (Premium Black) #}
+    <aside class="w-80 h-screen bg-[#0B0F1A] border-r border-white/5 flex flex-col z-20 transition-all duration-300">
+        <div class="p-6 border-b border-white/5 bg-black/20">
+            <div class="flex items-center gap-3 mb-6">
+                <a href="{{ path('front_course_index') }}" class="w-10 h-10 rounded-xl glass flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-all">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                </a>
+                <span class="text-xs font-bold uppercase tracking-widest text-slate-500">Back to Library</span>
+            </div>
+            
+            <h1 class="text-lg font-bold gradient-text leading-tight mb-2">{{ course.title }}</h1>
+            <div class="w-full bg-white/5 h-1.5 rounded-full overflow-hidden">
+                <div class="bg-primary h-full w-1/3 shadow-[0_0_10px_rgba(124,58,237,0.5)]"></div>
+            </div>
+            <p class="text-[10px] text-slate-500 mt-2 font-bold uppercase tracking-widest">33% Completed</p>
+        </div>
+
+        {# Module Navigation #}
+        <nav class="flex-grow overflow-y-auto py-6 px-4 custom-scrollbar">
+            <div class="space-y-2">
+                {% for module in course.modules %}
+                    <a href="{{ path('app_front_office_module_show', {id: module.id}) }}" 
+                       class="flex items-center gap-4 p-4 rounded-2xl transition-all group {{ loop.first ? 'bg-primary/10 border border-primary/20 text-white' : 'hover:bg-white/5 text-slate-400 hover:text-white' }}">
+                        <div class="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs {{ loop.first ? 'bg-primary shadow-lg shadow-primary/20' : 'bg-white/5 group-hover:bg-white/10' }}">
+                            {{ loop.index }}
+                        </div>
+                        <div class="flex-grow min-w-0">
+                            <p class="text-sm font-bold truncate">{{ module.title }}</p>
+                            <p class="text-[10px] uppercase opacity-50">{{ module.type }}</p>
+                        </div>
+                        {% if loop.first %}
+                            <div class="w-2 h-2 rounded-full bg-secondary"></div>
+                        {% endif %}
+                    </a>
+                {% endfor %}
+            </div>
+        </nav>
+
+        {# User Profile / Footer #}
+        <div class="p-4 border-t border-white/5">
+            <div class="flex items-center gap-3 p-3 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-all cursor-pointer">
+                <img src="https://ui-avatars.com/api/?name=User&background=random" class="w-8 h-8 rounded-full">
+                <div class="min-w-0">
+                    <p class="text-xs font-bold truncate">Premium User</p>
+                    <p class="text-[10px] text-slate-500">Learning account</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    {# Content Area #}
+    <main class="flex-grow flex flex-col relative bg-black">
+        {# Glass Header #}
+        <header class="h-16 flex items-center justify-between px-8 glass border-b border-white/5 z-10">
+            <div class="flex items-center gap-4 text-sm font-bold text-slate-500">
+                <span>{{ course.title }}</span>
+                <span class="text-white/10">•</span>
+                <span class="text-slate-300">Overview</span>
+            </div>
+            <div class="flex gap-3">
+                <button class="w-10 h-10 rounded-xl glass flex items-center justify-center hover:bg-white/10 transition-all" title="Share">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6a3 3 0 100-2.684m0 2.684l6.632-3.316m6.632 6a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6a3 3 0 100-2.684m0 2.684l6.632-3.316m-6.632 6a3 3 0 110-2.684m0 2.684l6.632 3.316"></path></svg>
+                </button>
+            </div>
+        </header>
+
+        {# Content Scrollable #}
+        <section class="flex-grow overflow-y-auto p-12 mesh-dark">
+            <div class="max-w-4xl mx-auto animate-fade-up">
+                {% if course.image %}
+                    <img src="{{ asset('uploads/modules/' ~ course.image) }}" class="w-full h-80 object-cover rounded-[2rem] border border-white/10 shadow-2xl mb-12">
+                {% endif %}
+
+                <div class="flex items-center gap-4 mb-8">
+                    <span class="badge badge-purple glass !bg-primary/20 !text-white !backdrop-blur-md">{{ course.category }}</span>
+                    <span class="text-xs font-bold text-slate-500 tracking-widest uppercase">{{ course.level }}</span>
+                </div>
+
+                <h1 class="text-5xl font-black mb-8 leading-tight">Welcome to <span class="gradient-text">{{ course.title }}</span></h1>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                    <div class="glass p-6 rounded-3xl border border-white/5">
+                        <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Duration</p>
+                        <p class="text-xl font-bold">12 Hours</p>
+                    </div>
+                    <div class="glass p-6 rounded-3xl border border-white/5">
+                        <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Chapters</p>
+                        <p class="text-xl font-bold">{{ course.modules|length }} Units</p>
+                    </div>
+                    <div class="glass p-6 rounded-3xl border border-white/5">
+                        <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Audience</p>
+                        <p class="text-xl font-bold">{{ course.level }}</p>
+                    </div>
+                </div>
+
+                <div class="prose prose-invert prose-lg max-w-none text-slate-400 leading-relaxed mb-12">
+                    <h2 class="text-2xl font-bold text-white mb-4 italic italic">Course Description</h2>
+                    <p>{{ course.description|nl2br }}</p>
+                    
+                    <h2 class="text-2xl font-bold text-white mt-12 mb-4 italic italic">What you will learn</h2>
+                    <ul class="space-y-4">
+                        {% for module in course.modules %}
+                            <li class="flex items-start gap-4">
+                                <div class="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></div>
+                                <span>{{ module.title }}</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="flex gap-4 pt-12 border-t border-white/5">
+                    {% if course.modules|length > 0 %}
+                        <a href="{{ path('app_front_office_module_show', {id: course.modules[0].id}) }}" class="btn-primary">Continue Learning</a>
+                    {% else %}
+                        <button class="btn-primary opacity-60 cursor-not-allowed" disabled>Continue Learning</button>
+                    {% endif %}
+                    <a href="{{ path('front_course_index') }}" class="btn-secondary">Back to List</a>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<style>
+    .glass {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(124,58,237,0.1); border-radius: 2px; }
+    .custom-scrollbar:hover::-webkit-scrollbar-thumb { background: rgba(124,58,237,0.3); }
+</style>
+{% endblock %}

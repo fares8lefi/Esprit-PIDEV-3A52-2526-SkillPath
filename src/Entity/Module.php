@@ -5,10 +5,7 @@ namespace App\Entity;
 use App\Repository\ModuleRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use App\Entity\Cours;
+use App\Entity\Course;
 
 #[ORM\Entity(repositoryClass: ModuleRepository::class)]
 class Module
@@ -19,44 +16,39 @@ class Module
     private ?int $id = null;
 
     #[ORM\Column(length: 120)]
-    #[Assert\NotBlank(message: "Le nom est obligatoire.")]
+    #[Assert\NotBlank(message: "Le titre est obligatoire.")]
     #[Assert\Length(min: 2, max: 120)]
-    private ?string $name = null;
+    private ?string $title = null;
 
     #[ORM\Column(type: "text", nullable: true)]
     #[Assert\Length(max: 2000)]
     private ?string $description = null;
 
     #[ORM\Column(type: "datetime_immutable")]
-    private ?\DateTimeImmutable $dateCreation = null;
+    private ?\DateTimeImmutable $createdAt = null;
 
-    #[ORM\Column(length: 30, nullable: true)] // Made nullable as it might be moved to parent conceptually, but keeping it here for data safety? 
-    // Actually, user said 'Corriger', so if this field should be on Parent, maybe I should remove it? 
-    // But I'm keeping 'name' as Title. 
-    // 'level' should be on Parent (Cours). 
-    // If I keep it here, it's just extra data. 
-    // I previously decided to duplicate/move fields. 
-    // Use nullable to avoid errors during migration.
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTime $updatedAt = null;
+
+    #[ORM\Column(length: 30, nullable: true)]
     private ?string $level = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $image = null;
 
-    // ✅ New Fields moved from Cours (Child Data)
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $type = null;
 
     #[ORM\Column(type: "text", nullable: true)]
-    private ?string $contenu = null;
+    private ?string $content = null;
 
-    // ✅ New Relation: Module (Many) belongs to One Cours
-    #[ORM\ManyToOne(targetEntity: Cours::class, inversedBy: 'modules')]
+    #[ORM\ManyToOne(targetEntity: Course::class, inversedBy: 'modules')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Cours $cours = null;
+    private ?Course $course = null;
 
     public function __construct()
     {
-        $this->dateCreation = new \DateTimeImmutable();
+        $this->createdAt = new \DateTimeImmutable();
     }
 
     public function getId(): ?int
@@ -64,21 +56,15 @@ class Module
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getTitle(): ?string
     {
-        return $this->name;
+        return $this->title;
     }
 
-    public function setName(string $name): self
+    public function setTitle(string $title): static
     {
-        $this->name = $name;
+        $this->title = $title;
         return $this;
-    }
-
-    // ✅ TWIG ALIAS: module.titre -> name
-    public function getTitre(): ?string
-    {
-        return $this->name;
     }
 
     public function getDescription(): ?string
@@ -86,20 +72,31 @@ class Module
         return $this->description;
     }
 
-    public function setDescription(?string $description): self
+    public function setDescription(?string $description): static
     {
         $this->description = $description;
         return $this;
     }
 
-    public function getDateCreation(): ?\DateTimeImmutable
+    public function getCreatedAt(): ?\DateTimeImmutable
     {
-        return $this->dateCreation;
+        return $this->createdAt;
     }
 
-    public function setDateCreation(\DateTimeImmutable $dateCreation): self
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
-        $this->dateCreation = $dateCreation;
+        $this->createdAt = $createdAt;
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTime
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTime $updatedAt): static
+    {
+        $this->updatedAt = $updatedAt;
         return $this;
     }
 
@@ -108,7 +105,7 @@ class Module
         return $this->level;
     }
 
-    public function setLevel(?string $level): self
+    public function setLevel(?string $level): static
     {
         $this->level = $level;
         return $this;
@@ -119,45 +116,47 @@ class Module
         return $this->image;
     }
 
-    public function setImage(?string $image): self
+    public function setImage(?string $image): static
     {
         $this->image = $image;
         return $this;
     }
-
-    // ✅ New Getters/Setters
 
     public function getType(): ?string
     {
         return $this->type;
     }
 
-    public function setType(?string $type): self
+    public function setType(?string $type): static
     {
         $this->type = $type;
         return $this;
     }
 
-    public function getContenu(): ?string
+    public function getContent(): ?string
     {
-        return $this->contenu;
+        return $this->content;
     }
 
-    public function setContenu(?string $contenu): self
+    public function setContent(?string $content): static
     {
-        $this->contenu = $contenu;
+        $this->content = $content;
         return $this;
     }
 
-    // ✅ Relation Cours (Parent)
-    public function getCours(): ?Cours
+    public function getCourse(): ?Course
     {
-        return $this->cours;
+        return $this->course;
     }
 
-    public function setCours(?Cours $cours): self
+    public function setCourse(?Course $course): static
     {
-        $this->cours = $cours;
+        $this->course = $course;
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->title ?? '';
     }
 }

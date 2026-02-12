@@ -2,12 +2,11 @@
 
 namespace App\Form;
 
-use App\Entity\Cours;
+use App\Entity\Course;
 use App\Entity\Module;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -19,10 +18,10 @@ class ModuleType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('cours', EntityType::class, [
+            ->add('course', EntityType::class, [
                 'label' => 'Formation (Cours Parent)',
-                'class' => Cours::class,
-                'choice_label' => 'titre',
+                'class' => Course::class,
+                'choice_label' => 'title',
                 'placeholder' => 'Sélectionner une formation',
                 'attr' => [
                     'class' => 'form-input'
@@ -31,7 +30,7 @@ class ModuleType extends AbstractType
                     new NotBlank(['message' => 'Le cours parent est obligatoire'])
                 ]
             ])
-            ->add('name', TextType::class, [
+            ->add('title', TextType::class, [
                 'label' => 'Titre du chapitre',
                 'attr' => [
                     'class' => 'form-input',
@@ -58,7 +57,7 @@ class ModuleType extends AbstractType
                     new NotBlank(['message' => 'Le type est obligatoire'])
                 ]
             ])
-            ->add('contenu', TextareaType::class, [
+            ->add('content', TextareaType::class, [
                 'label' => 'Contenu',
                 'attr' => [
                     'class' => 'form-input resize-none',
