@@ -21,12 +21,15 @@ class ModuleController extends AbstractController
     public function list(
         Request $request,
         ModuleRepository $moduleRepository,
+        \App\Repository\CoursRepository $coursRepository,
         PaginatorInterface $paginator
     ): Response {
         $search = $request->query->get('search', '');
-        // Level filter removed
+        $coursId = $request->query->get('cours');
 
-        $qb = $moduleRepository->qbSearch($search);
+        $courses = $coursRepository->findBy([], ['titre' => 'ASC']);
+
+        $qb = $moduleRepository->qbSearch($search, $coursId ? (int) $coursId : null);
 
         $modules = $paginator->paginate(
             $qb->getQuery(),
@@ -36,6 +39,7 @@ class ModuleController extends AbstractController
 
         return $this->render('BackOffice/module/list.html.twig', [
             'modules' => $modules,
+            'courses' => $courses,
         ]);
     }
 

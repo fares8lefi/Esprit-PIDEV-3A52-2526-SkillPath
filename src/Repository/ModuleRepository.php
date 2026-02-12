@@ -14,13 +14,20 @@ class ModuleRepository extends ServiceEntityRepository
         parent::__construct($registry, Module::class);
     }
 
-    public function qbSearch(?string $search): QueryBuilder
+    public function qbSearch(?string $search, ?int $coursId = null): QueryBuilder
     {
-        $qb = $this->createQueryBuilder('m');
+        $qb = $this->createQueryBuilder('m')
+            ->leftJoin('m.cours', 'c')
+            ->addSelect('c');
 
         if ($search) {
             $qb->andWhere('m.name LIKE :s OR m.description LIKE :s')
                ->setParameter('s', '%' . $search . '%');
+        }
+
+        if ($coursId) {
+            $qb->andWhere('c.id = :coursId')
+               ->setParameter('coursId', $coursId);
         }
 
         // Level filter removed
