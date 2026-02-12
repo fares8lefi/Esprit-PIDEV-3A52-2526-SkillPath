@@ -7,6 +7,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+use Symfony\Component\Validator\Constraints as Assert;
+
 #[ORM\Entity(repositoryClass: ReclamationRepository::class)]
 class Reclamation
 {
@@ -16,9 +18,11 @@ class Reclamation
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "Le sujet ne peut pas être vide.")]
     private ?string $sujet = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "La description ne peut pas être vide.")]
     private ?string $description = null;
 
     #[ORM\Column(length: 255)]
@@ -33,6 +37,9 @@ class Reclamation
     #[ORM\ManyToOne]
     private ?User $user = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $pieceJointe = null;
+
     public function __construct()
     {
         $this->reponses = new ArrayCollection();
@@ -41,6 +48,18 @@ class Reclamation
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getPieceJointe(): ?string
+    {
+        return $this->pieceJointe;
+    }
+
+    public function setPieceJointe(?string $pieceJointe): static
+    {
+        $this->pieceJointe = $pieceJointe;
+
+        return $this;
     }
 
     public function getSujet(): ?string

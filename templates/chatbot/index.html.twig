@@ -1,0 +1,86 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}SkillPath Chatbot{% endblock %}
+
+{% block body %}
+<style>
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes bounce-dot {
+        0%, 80%, 100% { transform: scale(0); }
+        40% { transform: scale(1); }
+    }
+    .animate-fade-in { animation: fadeInUp 0.3s ease-out; }
+    .dot1 { animation: bounce-dot 1.4s infinite ease-in-out -0.32s; }
+    .dot2 { animation: bounce-dot 1.4s infinite ease-in-out -0.16s; }
+    .dot3 { animation: bounce-dot 1.4s infinite ease-in-out 0s; }
+</style>
+
+<div class="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-center justify-center p-4"
+     data-controller="chatbot">
+
+    <div class="w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col" style="height: 85vh;">
+        
+        {# Header #}
+        <div class="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 px-6 py-5 flex items-center gap-4">
+            <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center text-2xl backdrop-blur-sm">
+                🤖
+            </div>
+            <div>
+                <h1 class="text-white text-xl font-bold">SkillPath AI Assistant</h1>
+                <p class="text-white/70 text-sm">Powered by Gemini ✨</p>
+            </div>
+        </div>
+
+        {# Messages Area #}
+        <div class="flex-1 overflow-y-auto p-6 space-y-4 bg-gradient-to-b from-gray-50/50 to-white"
+             data-chatbot-target="messages">
+            
+            {# Welcome message #}
+            <div class="flex items-end gap-2 animate-fade-in">
+                <div class="w-8 h-8 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full flex items-center justify-center text-white text-sm flex-shrink-0">
+                    AI
+                </div>
+                <div class="bg-white border border-gray-200 rounded-2xl rounded-bl-md px-4 py-3 max-w-[75%] shadow-sm">
+                    <p class="text-gray-700">Hello! 👋 I'm your AI assistant. How can I help you today?</p>
+                </div>
+            </div>
+
+            {# Typing indicator (hidden by default) #}
+            <div class="flex items-end gap-2" data-chatbot-target="typingIndicator" style="display: none;">
+                <div class="w-8 h-8 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full flex items-center justify-center text-white text-sm flex-shrink-0">
+                    AI
+                </div>
+                <div class="bg-white border border-gray-200 rounded-2xl rounded-bl-md px-4 py-3 shadow-sm">
+                    <div class="flex gap-1.5 items-center h-5">
+                        <span class="w-2 h-2 bg-gray-400 rounded-full dot1"></span>
+                        <span class="w-2 h-2 bg-gray-400 rounded-full dot2"></span>
+                        <span class="w-2 h-2 bg-gray-400 rounded-full dot3"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Input Area #}
+        <div class="border-t border-gray-100 bg-white px-4 py-4">
+            <form class="flex items-center gap-3" data-action="submit->chatbot#sendMessage">
+                <input type="text"
+                       class="flex-1 px-5 py-3 bg-gray-100 border-0 rounded-full text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white transition-all duration-200"
+                       data-chatbot-target="input"
+                       placeholder="Type your message..."
+                       autocomplete="off">
+                <button type="submit"
+                        class="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg hover:shadow-purple-500/25 hover:-translate-y-0.5 transition-all duration-200 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none disabled:hover:translate-y-0"
+                        data-chatbot-target="sendButton">
+                    <span>Send</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                    </svg>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
