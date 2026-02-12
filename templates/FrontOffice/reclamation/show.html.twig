@@ -1,0 +1,121 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Réclamation{% endblock %}
+
+{% block body %}
+<div class="min-h-screen mesh-light dark:mesh-dark p-6 lg:p-12">
+    <div class="max-w-4xl mx-auto">
+        <!-- Back Link -->
+        <a href="{{ path('app_reclamation_index') }}" class="inline-flex items-center gap-2 text-xs font-bold text-slate-400 hover:text-primary transition-colors mb-8 animate-fade-up">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+            Retour
+        </a>
+
+        <!-- Original Reclamation -->
+        <div class="glass-card p-8 lg:p-10 rounded-3xl shadow-xl mb-8 border-l-4 border-primary animate-fade-up">
+            <div class="flex justify-between items-start mb-6">
+                <div>
+                    <h1 class="text-xl font-black text-slate-900 dark:text-white tracking-tight mb-2">{{ reclamation.sujet }}</h1>
+                    <p class="text-sm text-slate-600 dark:text-slate-300 font-medium leading-relaxed mb-6">{{ reclamation.description }}</p>
+
+                    {% if reclamation.pieceJointe %}
+                        <div class="mt-4 p-5 bg-slate-50 dark:bg-white/5 rounded-2xl border border-slate-100 dark:border-white/10">
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" /></svg>
+                                Pièce jointe
+                            </p>
+                            {% if reclamation.pieceJointe matches '/\\.(jpg|jpeg|png)$/i' %}
+                                <div class="relative group max-w-sm">
+                                    <img src="{{ asset('uploads/reclamations/' ~ reclamation.pieceJointe) }}" alt="Pièce jointe" class="rounded-xl shadow-lg border border-slate-200 dark:border-white/10 group-hover:scale-[1.02] transition-transform duration-300">
+                                </div>
+                            {% else %}
+                                <a href="{{ asset('uploads/reclamations/' ~ reclamation.pieceJointe) }}" target="_blank" class="flex items-center gap-3 p-3 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-white/10 hover:border-primary transition-all group">
+                                    <div class="w-10 h-10 rounded-lg bg-primary/8 text-primary flex items-center justify-center group-hover:gradient-primary group-hover:text-white transition-all">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-xs font-bold text-slate-900 dark:text-white truncate">Voir le document</p>
+                                        <p class="text-[10px] text-slate-400 font-medium">Cliquez pour ouvrir</p>
+                                    </div>
+                                    <svg class="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                                </a>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+                {% if reclamation.statut == 'Pending' %}
+                    <span class="badge badge-amber">En attente</span>
+                {% elseif reclamation.statut == 'Resolved' %}
+                    <span class="badge badge-green">Résolu</span>
+                {% else %}
+                    <span class="badge badge-purple">{{ reclamation.statut }}</span>
+                {% endif %}
+            </div>
+            <div class="prose dark:prose-invert max-w-none">
+                <p class="text-slate-600 dark:text-slate-300 font-medium leading-relaxed whitespace-pre-line text-lg">{{ reclamation.description }}</p>
+            </div>
+        </div>
+
+        <!-- Conversation Stream -->
+        <div class="space-y-8 mb-12 relative">
+            <div class="absolute left-6 lg:left-8 top-0 bottom-0 w-[2px] bg-slate-200/50 dark:bg-slate-800/50 z-0"></div>
+            
+            {% for response in reclamation.reponses %}
+                <div class="relative z-10 pl-16 lg:pl-20 animate-fade-up" style="animation-delay: {{ loop.index0 * 100 }}ms">
+                    <!-- Avatar -->
+                    <div class="absolute left-0 top-0 w-12 h-12 lg:w-16 lg:h-16 rounded-2xl flex items-center justify-center shadow-lg border-2 border-white dark:border-slate-900
+                        {% if 'ADMIN' in response.user.roles %}
+                            bg-gradient-to-br from-accent to-accent-light text-white
+                        {% else %}
+                            gradient-primary text-white
+                        {% endif %}">
+                        <span class="font-black text-lg">{{ response.user.username|first|upper }}</span>
+                    </div>
+
+                    <!-- Message Bubble -->
+                    <div class="p-6 lg:p-8 shadow-md 
+                        {% if 'ADMIN' in response.user.roles %}
+                            chat-admin
+                        {% else %}
+                            chat-user ml-auto text-right
+                        {% endif %}">
+                        <div class="flex items-center gap-2 mb-2 {% if 'ADMIN' not in response.user.roles %}justify-end{% endif %}">
+                            <span class="text-xs font-black uppercase tracking-widest 
+                                {% if 'ADMIN' in response.user.roles %}text-accent{% else %}text-primary dark:text-primary-light{% endif %}">
+                                {{ response.user.username }} {% if 'ADMIN' in response.user.roles %}(Support){% endif %}
+                            </span>
+                        </div>
+                        <p class="font-medium leading-relaxed whitespace-pre-line {% if 'ADMIN' not in response.user.roles %}text-slate-700 dark:text-slate-200{% else %}text-slate-600 dark:text-slate-300{% endif %}">{{ response.message }}</p>
+                    </div>
+                </div>
+            {% else %}
+                <div class="pl-16 lg:pl-20">
+                    <p class="text-slate-400 italic font-medium">Aucune réponse pour le moment.</p>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Response Form -->
+        {% if reclamation.statut != 'Resolved' %}
+            <div class="glass-card p-8 rounded-3xl shadow-xl relative z-20 border-2 border-primary/8 dark:border-primary/15 animate-fade-up">
+                <h3 class="text-lg font-black text-slate-900 dark:text-white mb-6 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                    Ajouter une réponse
+                </h3>
+                {{ form_start(response_form) }}
+                    <div class="mb-4">
+                        {{ form_widget(response_form.message, {'attr': {'class': 'form-input min-h-[100px]', 'placeholder': 'Votre message...'}}) }}
+                        {{ form_errors(response_form.message) }}
+                    </div>
+                    <div class="flex justify-end">
+                        <button class="btn-primary !py-3 !px-8 text-sm flex items-center gap-2">
+                            <span>Envoyer</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9-2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                        </button>
+                    </div>
+                {{ form_end(response_form) }}
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

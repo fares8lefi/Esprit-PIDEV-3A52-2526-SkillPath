@@ -1,56 +1,85 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Admin - Créer Utilisateur{% endblock %}
+{% block title %}Ajouter un Utilisateur - BackOffice{% endblock %}
 
 {% block body %}
-<div class="flex items-center justify-center min-h-screen bg-neutral-900 text-white p-6">
-    <div class="w-full max-w-md bg-neutral-800 rounded-2xl shadow-2xl p-8 border border-neutral-700">
-        <div class="flex items-center justify-center mb-6">
-            <div class="p-3 bg-red-500/10 rounded-full border border-red-500/20">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                </svg>
+<div class="min-h-screen bg-gray-50 flex flex-col">
+    <!-- Header Dashboard -->
+    <header class="bg-white shadow-sm border-b border-gray-200 py-4 px-8 flex justify-between items-center">
+        <div class="flex items-center">
+            <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-10 w-auto mr-3">
+            <h1 class="text-2xl font-bold text-skill-blue">SkillPath <span class="text-gray-400 font-medium">| BackOffice</span></h1>
+        </div>
+        <a href="{{ path('app_user_index') }}" class="text-gray-500 hover:text-gray-700 font-bold text-sm flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+            </svg>
+            Retour à la liste
+        </a>
+    </header>
+
+    <main class="flex-1 p-8">
+        <div class="max-w-2xl mx-auto">
+            <div class="mb-8">
+                <h2 class="text-3xl font-extrabold text-gray-900">Nouvel Utilisateur</h2>
+                <p class="text-gray-500 mt-1">Créez un compte manuellement pour un administrateur ou un étudiant.</p>
+            </div>
+
+            <div class="bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100 p-10">
+                <form action="{{ path('app_user_admin_create') }}" method="POST" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="username" class="block text-sm font-bold text-gray-700 mb-2">Nom d'utilisateur</label>
+                            <input type="text" id="username" name="username" required
+                                class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:bg-white focus:border-skill-blue focus:outline-none transition-all placeholder-gray-400"
+                                placeholder="ex: phares_lefi">
+                        </div>
+                        <div>
+                            <label for="email" class="block text-sm font-bold text-gray-700 mb-2">Adresse Email</label>
+                            <input type="email" id="email" name="email" required
+                                class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:bg-white focus:border-skill-blue focus:outline-none transition-all placeholder-gray-400"
+                                placeholder="ex: contact@skillpath.tn">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="password" class="block text-sm font-bold text-gray-700 mb-2">Mot de passe temporaire</label>
+                        <input type="password" id="password" name="password" required
+                            class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:bg-white focus:border-skill-blue focus:outline-none transition-all"
+                            placeholder="••••••••">
+                        <p class="text-xs text-gray-400 mt-2 italic">L'utilisateur pourra modifier ce mot de passe ultérieurement.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                        <div>
+                            <label for="role" class="block text-sm font-bold text-gray-700 mb-2">Rôle assigné</label>
+                            <select id="role" name="role" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:bg-white focus:border-skill-blue focus:outline-none transition-all appearance-none cursor-pointer">
+                                <option value="student">Étudiant (Student)</option>
+                                <option value="admin">Administrateur (Admin)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">Statut initial</label>
+                            <div class="flex items-center space-x-4 py-3">
+                                <span class="inline-flex items-center px-3 py-1 bg-skill-green/10 text-skill-green rounded-full text-xs font-bold border border-skill-green/20">
+                                    <span class="w-2 h-2 rounded-full bg-skill-green mr-2"></span>
+                                    Actif par défaut
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-8 flex space-x-4">
+                        <button type="submit" class="flex-1 bg-gradient-to-r from-skill-blue to-skill-green text-white font-bold py-4 rounded-2xl shadow-lg shadow-skill-blue/30 transform transition-all active:scale-[0.98] hover:shadow-xl">
+                            Créer le compte utilisateur
+                        </button>
+                        <a href="{{ path('app_user_index') }}" class="px-8 py-4 bg-gray-100 text-gray-500 font-bold rounded-2xl hover:bg-gray-200 transition-colors">
+                            Annuler
+                        </a>
+                    </div>
+                </form>
             </div>
         </div>
-        
-        <h1 class="text-2xl font-bold mb-2 text-center text-white">Administration</h1>
-        <p class="text-neutral-400 text-center mb-8 text-sm">Gestion de création d'utilisateurs</p>
-        
-        <form method="post" class="space-y-4">
-            <div>
-                <label for="username" class="block text-sm font-medium text-neutral-400 mb-1">Nom d'utilisateur</label>
-                <input type="text" id="username" name="username" required 
-                       class="w-full bg-neutral-700 border border-neutral-600 rounded-lg px-4 py-2 focus:ring-2 focus:ring-red-500 focus:outline-none transition-all">
-            </div>
-            
-            <div>
-                <label for="email" class="block text-sm font-medium text-neutral-400 mb-1">Email</label>
-                <input type="email" id="email" name="email" required 
-                       class="w-full bg-neutral-700 border border-neutral-600 rounded-lg px-4 py-2 focus:ring-2 focus:ring-red-500 focus:outline-none transition-all">
-            </div>
-
-            <div>
-                <label for="password" class="block text-sm font-medium text-neutral-400 mb-1">Mot de passe</label>
-                <input type="password" id="password" name="password" required 
-                       class="w-full bg-neutral-700 border border-neutral-600 rounded-lg px-4 py-2 focus:ring-2 focus:ring-red-500 focus:outline-none transition-all">
-            </div>
-
-            <div>
-                <label for="role" class="block text-sm font-medium text-neutral-400 mb-1">Rôle</label>
-                <select id="role" name="role" required 
-                        class="w-full bg-neutral-700 border border-neutral-600 rounded-lg px-4 py-2 focus:ring-2 focus:ring-red-500 focus:outline-none transition-all appearance-none cursor-pointer">
-                    <option value="student">Student</option>
-                    <option value="admin">Admin</option>
-                </select>
-            </div>
-
-            <div class="pt-4">
-                <button type="submit" 
-                        class="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-3 rounded-lg transition-all transform hover:scale-[1.02] active:scale-95 shadow-lg shadow-red-900/20">
-                    Créer l'utilisateur
-                </button>
-            </div>
-        </form>
-    </div>
+    </main>
 </div>
 {% endblock %}

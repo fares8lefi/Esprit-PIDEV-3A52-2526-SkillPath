@@ -2,132 +2,151 @@
 
 {% block title %}Inscription - SkillPath{% endblock %}
 
+{% block stylesheets %}
+<style>
+    /* Autofill Fix */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover, 
+    input:-webkit-autofill:focus, 
+    input:-webkit-autofill:active{
+        -webkit-box-shadow: 0 0 0 30px white inset !important;
+        -webkit-text-fill-color: #0f172a !important;
+        transition: background-color 5000s ease-in-out 0s;
+    }
+    .dark input:-webkit-autofill,
+    .dark input:-webkit-autofill:hover, 
+    .dark input:-webkit-autofill:focus, 
+    .dark input:-webkit-autofill:active{
+        -webkit-box-shadow: 0 0 0 30px #0B0F1A inset !important;
+        -webkit-text-fill-color: white !important;
+        transition: background-color 5000s ease-in-out 0s;
+    }
+</style>
+{% endblock %}
+
 {% block body %}
-<div class="min-h-screen bg-gradient-to-br from-skill-blue via-skill-green to-skill-yellow/30 flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl shadow-2xl flex flex-col md:flex-row max-w-5xl w-full overflow-hidden min-h-[600px]">
+<div class="min-h-screen mesh-light dark:mesh-dark flex items-center justify-center p-6 relative overflow-hidden">
+    <!-- Decorative blurs -->
+    <div class="absolute -top-24 -right-24 w-96 h-96 bg-accent/8 rounded-full blur-3xl animate-pulse"></div>
+    <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-primary/8 rounded-full blur-3xl animate-pulse" style="animation-delay: 2s"></div>
+    
+    <div class="max-w-6xl w-full flex flex-col lg:flex-row items-center gap-12 relative z-10 animate-fade-up">
         
-        <!-- Left Side: Welcome Info (Same as Login) -->
-        <div class="md:w-1/2 bg-blue-50/50 p-10 flex flex-col justify-center items-center text-center border-r border-gray-100">
-            <div class="mb-8">
-                <div class="flex items-center justify-center space-x-2 mb-10">
-                    <div class="w-10 h-10 border-2 border-skill-green flex items-center justify-center">
-                        <div class="w-2 h-2 bg-skill-green"></div>
-                    </div>
-                    <span class="text-3xl font-bold text-skill-blue">SkillPath</span>
+        <!-- Creative Side -->
+        <div class="flex-1 hidden lg:flex flex-col text-left">
+            <div class="flex items-center gap-4 mb-20 group cursor-pointer">
+                <div class="w-14 h-14 gradient-primary rounded-2xl flex items-center justify-center shadow-lg shadow-purple-500/20 group-hover:-rotate-6 transition-transform">
+                    <img src="{{ asset('images/logo.png') }}" alt="Logo" class="w-8 h-8 invert brightness-0">
                 </div>
-                
-                <div class="w-32 h-48 border-2 border-skill-green mx-auto mb-8 flex items-center justify-center">
-                    <div class="w-12 h-16 border border-skill-blue"></div>
+                <div>
+                    <span class="text-3xl font-black tracking-tighter text-slate-900 dark:text-white">Skill<span class="gradient-text">Path</span></span>
+                    <span class="block text-[10px] font-bold uppercase tracking-[0.25em] text-primary dark:text-primary-light">Start your journey</span>
                 </div>
             </div>
 
-            <h1 class="text-3xl font-extrabold text-gray-800 mb-4">Rejoignez SkillPath</h1>
-            <p class="text-gray-500 mb-10 leading-relaxed max-w-xs">
-                Commencez votre voyage d'apprentissage aujourd'hui et débloquez de nouvelles opportunités.
+            <h1 class="text-5xl font-black text-slate-900 dark:text-white leading-tight mb-6">
+                Rejoignez la <br>
+                <span class="gradient-text">communauté !</span>
+            </h1>
+            
+            <p class="text-base text-slate-500 dark:text-slate-400 font-medium max-w-sm leading-relaxed mb-12">
+                Commencez à apprendre gratuitement et accédez à des centaines de cours spécialisés.
             </p>
 
-            <div class="space-y-6 text-left w-full max-w-xs">
-                <div class="flex items-start space-x-4">
-                    <div class="bg-skill-green/20 p-2 rounded-full">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-skill-green" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                        </svg>
+            <div class="space-y-4">
+                <div class="flex items-center gap-5">
+                    <div class="w-11 h-11 rounded-xl glass-card flex items-center justify-center text-primary">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                     </div>
                     <div>
-                        <h4 class="font-bold text-gray-800">Accès Immédiat</h4>
-                        <p class="text-xs text-gray-400">Plus de 500 cours disponibles</p>
+                        <p class="text-sm font-bold text-slate-900 dark:text-white">Apprentissage rapide</p>
+                        <p class="text-xs text-slate-400 font-medium">Parcours optimisés par IA</p>
                     </div>
                 </div>
-                <div class="flex items-start space-x-4">
-                    <div class="bg-skill-green/20 p-2 rounded-full">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-skill-green" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
+                <div class="flex items-center gap-5">
+                    <div class="w-11 h-11 rounded-xl glass-card flex items-center justify-center text-accent">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                     </div>
                     <div>
-                        <h4 class="font-bold text-gray-800">Gratuit pour débuter</h4>
-                        <p class="text-xs text-gray-400">Inscrivez-vous sans frais</p>
+                        <p class="text-sm font-bold text-slate-900 dark:text-white">Support Entraide</p>
+                        <p class="text-xs text-slate-400 font-medium">Apprenez avec les autres</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-5">
+                    <div class="w-11 h-11 rounded-xl glass-card flex items-center justify-center text-secondary">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
+                    </div>
+                    <div>
+                        <p class="text-sm font-bold text-slate-900 dark:text-white">Badges & Récompenses</p>
+                        <p class="text-xs text-slate-400 font-medium">Célébrez vos progrès</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Right Side: Sign Up Form -->
-        <div class="md:w-1/2 p-10 flex flex-col justify-center">
-            <h2 class="text-3xl font-extrabold text-skill-blue mb-2">Inscription</h2>
-            <p class="text-gray-400 mb-8 text-sm">Créez votre compte SkillPath gratuitement</p>
-
-            <form action="" method="POST" class="space-y-4 text-sm">
-                <div>
-                    <label class="block font-bold text-gray-700 mb-1">Nom d'utilisateur</label>
-                    <div class="relative">
-                        <input type="text" name="username" placeholder="votre_pseudo" required
-                               class="w-full border-2 border-gray-100 rounded-xl px-4 py-3 focus:border-skill-blue focus:outline-none transition-colors pr-10">
-                        <span class="absolute right-3 top-3.5 text-gray-300">
-                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                            </svg>
-                        </span>
+        <!-- Register Card -->
+        <div class="w-full max-w-lg">
+            <div class="glass-card p-10 lg:p-12 rounded-3xl shadow-2xl relative overflow-hidden">
+                <div class="absolute -top-12 -right-12 w-32 h-32 bg-accent/5 rounded-full blur-2xl"></div>
+                
+                <div class="relative z-10">
+                    <div class="mb-10 text-center lg:text-left">
+                        <h2 class="text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">Inscription</h2>
+                        <p class="text-slate-500 dark:text-slate-400 font-medium text-sm">Créez votre compte en quelques secondes.</p>
                     </div>
+
+                    <form action="{{ path('app_user_register') }}" method="POST" class="space-y-5">
+                        <div class="space-y-2">
+                            <label class="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">Nom d'utilisateur</label>
+                            <div class="relative group">
+                                <input type="text" name="username" placeholder="Ex: DevCraft2026" required
+                                       class="form-input pr-12">
+                                <span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 dark:text-slate-600 group-focus-within:text-primary transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">Adresse Email</label>
+                            <div class="relative group">
+                                <input type="email" name="email" placeholder="votre.email@exemple.com" required
+                                       class="form-input pr-12">
+                                <span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 dark:text-slate-600 group-focus-within:text-primary transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">Mot de Passe</label>
+                            <div class="relative group">
+                                <input type="password" name="password" placeholder="8 caractères minimum" required
+                                       class="form-input pr-12">
+                                <span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 dark:text-slate-600 group-focus-within:text-primary transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-3 px-1 py-2">
+                            <input type="checkbox" id="terms" required class="mt-0.5 w-4 h-4 rounded border-slate-300 dark:border-slate-600 text-primary focus:ring-primary/30 bg-transparent">
+                            <label for="terms" class="text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider leading-relaxed">
+                                J'accepte les <a href="#" class="text-primary dark:text-primary-light hover:underline">conditions d'utilisation</a> & la <a href="#" class="text-primary dark:text-primary-light hover:underline">politique de données</a>.
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn-primary w-full !py-4 !text-sm mt-2">
+                            Créer mon profil gratuit
+                        </button>
+                    </form>
+
+                    <p class="text-center text-sm font-medium text-slate-500 dark:text-slate-400 mt-10 pt-8 border-t border-slate-100/50 dark:border-white/5">
+                        Déjà inscrit ? 
+                        <a href="{{ path('app_user_login') }}" class="text-primary dark:text-primary-light font-bold hover:underline ml-1">Se connecter</a>
+                    </p>
                 </div>
-
-                <div>
-                    <label class="block font-bold text-gray-700 mb-1">Adresse Email</label>
-                    <div class="relative">
-                        <input type="email" name="email" placeholder="votre.email@exemple.com" required
-                               class="w-full border-2 border-gray-100 rounded-xl px-4 py-3 focus:border-skill-blue focus:outline-none transition-colors pr-10">
-                        <span class="absolute right-3 top-3.5 text-gray-300">
-                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                            </svg>
-                        </span>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block font-bold text-gray-700 mb-1">Mot de Passe</label>
-                    <div class="relative">
-                        <input type="password" name="password" placeholder="••••••••" required
-                               class="w-full border-2 border-gray-100 rounded-xl px-4 py-3 focus:border-skill-blue focus:outline-none transition-colors pr-10">
-                        <span class="absolute right-3 top-3.5 text-gray-300">
-                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                            </svg>
-                        </span>
-                    </div>
-                </div>
-
-                <div class="flex items-center text-[10px] text-gray-400 py-2">
-                    <input type="checkbox" required class="mr-2 rounded border-gray-300 accent-skill-blue">
-                    <span>J'accepte les <a href="#" class="text-skill-blue font-bold hover:underline">Conditions d'Utilisation</a> et la <a href="#" class="text-skill-blue font-bold hover:underline">Politique de Confidentialité</a>.</span>
-                </div>
-
-                <button type="submit" 
-                        class="w-full bg-gradient-to-r from-skill-blue to-skill-green text-white font-bold py-3 rounded-xl shadow-lg shadow-skill-blue/30 transform transition-transform active:scale-95 mt-4">
-                    Créer mon compte
-                </button>
-
-                <div class="relative flex items-center justify-center py-4">
-                    <div class="border-t border-gray-100 w-full"></div>
-                    <span class="absolute bg-white px-4 text-xs text-gray-300 uppercase tracking-widest">Ou s'inscrire avec</span>
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                    <button type="button" class="flex items-center justify-center space-x-2 border-2 border-gray-100 py-2.5 rounded-xl hover:bg-gray-50 transition-colors text-xs font-bold text-gray-700">
-                        <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5" alt="Google">
-                        <span>Google</span>
-                    </button>
-                    <button type="button" class="flex items-center justify-center space-x-2 border-2 border-gray-100 py-2.5 rounded-xl hover:bg-gray-50 transition-colors text-xs font-bold text-gray-700">
-                        <img src="https://www.svgrepo.com/show/475654/github-color.svg" class="w-5 h-5" alt="GitHub">
-                        <span>GitHub</span>
-                    </button>
-                </div>
-
-                <p class="text-center text-gray-400 text-xs mt-6">
-                    Déjà un compte ? <br>
-                    <a href="{{ path('app_user_login') }}" class="text-skill-blue font-extrabold hover:underline">Se connecter maintenant</a>
-                </p>
-            </form>
+            </div>
         </div>
     </div>
 </div>

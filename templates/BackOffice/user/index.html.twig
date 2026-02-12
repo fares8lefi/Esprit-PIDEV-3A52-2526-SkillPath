@@ -1,53 +1,114 @@
-{% extends 'base.html.twig' %}
+{% extends 'BackOffice/layout.html.twig' %}
 
-{% block title %}Liste des utilisateurs{% endblock %}
+{% block title %}Gestion des Utilisateurs - SkillPath{% endblock %}
 
-{% block body %}
-<div class="min-h-screen bg-neutral-900 text-white p-8">
-    <div class="max-w-6xl mx-auto">
-        <div class="flex justify-between items-center mb-8">
-            <h1 class="text-3xl font-bold text-white">Utilisateurs</h1>
-            <div class="flex space-x-4">
-                <a href="{{ path('app_user_register') }}" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg transition-colors text-sm font-semibold">
-                    + Inscription (Student)
-                </a>
-                <a href="{{ path('app_user_admin_create') }}" class="px-4 py-2 bg-red-600 hover:bg-red-500 rounded-lg transition-colors text-sm font-semibold">
-                    + Créer via Admin
-                </a>
-            </div>
+{% block content %}
+<div class="space-y-8 animate-in fade-in duration-500">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div>
+            <h1 class="text-4xl font-extrabold text-white tracking-tight">Gestion des <span class="vibrant-text">Utilisateurs</span></h1>
+            <p class="text-neutral-500 mt-2 font-medium">Gérez et administrez les comptes membres de la plateforme.</p>
         </div>
+        <a href="{{ path('app_user_admin_create') }}" class="px-6 py-3 vibrant-gradient rounded-2xl text-sm font-bold text-white shadow-lg shadow-skill-blue/25 flex items-center gap-2 transform hover:scale-105 active:scale-95 transition-all">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
+            Ajouter un utilisateur
+        </a>
+    </div>
 
-        <div class="bg-neutral-800 rounded-xl overflow-hidden border border-neutral-700 shadow-xl">
+    {% for message in app.flashes('success') %}
+        <div class="bg-green-500/10 border border-green-500/20 text-green-400 px-6 py-4 rounded-2xl flex items-center gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+            </svg>
+            <span class="font-medium">{{ message }}</span>
+        </div>
+    {% endfor %}
+
+    <div class="glass-card rounded-[2.5rem] overflow-hidden border border-neutral-800/50">
+        <div class="overflow-x-auto">
             <table class="w-full text-left">
-                <thead class="bg-neutral-700/50 text-neutral-400 text-xs uppercase tracking-wider">
-                    <tr>
-                        <th class="px-6 py-4 font-semibold">Username</th>
-                        <th class="px-6 py-4 font-semibold">Email</th>
-                        <th class="px-6 py-4 font-semibold text-center">Rôle</th>
-                        <th class="px-6 py-4 font-semibold text-center">Status</th>
+                <thead>
+                    <tr class="border-b border-neutral-800/50">
+                        <th class="px-8 py-6 text-xs font-black text-neutral-500 uppercase tracking-widest">Utilisateur</th>
+                        <th class="px-8 py-6 text-xs font-black text-neutral-500 uppercase tracking-widest">Rôle</th>
+                        <th class="px-8 py-6 text-xs font-black text-neutral-500 uppercase tracking-widest">Statut</th>
+                        <th class="px-8 py-6 text-xs font-black text-neutral-500 uppercase tracking-widest text-right">Actions</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-neutral-700">
+                <tbody class="divide-y divide-neutral-800/30">
                     {% for user in users %}
-                    <tr class="hover:bg-neutral-700/30 transition-colors">
-                        <td class="px-6 py-4 font-medium">{{ user.username }}</td>
-                        <td class="px-6 py-4 text-neutral-400">{{ user.email }}</td>
-                        <td class="px-6 py-4 text-center">
-                            <span class="px-3 py-1 rounded-full text-xs font-bold {{ user.role == 'admin' ? 'bg-red-500/20 text-red-400 border border-red-500/30' : 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' }}">
-                                {{ user.role|upper }}
-                            </span>
+                    <tr class="hover:bg-white/[0.02] transition-colors group">
+                        <td class="px-8 py-6 text-gray-500 font-medium">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-2xl bg-neutral-800/50 border border-neutral-700/50 flex items-center justify-center group-hover:border-skillpath-blue/30 transition-all">
+                                    <div class="w-9 h-9 rounded-xl {% if user.role == 'admin' %}bg-gradient-to-br from-skill-yellow to-orange-500{% else %}vibrant-gradient{% endif %} flex items-center justify-center text-xs font-black text-white shadow-inner">
+                                        {{ user.username|first|upper }}
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="text-white font-bold group-hover:text-skillpath-blue transition-colors">{{ user.username }}</div>
+                                    <div class="text-neutral-500 text-xs">{{ user.email }}</div>
+                                </div>
+                            </div>
                         </td>
-                        <td class="px-6 py-4 text-center">
-                            <span class="flex items-center justify-center space-x-2">
-                                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                                <span class="text-sm">{{ user.status }}</span>
-                            </span>
+                        <td class="px-8 py-6">
+                            {% if user.role == 'admin' %}
+                                <span class="inline-flex items-center px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-wider bg-skill-yellow/10 text-skill-yellow border border-skill-yellow/20">
+                                    Administrateur
+                                </span>
+                            {% else %}
+                                <span class="inline-flex items-center px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-wider bg-skillpath-blue/10 text-skillpath-blue border border-skillpath-blue/20">
+                                    Étudiant
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td class="px-8 py-6">
+                            {% if user.status == 'active' %}
+                                <span class="inline-flex items-center px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-wider bg-skillpath-green/10 text-skillpath-green border border-skillpath-green/20">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-skillpath-green mr-2 animate-pulse"></span>
+                                    Actif
+                                </span>
+                            {% else %}
+                                <span class="inline-flex items-center px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-wider bg-neutral-800 text-neutral-500 border border-neutral-700">
+                                    {{ user.status|capitalize }}
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td class="px-8 py-6 text-right">
+                            <div class="flex items-center justify-end gap-2">
+                                <a href="{{ path('app_user_show', {id: user.id}) }}" class="p-2.5 bg-neutral-800/50 text-neutral-400 hover:text-white hover:bg-neutral-800 rounded-xl transition-all border border-neutral-700/50" title="Voir">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                                        <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                                    </svg>
+                                </a>
+                                <a href="{{ path('app_user_edit', {id: user.id}) }}" class="p-2.5 bg-neutral-800/50 text-neutral-400 hover:text-skillpath-green hover:bg-skillpath-green/10 rounded-xl transition-all border border-neutral-700/50" title="Modifier">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                                    </svg>
+                                </a>
+                                <form action="{{ path('app_user_delete', {id: user.id}) }}" method="POST" class="inline-block" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
+                                    <button type="submit" class="p-2.5 bg-neutral-800/50 text-neutral-400 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all border border-neutral-700/50" title="Supprimer">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                        </svg>
+                                    </button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                     {% else %}
                     <tr>
-                        <td colspan="4" class="px-6 py-12 text-center text-neutral-500 italic">
-                            Aucun utilisateur trouvé.
+                        <td colspan="4" class="px-8 py-20 text-center">
+                            <div class="w-20 h-20 bg-neutral-800/50 rounded-full flex items-center justify-center mx-auto mb-6 border border-neutral-700/50">
+                                <svg class="w-10 h-10 text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                            </div>
+                            <h3 class="text-xl font-bold text-white">Aucun utilisateur</h3>
+                            <p class="text-neutral-500 mt-2 mb-8">Commencez par ajouter des membres à votre plateforme.</p>
+                            <a href="{{ path('app_user_admin_create') }}" class="px-8 py-3 vibrant-gradient rounded-2xl text-sm font-bold text-white shadow-lg shadow-skillpath-blue/25 transition-all">
+                                Ajouter le premier membre
+                            </a>
                         </td>
                     </tr>
                     {% endfor %}

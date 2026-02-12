@@ -2,13 +2,14 @@
 
 namespace App\Entity;
 
-use App\Repository\CoursRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use App\Repository\CoursRepository;  // ✅ Changé
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity(repositoryClass: CoursRepository::class)]
-class Cours
+#[ORM\Entity(repositoryClass: CoursRepository::class)]  // ✅ Changé
+#[ORM\Table(name: 'cours')]  // ✅ IMPORTANT : Garde le nom de table existant
+class Cours  // ✅ Changé de Content à Cours
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -16,29 +17,41 @@ class Cours
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'Le titre est obligatoire')]
+    #[Assert\Length(
+        min: 3,
+        max: 255,
+        minMessage: 'Le titre doit contenir au moins {{ limit }} caractères',
+        maxMessage: 'Le titre ne peut pas dépasser {{ limit }} caractères'
+    )]
     private ?string $titre = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $contenu = null;
-
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 50)]
+    #[Assert\NotBlank(message: 'Le type est obligatoire')]
+    #[Assert\Choice(
+        choices: ['video', 'texte', 'quiz', 'exercice', 'document'],
+        message: 'Type invalide'
+    )]
     private ?string $type = null;
 
-    #[ORM\ManyToOne(inversedBy: 'cours')]
+    #[ORM\Column(type: Types::TEXT)]
+    #[Assert\NotBlank(message: 'Le contenu est obligatoire')]
+    private ?string $contenu = null;
+
+    #[ORM\ManyToOne(inversedBy: 'cours')]  // ✅ Changé de 'contents' à 'cours'
+    #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull(message: 'Le module est obligatoire')]
     private ?Module $module = null;
 
-    #[ORM\OneToOne(mappedBy: 'cours', cascade: ['persist', 'remove'])]
-    private ?Quiz $quiz = null;
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $createdAt = null;
 
-    /**
-     * @var Collection<int, User>
-     */
-    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'cours')]
-    private Collection $users;
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $updatedAt = null;
 
     public function __construct()
     {
-        $this->users = new ArrayCollection();
+        $this->createdAt = new \DateTime();
     }
 
     public function getId(): ?int
@@ -54,19 +67,6 @@ class Cours
     public function setTitre(string $titre): static
     {
         $this->titre = $titre;
-
-        return $this;
-    }
-
-    public function getContenu(): ?string
-    {
-        return $this->contenu;
-    }
-
-    public function setContenu(string $contenu): static
-    {
-        $this->contenu = $contenu;
-
         return $this;
     }
 
@@ -78,7 +78,17 @@ class Cours
     public function setType(string $type): static
     {
         $this->type = $type;
+        return $this;
+    }
 
+    public function getContenu(): ?string
+    {
+        return $this->contenu;
+    }
+
+    public function setContenu(string $contenu): static
+    {
+        $this->contenu = $contenu;
         return $this;
     }
 
@@ -90,51 +100,28 @@ class Cours
     public function setModule(?Module $module): static
     {
         $this->module = $module;
-
         return $this;
     }
 
-    public function getQuiz(): ?Quiz
+    public function getCreatedAt(): ?\DateTimeInterface
     {
-        return $this->quiz;
+        return $this->createdAt;
     }
 
-    public function setQuiz(Quiz $quiz): static
+    public function setCreatedAt(\DateTimeInterface $createdAt): static
     {
-        // set the owning side of the relation if necessary
-        if ($quiz->getCours() !== $this) {
-            $quiz->setCours($this);
-        }
-
-        $this->quiz = $quiz;
-
+        $this->createdAt = $createdAt;
         return $this;
     }
 
-    /**
-     * @return Collection<int, User>
-     */
-    public function getUsers(): Collection
+    public function getUpdatedAt(): ?\DateTimeInterface
     {
-        return $this->users;
+        return $this->updatedAt;
     }
 
-    public function addUser(User $user): static
+    public function setUpdatedAt(?\DateTimeInterface $updatedAt): static
     {
-        if (!$this->users->contains($user)) {
-            $this->users->add($user);
-            $user->addCour($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUser(User $user): static
-    {
-        if ($this->users->removeElement($user)) {
-            $user->removeCour($this);
-        }
-
+        $this->updatedAt = $updatedAt;
         return $this;
     }
 }
