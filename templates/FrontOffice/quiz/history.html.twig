@@ -1,0 +1,132 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Résultats - SkillPath{% endblock %}
+
+{% block body %}
+<div class="min-h-screen mesh-light dark:mesh-dark">
+    <!-- Navigation Bar -->
+    <nav class="glass border-b border-slate-200/30 dark:border-white/5 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <a href="{{ path('app_home') }}" class="flex items-center gap-3 group">
+                    <div class="w-9 h-9 gradient-primary rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/20 group-hover:scale-110 transition-transform">
+                        <img src="{{ asset('images/logo.png') }}" alt="Logo" class="w-5 h-5 invert brightness-0">
+                    </div>
+                    <span class="text-lg font-black text-slate-900 dark:text-white">Skill<span class="gradient-text">Path</span></span>
+                </a>
+                <div class="flex items-center gap-4">
+                    <a href="{{ path('app_front_office_quiz_index') }}" class="text-sm font-semibold text-slate-500 dark:text-slate-400 hover:text-primary transition-colors">Quiz</a>
+                    <span class="text-slate-300 dark:text-slate-600">|</span>
+                    <span class="text-sm font-bold text-primary dark:text-primary-light">Mes Résultats</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <!-- Header -->
+        <div class="text-center mb-10 animate-fade-up">
+            <span class="badge badge-cyan mb-4 inline-flex">📊 Historique</span>
+            <h1 class="text-3xl font-black text-slate-900 dark:text-white mb-3">Mes <span class="gradient-text">Résultats</span></h1>
+            <p class="text-base text-slate-500 dark:text-slate-400">Consultez votre historique de quiz et suivez votre progression</p>
+        </div>
+
+        {% if resultats|length > 0 %}
+            <!-- Stats Summary -->
+            {% set totalAttempts = resultats|length %}
+            {% set passedCount = 0 %}
+            {% set totalScore = 0 %}
+            {% set totalMax = 0 %}
+            {% for r in resultats %}
+                {% set totalScore = totalScore + r.score %}
+                {% set totalMax = totalMax + r.noteMax %}
+                {% if r.noteMax > 0 and (r.score / r.noteMax * 100) >= 50 %}
+                    {% set passedCount = passedCount + 1 %}
+                {% endif %}
+            {% endfor %}
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8 animate-fade-up delay-100">
+                <div class="glass-card rounded-2xl p-5 text-center">
+                    <p class="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500 mb-1">Total Tentatives</p>
+                    <p class="text-3xl font-black text-slate-900 dark:text-white">{{ totalAttempts }}</p>
+                </div>
+                <div class="glass-card rounded-2xl p-5 text-center">
+                    <p class="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500 mb-1">Réussis</p>
+                    <p class="text-3xl font-black text-emerald-500">{{ passedCount }}</p>
+                </div>
+                <div class="glass-card rounded-2xl p-5 text-center">
+                    <p class="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500 mb-1">Moyenne</p>
+                    <p class="text-3xl font-black text-primary">{{ totalMax > 0 ? ((totalScore / totalMax) * 100)|round : 0 }}%</p>
+                </div>
+            </div>
+
+            <!-- Results List -->
+            <div class="glass-card rounded-2xl overflow-hidden animate-fade-up delay-200">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b border-slate-200/60 dark:border-white/5">
+                                <th class="text-left px-6 py-4 text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500">Quiz</th>
+                                <th class="text-left px-6 py-4 text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500">Score</th>
+                                <th class="text-left px-6 py-4 text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500">Statut</th>
+                                <th class="text-left px-6 py-4 text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500">Date</th>
+                                <th class="text-right px-6 py-4 text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for resultat in resultats %}
+                            {% set pct = resultat.noteMax > 0 ? (resultat.score / resultat.noteMax * 100)|round : 0 %}
+                            {% set ok = pct >= 50 %}
+                            <tr class="border-b border-slate-100/60 dark:border-white/5 hover:bg-slate-50/50 dark:hover:bg-white/[0.02] transition-colors">
+                                <td class="px-6 py-4">
+                                    <div>
+                                        <span class="font-bold text-sm text-slate-900 dark:text-white">{{ resultat.quiz.titre }}</span>
+                                        {% if resultat.quiz.cours %}
+                                            <p class="text-xs text-slate-400">📚 {{ resultat.quiz.cours.titre }}</p>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-2">
+                                        <span class="font-bold text-sm text-slate-900 dark:text-white">{{ resultat.score }}/{{ resultat.noteMax }}</span>
+                                        <div class="w-12 h-1.5 rounded-full bg-slate-100 dark:bg-white/5 overflow-hidden">
+                                            <div class="h-full rounded-full {% if ok %}bg-emerald-500{% else %}bg-red-500{% endif %}" style="width: {{ pct }}%"></div>
+                                        </div>
+                                        <span class="text-xs font-bold {% if ok %}text-emerald-500{% else %}text-red-500{% endif %}">{{ pct }}%</span>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    {% if ok %}
+                                        <span class="badge badge-green">Réussi ✓</span>
+                                    {% else %}
+                                        <span class="badge badge-red">Échoué</span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span class="text-xs text-slate-400 dark:text-slate-500">{{ resultat.datePassage|date('d/m/Y H:i') }}</span>
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    <a href="{{ path('app_front_office_quiz_take', {'id': resultat.quiz.id}) }}" class="text-sm font-bold text-primary hover:text-primary-dark transition-colors">Réessayer →</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {% else %}
+            <div class="glass-card rounded-2xl p-12 text-center animate-fade-up">
+                <div class="w-20 h-20 rounded-2xl bg-slate-100 dark:bg-white/5 flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-10 h-10 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                </div>
+                <p class="text-lg font-bold text-slate-400 dark:text-slate-500 mb-2">Aucun résultat pour le moment</p>
+                <p class="text-sm text-slate-400 dark:text-slate-600 mb-4">Passez un quiz pour voir vos résultats ici</p>
+                <a href="{{ path('app_front_office_quiz_index') }}" class="btn-primary text-sm !py-3 !px-6 inline-flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/></svg>
+                    Découvrir les Quiz
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

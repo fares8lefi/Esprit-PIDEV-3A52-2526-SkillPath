@@ -5,13 +5,12 @@ namespace App\Controller\FrontOffice;
 use App\Entity\Resultat;
 use App\Entity\Quiz;
 use App\Repository\QuizRepository;
-use App\Repository\QuestionRepository;
+use App\Repository\ResultatRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -36,10 +35,9 @@ class QuizController extends AbstractController
         $funFact = $fallbacks[array_rand($fallbacks)]; 
 
         try {
-            // Utilisation d'un cache-buster (t=...) pour forcer un nouveau fait à chaque F5
             $response = $httpClient->request('GET', 'https://numbersapi.com/random/trivia?json&t=' . time(), [
                 'timeout' => 2,
-                'verify_peer' => false, // Utile pour éviter les erreurs SSL sur certains environnements Windows
+                'verify_peer' => false,
             ]);
             
             if ($response->getStatusCode() === 200) {
@@ -47,7 +45,7 @@ class QuizController extends AbstractController
                 $funFact = $content['text'] ?? $funFact;
             }
         } catch (\Exception $e) {
-            // Le fallback aléatoire reste actif si l'API échoue
+            // Fallback remains active
         }
 
         return $this->render('FrontOffice/quiz/index.html.twig', [
@@ -58,6 +56,24 @@ class QuizController extends AbstractController
         ]);
     }
 
+    #[Route('/history', name: 'app_front_office_quiz_history', methods: ['GET'])]
+    public function history(ResultatRepository $resultatRepository): Response
+    {
+        $user = $this->getUser();
+        $resultats = [];
+
+        if ($user) {
+            $resultats = $resultatRepository->findBy(
+                ['etudiant' => $user],
+                ['datePassage' => 'DESC']
+            );
+        }
+
+        return $this->render('FrontOffice/quiz/history.html.twig', [
+            'resultats' => $resultats,
+        ]);
+    }
+
     #[Route('/{id}/take', name: 'app_front_office_quiz_take', methods: ['GET', 'POST'])]
     public function take(Request $request, Quiz $quiz, EntityManagerInterface $entityManager): Response
     {
@@ -65,21 +81,20 @@ class QuizController extends AbstractController
             $score = 0;
             $questions = $quiz->getQuestions();
             $data = $request->request->all();
+            $userAnswers = [];
 
             foreach ($questions as $question) {
                 $fieldName = 'question_' . $question->getId();
-                if (isset($data[$fieldName])) {
-                    $userAnswer = $data[$fieldName];
-                    if ($userAnswer === $question->getBonneReponse()) {
-                        $score += $question->getPoints();
-                    }
+                $userAnswer = $data[$fieldName] ?? null;
+                $userAnswers[$question->getId()] = $userAnswer;
+
+                if ($userAnswer && $userAnswer === $question->getBonneReponse()) {
+                    $score += $question->getPoints();
                 }
             }
 
             $user = $this->getUser();
-            $resultat = null;
 
-            // Only attempt to save if we have a valid user
             if ($user && method_exists($user, 'getId')) {
                 $resultat = new Resultat();
                 $resultat->setQuiz($quiz);
@@ -95,6 +110,9 @@ class QuizController extends AbstractController
                     // Log error but continue
                 }
             }
+
+            // Store answers in session for review
+            $request->getSession()->set('quiz_answers_' . $quiz->getId(), $userAnswers);
 
             return $this->redirectToRoute('app_front_office_quiz_result', [
                 'id' => $quiz->getId(),
@@ -114,10 +132,14 @@ class QuizController extends AbstractController
         $score = $request->query->get('score', 0);
         $totalPoints = $request->query->get('totalPoints', 0);
 
+        // Retrieve user answers from session for review
+        $userAnswers = $request->getSession()->get('quiz_answers_' . $quiz->getId(), []);
+
         return $this->render('FrontOffice/quiz/result.html.twig', [
             'quiz' => $quiz,
             'score' => $score,
-            'totalPoints' => $totalPoints
+            'totalPoints' => $totalPoints,
+            'userAnswers' => $userAnswers,
         ]);
     }
 }

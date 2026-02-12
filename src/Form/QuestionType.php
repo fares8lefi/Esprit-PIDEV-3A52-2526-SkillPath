@@ -19,24 +19,24 @@ class QuestionType extends AbstractType
     {
         $builder
             ->add('enonce', TextareaType::class, [
-                'label' => 'Enoncé',
-                'attr' => ['class' => 'form-control']
+                'label' => 'Énoncé de la question',
+                'attr' => ['class' => 'form-input', 'rows' => 3, 'placeholder' => 'Saisissez la question...']
             ])
             ->add('choixA', TextType::class, [
                 'label' => 'Choix A',
-                'attr' => ['class' => 'form-control']
+                'attr' => ['class' => 'form-input', 'placeholder' => 'Réponse A']
             ])
             ->add('choixB', TextType::class, [
                 'label' => 'Choix B',
-                'attr' => ['class' => 'form-control']
+                'attr' => ['class' => 'form-input', 'placeholder' => 'Réponse B']
             ])
             ->add('choixC', TextType::class, [
                 'label' => 'Choix C',
-                'attr' => ['class' => 'form-control']
+                'attr' => ['class' => 'form-input', 'placeholder' => 'Réponse C']
             ])
             ->add('choixD', TextType::class, [
                 'label' => 'Choix D',
-                'attr' => ['class' => 'form-control']
+                'attr' => ['class' => 'form-input', 'placeholder' => 'Réponse D']
             ])
             ->add('bonneReponse', ChoiceType::class, [
                 'label' => 'Bonne Réponse',
@@ -46,21 +46,18 @@ class QuestionType extends AbstractType
                     'C' => 'C',
                     'D' => 'D',
                 ],
-                'attr' => ['class' => 'form-control']
+                'placeholder' => '-- Choisir --',
+                'attr' => ['class' => 'form-input']
             ])
             ->add('points', IntegerType::class, [
                 'label' => 'Points',
-                'attr' => ['class' => 'form-control']
+                'attr' => ['class' => 'form-input', 'placeholder' => 'Ex: 5']
             ])
-            // We usually set the quiz via controller when adding from a quiz page, avoiding the need to select it here if coming from a context.
-            // But if we want to allow changing it or adding standalone, we can keep it.
-            // For now, I will omit it here assuming we pass it or it's implicitly handled, 
-            // OR I can add it but disable it if passed via options.
-            // Let's add it generic for now.
-             ->add('quiz', EntityType::class, [
+            ->add('quiz', EntityType::class, [
                 'class' => Quiz::class,
                 'choice_label' => 'titre',
-                'attr' => ['class' => 'form-control']
+                'label' => 'Quiz',
+                'attr' => ['class' => 'form-input']
             ])
         ;
     }

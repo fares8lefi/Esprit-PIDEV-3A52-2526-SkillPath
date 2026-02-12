@@ -1,56 +1,142 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Take Quiz - {{ quiz.titre }}{% endblock %}
+{% block title %}{{ quiz.titre }} - SkillPath Quiz{% endblock %}
 
 {% block body %}
-    <div class="container mx-auto p-4 max-w-3xl">
-        <div class="bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-700">
-            <h1 class="text-2xl font-bold mb-2 text-white">{{ quiz.titre }}</h1>
-            <p class="text-gray-300 mb-6">{{ quiz.description }}</p>
-            
-            <form method="post" action="{{ path('app_front_office_quiz_take', {'id': quiz.id}) }}">
-                {% for question in quiz.questions %}
-                    <div class="mb-8 border-b border-gray-700 pb-6 last:border-b-0">
-                        <h3 class="text-lg font-semibold mb-3 text-white">{{ loop.index }}. {{ question.enonce }} <span class="text-sm text-gray-400 font-normal">({{ question.points }} pts)</span></h3>
-                        
-                        <div class="space-y-2">
-                            {% if question.choixA %}
-                                <label class="flex items-center space-x-3 cursor-pointer p-2 rounded hover:bg-gray-700 transition">
-                                    <input type="radio" name="question_{{ question.id }}" value="A" class="form-radio h-5 w-5 text-blue-600 bg-gray-700 border-gray-600 focus:ring-blue-500" required>
-                                    <span class="text-gray-200">A. {{ question.choixA }}</span>
-                                </label>
-                            {% endif %}
-                            
-                            {% if question.choixB %}
-                                <label class="flex items-center space-x-3 cursor-pointer p-2 rounded hover:bg-gray-700 transition">
-                                    <input type="radio" name="question_{{ question.id }}" value="B" class="form-radio h-5 w-5 text-blue-600 bg-gray-700 border-gray-600 focus:ring-blue-500">
-                                    <span class="text-gray-200">B. {{ question.choixB }}</span>
-                                </label>
-                            {% endif %}
-                            
-                            {% if question.choixC %}
-                                <label class="flex items-center space-x-3 cursor-pointer p-2 rounded hover:bg-gray-700 transition">
-                                    <input type="radio" name="question_{{ question.id }}" value="C" class="form-radio h-5 w-5 text-blue-600 bg-gray-700 border-gray-600 focus:ring-blue-500">
-                                    <span class="text-gray-200">C. {{ question.choixC }}</span>
-                                </label>
-                            {% endif %}
-                            
-                            {% if question.choixD %}
-                                <label class="flex items-center space-x-3 cursor-pointer p-2 rounded hover:bg-gray-700 transition">
-                                    <input type="radio" name="question_{{ question.id }}" value="D" class="form-radio h-5 w-5 text-blue-600 bg-gray-700 border-gray-600 focus:ring-blue-500">
-                                    <span class="text-gray-200">D. {{ question.choixD }}</span>
-                                </label>
-                            {% endif %}
+<div class="min-h-screen mesh-light dark:mesh-dark">
+    <!-- Navigation Bar -->
+    <nav class="glass border-b border-slate-200/30 dark:border-white/5 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <a href="{{ path('app_home') }}" class="flex items-center gap-3 group">
+                    <div class="w-9 h-9 gradient-primary rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/20 group-hover:scale-110 transition-transform">
+                        <img src="{{ asset('images/logo.png') }}" alt="Logo" class="w-5 h-5 invert brightness-0">
+                    </div>
+                    <span class="text-lg font-black text-slate-900 dark:text-white">Skill<span class="gradient-text">Path</span></span>
+                </a>
+                <div class="flex items-center gap-4">
+                    <a href="{{ path('app_front_office_quiz_index') }}" class="text-sm font-semibold text-slate-500 dark:text-slate-400 hover:text-primary transition-colors">← Retour aux Quiz</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <!-- Quiz Header -->
+        <div class="glass-card rounded-2xl overflow-hidden mb-8 animate-fade-up">
+            <div class="gradient-primary px-8 py-6">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <span class="badge bg-white/15 text-white backdrop-blur-sm mb-3 inline-flex">📝 Quiz</span>
+                        <h1 class="text-2xl font-black text-white mb-2">{{ quiz.titre }}</h1>
+                        <p class="text-white/70 text-sm">{{ quiz.description }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="px-8 py-4 flex items-center gap-6">
+                <div class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <span class="font-semibold">{{ quiz.duree }} min</span>
+                </div>
+                <div class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>
+                    <span class="font-semibold">{{ quiz.noteMax }} pts max</span>
+                </div>
+                <div class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <span class="font-semibold">{{ quiz.questions|length }} questions</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="glass-card rounded-2xl px-6 py-4 mb-8 animate-fade-up delay-100">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-black uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500">Progression</span>
+                <span class="text-xs font-bold text-primary dark:text-primary-light" id="progressText">0 / {{ quiz.questions|length }}</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-bar-fill" id="progressBar" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <!-- Quiz Form -->
+        <form method="post" action="{{ path('app_front_office_quiz_take', {'id': quiz.id}) }}" id="quizForm">
+            {% for question in quiz.questions %}
+                <div class="glass-card rounded-2xl p-6 mb-4 animate-fade-up delay-{{ loop.index * 100 }} question-card" data-index="{{ loop.index }}">
+                    <div class="flex items-start gap-4 mb-4">
+                        <span class="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center text-white text-sm font-black flex-shrink-0 shadow-lg shadow-purple-500/15">{{ loop.index }}</span>
+                        <div class="flex-1">
+                            <h3 class="text-base font-bold text-slate-900 dark:text-white leading-relaxed">{{ question.enonce }}</h3>
+                            <span class="badge badge-amber mt-2">{{ question.points }} pts</span>
                         </div>
                     </div>
-                {% endfor %}
-                
-                <div class="mt-8 text-center">
-                    <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-lg shadow transition duration-300 transform hover:scale-105">
-                        Submit Quiz
-                    </button>
+                    
+                    <div class="space-y-2 ml-14">
+                        {% set choices = [
+                            {'letter': 'A', 'text': question.choixA},
+                            {'letter': 'B', 'text': question.choixB},
+                            {'letter': 'C', 'text': question.choixC},
+                            {'letter': 'D', 'text': question.choixD}
+                        ] %}
+                        {% for choice in choices %}
+                            {% if choice.text %}
+                            <label class="flex items-center gap-3 p-3.5 rounded-xl cursor-pointer border-2 border-transparent hover:border-primary/20 hover:bg-primary/[0.03] dark:hover:bg-primary/[0.05] transition-all group quiz-option" data-question="{{ question.id }}">
+                                <input type="radio" name="question_{{ question.id }}" value="{{ choice.letter }}" class="hidden quiz-radio" required>
+                                <span class="w-8 h-8 rounded-lg border-2 border-slate-200 dark:border-slate-600 flex items-center justify-center text-xs font-black text-slate-400 dark:text-slate-500 group-hover:border-primary group-hover:text-primary transition-all option-letter">{{ choice.letter }}</span>
+                                <span class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">{{ choice.text }}</span>
+                            </label>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
                 </div>
-            </form>
-        </div>
+            {% endfor %}
+
+            <!-- Submit -->
+            <div class="text-center py-8 animate-fade-up">
+                <button type="submit" class="btn-primary text-base !py-4 !px-10 inline-flex items-center gap-3">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    Soumettre mes Réponses
+                </button>
+            </div>
+        </form>
     </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const options = document.querySelectorAll('.quiz-option');
+    const totalQuestions = {{ quiz.questions|length }};
+    const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
+    const answered = new Set();
+
+    options.forEach(option => {
+        option.addEventListener('click', function() {
+            const radio = this.querySelector('.quiz-radio');
+            const questionId = this.dataset.question;
+            radio.checked = true;
+
+            // Update visual state for all options of this question
+            const siblings = document.querySelectorAll(`[data-question="${questionId}"]`);
+            siblings.forEach(sib => {
+                sib.classList.remove('border-primary/30', 'bg-primary/[0.05]');
+                sib.querySelector('.option-letter').classList.remove('border-primary', 'bg-primary', 'text-white');
+                sib.querySelector('.option-letter').classList.add('border-slate-200', 'dark:border-slate-600', 'text-slate-400');
+            });
+
+            this.classList.add('border-primary/30', 'bg-primary/[0.05]');
+            const letter = this.querySelector('.option-letter');
+            letter.classList.remove('border-slate-200', 'dark:border-slate-600', 'text-slate-400');
+            letter.classList.add('border-primary', 'bg-primary', 'text-white');
+
+            // Update progress
+            answered.add(questionId);
+            const percent = (answered.size / totalQuestions) * 100;
+            progressBar.style.width = percent + '%';
+            progressText.textContent = answered.size + ' / ' + totalQuestions;
+        });
+    });
+});
+</script>
 {% endblock %}

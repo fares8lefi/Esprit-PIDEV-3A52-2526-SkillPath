@@ -1,0 +1,128 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ cours.titre }} - SkillPath{% endblock %}
+
+{% block body %}
+<div class="min-h-screen mesh-light dark:mesh-dark pb-20">
+    <!-- Navigation Bar -->
+    <nav class="glass border-b border-slate-200/30 dark:border-white/5 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <a href="{{ path('app_home') }}" class="flex items-center gap-3 group">
+                    <div class="w-9 h-9 gradient-primary rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/20 group-hover:scale-110 transition-transform">
+                        <img src="{{ asset('images/logo.png') }}" alt="Logo" class="w-5 h-5 invert brightness-0">
+                    </div>
+                    <span class="text-lg font-black text-slate-900 dark:text-white">Skill<span class="gradient-text">Path</span></span>
+                </a>
+                <div class="flex items-center gap-4">
+                    <a href="{{ path('app_home') }}" class="text-sm font-semibold text-slate-500 dark:text-slate-400 hover:text-primary transition-colors">Accueil</a>
+                    <span class="text-slate-300 dark:text-slate-600">|</span>
+                    <span class="text-sm font-bold text-primary dark:text-primary-light">Détails du Cours</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <!-- Course Header -->
+        <div class="glass-card rounded-3xl overflow-hidden mb-8 animate-fade-up">
+            <div class="gradient-primary px-8 py-10 relative overflow-hidden">
+                <div class="absolute right-0 top-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+                
+                <div class="relative z-10">
+                    <div class="flex flex-wrap items-center gap-3 mb-4">
+                        <span class="badge bg-white/20 backdrop-blur-md text-white border-none uppercase tracking-widest text-[10px]">{{ cours.type }}</span>
+                        <span class="badge bg-white/20 backdrop-blur-md text-white border-none uppercase tracking-widest text-[10px]">{{ cours.module.name }}</span>
+                    </div>
+                    <h1 class="text-3xl lg:text-4xl font-black text-white mb-4 tracking-tight">{{ cours.titre }}</h1>
+                    <div class="flex items-center gap-6 text-white/80 text-sm font-medium">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            <span>Ajouté le {{ cours.createdAt|date('d M Y') }}</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                            <span>{{ cours.module.level }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-8 lg:p-10">
+                <div class="prose prose-slate dark:prose-invert max-w-none">
+                    <h2 class="text-xl font-black text-slate-900 dark:text-white mb-6 flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        </span>
+                        Contenu du Cours
+                    </h2>
+                    <div class="text-slate-600 dark:text-slate-400 leading-relaxed whitespace-pre-wrap text-lg">
+                        {{ cours.contenu }}
+                    </div>
+                </div>
+                
+                {% if cours.type == 'video' %}
+                    <div class="mt-10 aspect-video rounded-2xl bg-slate-900 flex items-center justify-center group cursor-pointer relative overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                        <div class="w-20 h-20 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center group-hover:scale-110 transition-transform relative z-10">
+                            <svg class="w-10 h-10 text-white fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                        </div>
+                        <span class="absolute bottom-6 left-1/2 -translate-x-1/2 text-white font-bold tracking-wider uppercase text-xs">Lecteur Vidéo</span>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Associated Quizzes Section -->
+        <div class="animate-fade-up delay-200">
+            <h2 class="text-2xl font-black text-slate-900 dark:text-white mb-6 flex items-center gap-3">
+                <span class="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center text-accent">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+                </span>
+                Quiz de validation
+            </h2>
+            
+            {% if cours.quizzes|length > 0 %}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {% for quiz in cours.quizzes %}
+                        <div class="glass-card p-6 rounded-2xl group relative overflow-hidden flex flex-col justify-between">
+                            <div class="absolute top-0 right-0 w-32 h-32 bg-accent/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                            
+                            <div>
+                                <div class="flex items-start justify-between mb-4">
+                                    <h3 class="text-xl font-bold text-slate-900 dark:text-white group-hover:text-primary transition-colors">{{ quiz.titre }}</h3>
+                                    <span class="badge badge-purple">{{ quiz.questions|length }} Q</span>
+                                </div>
+                                <p class="text-sm text-slate-500 dark:text-slate-400 mb-6 line-clamp-2">{{ quiz.description }}</p>
+                                
+                                <div class="flex items-center gap-4 text-xs font-bold text-slate-400 mb-6">
+                                    <div class="flex items-center gap-1.5">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                        <span>{{ quiz.duree }} min</span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>
+                                        <span>{{ quiz.noteMax }} pts</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <a href="{{ path('app_front_office_quiz_take', {'id': quiz.id}) }}" class="btn-primary w-full text-center text-sm !py-3.5 flex items-center justify-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/></svg>
+                                Commencer le Test
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="glass-card rounded-2xl p-10 text-center border-2 border-dashed border-slate-200/50 dark:border-white/5">
+                    <div class="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-white/5 flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
+                    <p class="text-slate-400 font-bold">Aucun quiz n'est encore associé à ce cours.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

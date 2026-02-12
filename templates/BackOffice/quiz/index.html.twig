@@ -1,43 +1,92 @@
-{% extends 'base.html.twig' %}
+{% extends 'BackOffice/layout.html.twig' %}
 
-{% block title %}Quiz Index{% endblock %}
+{% block title %}Gestion des Quiz - SkillPath{% endblock %}
 
-{% block body %}
-    <div class="container mx-auto p-4">
-        <h1 class="text-2xl font-bold mb-4">Quiz List</h1>
+{% block content %}
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
+        <div>
+            <h1 class="text-2xl font-black text-slate-900 dark:text-white">Gestion des Quiz</h1>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">{{ quizzes|length }} quiz disponible{{ quizzes|length > 1 ? 's' : '' }}</p>
+        </div>
+        <a href="{{ path('app_back_office_quiz_new') }}" class="btn-primary inline-flex items-center gap-2 text-sm !py-3 !px-5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            Créer un Quiz
+        </a>
+    </div>
 
-        <a href="{{ path('app_back_office_quiz_new') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4 inline-block">Create new</a>
-
-        <div class="overflow-x-auto relative shadow-md sm:rounded-lg">
-            <table class="w-full text-sm text-left text-gray-400">
-                <thead class="text-xs text-gray-400 uppercase bg-gray-900">
-                    <tr>
-                        <th scope="col" class="py-3 px-6">Id</th>
-                        <th scope="col" class="py-3 px-6">Titre</th>
-                        <th scope="col" class="py-3 px-6">Description</th>
-                        <th scope="col" class="py-3 px-6">Duree</th>
-                        <th scope="col" class="py-3 px-6">Note Max</th>
-                        <th scope="col" class="py-3 px-6">Date Creation</th>
-                        <th scope="col" class="py-3 px-6">Actions</th>
+    <!-- Quiz Table -->
+    <div class="glass-card rounded-2xl overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead>
+                    <tr class="border-b border-slate-200/60 dark:border-white/5">
+                        <th class="text-left px-6 py-4 text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500">ID</th>
+                        <th class="text-left px-6 py-4 text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500">Titre</th>
+                        <th class="text-left px-6 py-4 text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500">Cours</th>
+                        <th class="text-left px-6 py-4 text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500">Durée</th>
+                        <th class="text-left px-6 py-4 text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500">Note Max</th>
+                        <th class="text-left px-6 py-4 text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500">Questions</th>
+                        <th class="text-left px-6 py-4 text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500">Date</th>
+                        <th class="text-right px-6 py-4 text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                 {% for quiz in quizzes %}
-                    <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700">
-                        <td class="py-4 px-6 text-white">{{ quiz.id }}</td>
-                        <td class="py-4 px-6 text-white">{{ quiz.titre }}</td>
-                        <td class="py-4 px-6 text-gray-300">{{ quiz.description }}</td>
-                        <td class="py-4 px-6 text-gray-300">{{ quiz.duree }} min</td>
-                        <td class="py-4 px-6 text-gray-300">{{ quiz.noteMax }}</td>
-                        <td class="py-4 px-6 text-gray-300">{{ quiz.dateCreation ? quiz.dateCreation|date('Y-m-d H:i:s') : '' }}</td>
-                        <td class="py-4 px-6">
-                            <a href="{{ path('app_back_office_quiz_show', {'id': quiz.id}) }}" class="font-medium text-blue-400 hover:underline">Show</a>
-                            <a href="{{ path('app_back_office_quiz_edit', {'id': quiz.id}) }}" class="font-medium text-blue-400 hover:underline ml-2">Edit</a>
+                    <tr class="border-b border-slate-100/60 dark:border-white/5 hover:bg-slate-50/50 dark:hover:bg-white/[0.02] transition-colors">
+                        <td class="px-6 py-4">
+                            <span class="text-xs font-bold text-slate-400 dark:text-slate-500">#{{ quiz.id }}</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="font-bold text-sm text-slate-900 dark:text-white">{{ quiz.titre }}</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            {% if quiz.cours %}
+                                <span class="badge badge-green">{{ quiz.cours.titre }}</span>
+                            {% else %}
+                                <span class="text-xs text-slate-400 italic">Non assigné</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="badge badge-cyan">{{ quiz.duree }} min</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="badge badge-amber">{{ quiz.noteMax }} pts</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="badge badge-purple">{{ quiz.questions|length }} Q</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="text-xs text-slate-400 dark:text-slate-500">{{ quiz.dateCreation ? quiz.dateCreation|date('d/m/Y') : '-' }}</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="flex items-center justify-end gap-2">
+                                <a href="{{ path('app_back_office_quiz_show', {'id': quiz.id}) }}" class="p-2 rounded-lg text-slate-400 hover:text-primary hover:bg-primary/5 transition-all" title="Voir">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                </a>
+                                <a href="{{ path('app_back_office_quiz_edit', {'id': quiz.id}) }}" class="p-2 rounded-lg text-slate-400 hover:text-amber-500 hover:bg-amber-500/5 transition-all" title="Modifier">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                </a>
+                                <form method="post" action="{{ path('app_back_office_quiz_delete', {'id': quiz.id}) }}" onsubmit="return confirm('Supprimer ce quiz ?');" style="display:inline;">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ quiz.id) }}">
+                                    <button type="submit" class="p-2 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-500/5 transition-all" title="Supprimer">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                    </button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                 {% else %}
                     <tr>
-                        <td colspan="7" class="py-4 px-6 text-center text-gray-400">No records found</td>
+                        <td colspan="8" class="px-6 py-12 text-center">
+                            <div class="flex flex-col items-center gap-3">
+                                <div class="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-white/5 flex items-center justify-center">
+                                    <svg class="w-8 h-8 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                                </div>
+                                <p class="text-sm font-semibold text-slate-400 dark:text-slate-500">Aucun quiz trouvé</p>
+                                <a href="{{ path('app_back_office_quiz_new') }}" class="text-sm font-bold text-primary hover:text-primary-dark transition-colors">Créer le premier quiz →</a>
+                            </div>
+                        </td>
                     </tr>
                 {% endfor %}
                 </tbody>

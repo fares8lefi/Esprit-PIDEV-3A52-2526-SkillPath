@@ -2,7 +2,9 @@
 
 namespace App\Entity;
 
-use App\Repository\CoursRepository;  // ✅ Changé
+use App\Repository\CoursRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -49,9 +51,16 @@ class Cours  // ✅ Changé de Content à Cours
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $updatedAt = null;
 
+    /**
+     * @var Collection<int, Quiz>
+     */
+    #[ORM\OneToMany(targetEntity: Quiz::class, mappedBy: 'cours')]
+    private Collection $quizzes;
+
     public function __construct()
     {
         $this->createdAt = new \DateTime();
+        $this->quizzes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -123,5 +132,37 @@ class Cours  // ✅ Changé de Content à Cours
     {
         $this->updatedAt = $updatedAt;
         return $this;
+    }
+
+    /**
+     * @return Collection<int, Quiz>
+     */
+    public function getQuizzes(): Collection
+    {
+        return $this->quizzes;
+    }
+
+    public function addQuiz(Quiz $quiz): static
+    {
+        if (!$this->quizzes->contains($quiz)) {
+            $this->quizzes->add($quiz);
+            $quiz->setCours($this);
+        }
+        return $this;
+    }
+
+    public function removeQuiz(Quiz $quiz): static
+    {
+        if ($this->quizzes->removeElement($quiz)) {
+            if ($quiz->getCours() === $this) {
+                $quiz->setCours(null);
+            }
+        }
+        return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->titre ?? '';
     }
 }

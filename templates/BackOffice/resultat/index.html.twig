@@ -1,0 +1,97 @@
+{% extends 'BackOffice/layout.html.twig' %}
+
+{% block title %}Résultats des Quiz - SkillPath{% endblock %}
+
+{% block content %}
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
+        <div>
+            <h1 class="text-2xl font-black text-slate-900 dark:text-white">Résultats des Quiz</h1>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">{{ resultats|length }} résultat{{ resultats|length > 1 ? 's' : '' }} enregistré{{ resultats|length > 1 ? 's' : '' }}</p>
+        </div>
+    </div>
+
+    <!-- Results Table -->
+    <div class="glass-card rounded-2xl overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead>
+                    <tr class="border-b border-slate-200/60 dark:border-white/5">
+                        <th class="text-left px-6 py-4 text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500">Étudiant</th>
+                        <th class="text-left px-6 py-4 text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500">Quiz</th>
+                        <th class="text-left px-6 py-4 text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500">Score</th>
+                        <th class="text-left px-6 py-4 text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500">Pourcentage</th>
+                        <th class="text-left px-6 py-4 text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500">Statut</th>
+                        <th class="text-left px-6 py-4 text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500">Date</th>
+                        <th class="text-right px-6 py-4 text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for resultat in resultats %}
+                    {% set percentage = resultat.noteMax > 0 ? (resultat.score / resultat.noteMax * 100)|round : 0 %}
+                    {% set passed = percentage >= 50 %}
+                    <tr class="border-b border-slate-100/60 dark:border-white/5 hover:bg-slate-50/50 dark:hover:bg-white/[0.02] transition-colors">
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-lg gradient-primary flex items-center justify-center text-white text-xs font-black">
+                                    {{ resultat.etudiant.username|slice(0,1)|upper }}
+                                </div>
+                                <div>
+                                    <span class="font-bold text-sm text-slate-900 dark:text-white">{{ resultat.etudiant.username }}</span>
+                                    <p class="text-xs text-slate-400 dark:text-slate-500">{{ resultat.etudiant.email }}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <a href="{{ path('app_back_office_quiz_show', {'id': resultat.quiz.id}) }}" class="font-semibold text-sm text-primary hover:text-primary-dark transition-colors">
+                                {{ resultat.quiz.titre }}
+                            </a>
+                            <p class="text-[10px] text-slate-400 mt-0.5">{{ resultat.quiz.questions|length }} questions</p>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="font-bold text-sm text-slate-900 dark:text-white">{{ resultat.score }} <span class="text-slate-400 font-normal">/ {{ resultat.noteMax }}</span></span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-2">
+                                <div class="w-16 h-1.5 rounded-full bg-slate-100 dark:bg-white/5 overflow-hidden">
+                                    <div class="h-full rounded-full {% if passed %}bg-emerald-500{% else %}bg-red-500{% endif %}" style="width: {{ percentage }}%"></div>
+                                </div>
+                                <span class="text-xs font-bold {% if passed %}text-emerald-500{% else %}text-red-500{% endif %}">{{ percentage }}%</span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4">
+                            {% if passed %}
+                                <span class="badge badge-green">Réussi</span>
+                            {% else %}
+                                <span class="badge badge-red">Échoué</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="text-xs text-slate-400 dark:text-slate-500">{{ resultat.datePassage|date('d/m/Y H:i') }}</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <form method="post" action="{{ path('app_back_office_resultat_delete', {'id': resultat.id}) }}" onsubmit="return confirm('Supprimer ce résultat ?');" style="display:inline;">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ resultat.id) }}">
+                                <button type="submit" class="p-2 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-500/5 transition-all" title="Supprimer">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="7" class="px-6 py-12 text-center">
+                            <div class="flex flex-col items-center gap-3">
+                                <div class="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-white/5 flex items-center justify-center">
+                                    <svg class="w-8 h-8 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                                </div>
+                                <p class="text-sm font-semibold text-slate-400 dark:text-slate-500">Aucun résultat enregistré</p>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

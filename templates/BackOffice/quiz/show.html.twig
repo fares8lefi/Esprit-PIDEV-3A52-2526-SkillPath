@@ -1,84 +1,178 @@
-{% extends 'base.html.twig' %}
+{% extends 'BackOffice/layout.html.twig' %}
 
-{% block title %}Quiz{% endblock %}
+{% block title %}{{ quiz.titre }} - SkillPath{% endblock %}
 
-{% block body %}
-    <div class="container mx-auto p-4">
-        <h1 class="text-2xl font-bold mb-4">Quiz</h1>
+{% block content %}
+    <!-- Breadcrumb -->
+    <nav class="mb-6">
+        <ol class="flex items-center gap-2 text-sm">
+            <li><a href="{{ path('app_back_office_quiz_index') }}" class="text-slate-400 dark:text-slate-500 hover:text-primary transition-colors font-medium">Quiz</a></li>
+            <li class="text-slate-300 dark:text-slate-600">/</li>
+            <li class="text-slate-700 dark:text-slate-300 font-semibold">{{ quiz.titre }}</li>
+        </ol>
+    </nav>
 
-        <div class="bg-white shadow overflow-hidden sm:rounded-lg mb-4">
-            <div class="px-4 py-5 sm:px-6">
-                <h3 class="text-lg leading-6 font-medium text-gray-900">Quiz Details</h3>
-            </div>
-            <div class="border-t border-gray-200">
-                <dl>
-                    <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt class="text-sm font-medium text-gray-500">Id</dt>
-                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ quiz.id }}</dd>
-                    </div>
-                    <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt class="text-sm font-medium text-gray-500">Titre</dt>
-                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ quiz.titre }}</dd>
-                    </div>
-                    <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt class="text-sm font-medium text-gray-500">Description</dt>
-                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ quiz.description }}</dd>
-                    </div>
-                    <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt class="text-sm font-medium text-gray-500">Duree</dt>
-                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ quiz.duree }} min</dd>
-                    </div>
-                    <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt class="text-sm font-medium text-gray-500">Note Max</dt>
-                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ quiz.noteMax }}</dd>
-                    </div>
-                    <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt class="text-sm font-medium text-gray-500">Date Creation</dt>
-                        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ quiz.dateCreation ? quiz.dateCreation|date('Y-m-d H:i:s') : '' }}</dd>
-                    </div>
-                </dl>
+    <!-- Quiz Details Card -->
+    <div class="glass-card rounded-2xl overflow-hidden mb-8">
+        <!-- Header -->
+        <div class="gradient-primary px-8 py-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-black text-white">{{ quiz.titre }}</h1>
+                    <p class="text-white/70 text-sm mt-1">{{ quiz.description }}</p>
+                </div>
+                <span class="px-4 py-2 bg-white/15 backdrop-blur-sm text-white rounded-xl text-xs font-bold">#{{ quiz.id }}</span>
             </div>
         </div>
 
-        <a href="{{ path('app_back_office_quiz_index') }}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mr-2">Back to list</a>
-        <a href="{{ path('app_back_office_quiz_edit', {'id': quiz.id}) }}" class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded mr-2">Edit</a>
-        {{ include('BackOffice/quiz/_delete_form.html.twig') }}
-        
-        <hr class="my-8">
-        
-        <div class="flex justify-between items-center mb-4">
-            <h2 class="text-xl font-bold">Questions</h2>
-            <a href="{{ path('app_back_office_question_new', {'id_quiz': quiz.id}) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Add Question</a>
-        </div>
-        
-        <div class="overflow-x-auto relative shadow-md sm:rounded-lg">
-            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                    <tr>
-                        <th scope="col" class="py-3 px-6">Enonce</th>
-                        <th scope="col" class="py-3 px-6">Points</th>
-                        <th scope="col" class="py-3 px-6">Bonne Réponse</th>
-                        <th scope="col" class="py-3 px-6">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                {% for question in quiz.questions %}
-                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                        <td class="py-4 px-6">{{ question.enonce }}</td>
-                        <td class="py-4 px-6">{{ question.points }}</td>
-                        <td class="py-4 px-6">{{ question.bonneReponse }}</td>
-                        <td class="py-4 px-6">
-                             <a href="{{ path('app_back_office_question_edit', {'id': question.id}) }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
-                        </td>
-                    </tr>
-                {% else %}
-                    <tr>
-                        <td colspan="4" class="py-4 px-6 text-center">No questions found</td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
+        <!-- Details Grid -->
+        <div class="p-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-6">
+                <div class="text-center p-4 rounded-xl bg-slate-50/50 dark:bg-white/[0.03]">
+                    <p class="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500 mb-1">Cours</p>
+                    <p class="text-sm font-bold text-slate-900 dark:text-white">{{ quiz.cours ? quiz.cours.titre : 'Non assigné' }}</p>
+                </div>
+                <div class="text-center p-4 rounded-xl bg-slate-50/50 dark:bg-white/[0.03]">
+                    <p class="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500 mb-1">Durée</p>
+                    <p class="text-2xl font-black text-slate-900 dark:text-white">{{ quiz.duree }} <span class="text-sm font-semibold text-slate-400">min</span></p>
+                </div>
+                <div class="text-center p-4 rounded-xl bg-slate-50/50 dark:bg-white/[0.03]">
+                    <p class="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500 mb-1">Note Max</p>
+                    <p class="text-2xl font-black text-slate-900 dark:text-white">{{ quiz.noteMax }} <span class="text-sm font-semibold text-slate-400">pts</span></p>
+                </div>
+                <div class="text-center p-4 rounded-xl bg-slate-50/50 dark:bg-white/[0.03]">
+                    <p class="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500 mb-1">Questions</p>
+                    <p class="text-2xl font-black text-slate-900 dark:text-white">{{ quiz.questions|length }}</p>
+                </div>
+                <div class="text-center p-4 rounded-xl bg-slate-50/50 dark:bg-white/[0.03]">
+                    <p class="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500 mb-1">Date Création</p>
+                    <p class="text-sm font-bold text-slate-900 dark:text-white">{{ quiz.dateCreation ? quiz.dateCreation|date('d/m/Y') : '-' }}</p>
+                </div>
+            </div>
 
+            <!-- Actions -->
+            <div class="flex items-center gap-3 pt-6 border-t border-slate-200/60 dark:border-white/5">
+                <a href="{{ path('app_back_office_quiz_index') }}" class="btn-secondary !py-2.5 !px-5 text-sm inline-flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                    Retour
+                </a>
+                <a href="{{ path('app_back_office_quiz_edit', {'id': quiz.id}) }}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 transition-all">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                    Modifier
+                </a>
+                <form method="post" action="{{ path('app_back_office_quiz_delete', {'id': quiz.id}) }}" onsubmit="return confirm('Voulez-vous vraiment supprimer ce quiz et toutes ses questions ?');">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ quiz.id) }}">
+                    <button type="submit" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm bg-red-500/10 text-red-500 dark:text-red-400 hover:bg-red-500/20 transition-all">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                        Supprimer
+                    </button>
+                </form>
+            </div>
+        </div>
     </div>
+
+    <!-- Questions Section -->
+    <div class="flex items-center justify-between mb-6">
+        <h2 class="text-xl font-black text-slate-900 dark:text-white">Questions ({{ quiz.questions|length }})</h2>
+        <a href="{{ path('app_back_office_question_new', {'id_quiz': quiz.id}) }}" class="btn-primary inline-flex items-center gap-2 text-sm !py-2.5 !px-5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            Ajouter une Question
+        </a>
+    </div>
+
+    {% for question in quiz.questions %}
+        <div class="glass-card rounded-2xl p-6 mb-4">
+            <div class="flex items-start justify-between mb-4">
+                <div class="flex items-start gap-4 flex-1">
+                    <span class="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center text-white text-sm font-black flex-shrink-0">{{ loop.index }}</span>
+                    <div class="flex-1">
+                        <h3 class="font-bold text-sm text-slate-900 dark:text-white mb-1">{{ question.enonce }}</h3>
+                        <span class="badge badge-amber">{{ question.points }} pts</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 flex-shrink-0">
+                    <a href="{{ path('app_back_office_question_edit', {'id': question.id}) }}" class="p-2 rounded-lg text-slate-400 hover:text-amber-500 hover:bg-amber-500/5 transition-all" title="Modifier">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                    </a>
+                    <form method="post" action="{{ path('app_back_office_question_delete', {'id': question.id}) }}" onsubmit="return confirm('Supprimer cette question ?');" style="display:inline;">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ question.id) }}">
+                        <button type="submit" class="p-2 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-500/5 transition-all" title="Supprimer">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Choices Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 ml-14">
+                {% set choices = {'A': question.choixA, 'B': question.choixB, 'C': question.choixC, 'D': question.choixD} %}
+                {% for letter, text in choices %}
+                    {% if text %}
+                    <div class="flex items-center gap-3 p-3 rounded-xl {{ question.bonneReponse == letter ? 'bg-emerald-500/10 border-2 border-emerald-500/30' : 'bg-slate-50/50 dark:bg-white/[0.03] border-2 border-transparent' }}">
+                        <span class="w-7 h-7 rounded-lg {{ question.bonneReponse == letter ? 'bg-emerald-500 text-white' : 'bg-slate-200/60 dark:bg-white/10 text-slate-500 dark:text-slate-400' }} flex items-center justify-center text-xs font-black flex-shrink-0">{{ letter }}</span>
+                        <span class="text-sm {{ question.bonneReponse == letter ? 'font-bold text-emerald-700 dark:text-emerald-400' : 'text-slate-600 dark:text-slate-400' }}">{{ text }}</span>
+                        {% if question.bonneReponse == letter %}
+                            <svg class="w-4 h-4 text-emerald-500 ml-auto flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    {% else %}
+        <div class="glass-card rounded-2xl p-12 text-center">
+            <div class="flex flex-col items-center gap-3">
+                <div class="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-white/5 flex items-center justify-center">
+                    <svg class="w-8 h-8 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </div>
+                <p class="text-sm font-semibold text-slate-400 dark:text-slate-500">Aucune question pour ce quiz</p>
+                <a href="{{ path('app_back_office_question_new', {'id_quiz': quiz.id}) }}" class="text-sm font-bold text-primary hover:text-primary-dark transition-colors">Ajouter la première question →</a>
+            </div>
+        </div>
+    {% endfor %}
+
+    <!-- Results Section -->
+    {% if quiz.resultats|length > 0 %}
+    <div class="mt-10">
+        <h2 class="text-xl font-black text-slate-900 dark:text-white mb-6">Résultats ({{ quiz.resultats|length }})</h2>
+        <div class="glass-card rounded-2xl overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="border-b border-slate-200/60 dark:border-white/5">
+                            <th class="text-left px-6 py-4 text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500">Étudiant</th>
+                            <th class="text-left px-6 py-4 text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500">Score</th>
+                            <th class="text-left px-6 py-4 text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500">Statut</th>
+                            <th class="text-left px-6 py-4 text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500">Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for resultat in quiz.resultats %}
+                        {% set pct = resultat.noteMax > 0 ? (resultat.score / resultat.noteMax * 100)|round : 0 %}
+                        <tr class="border-b border-slate-100/60 dark:border-white/5">
+                            <td class="px-6 py-3">
+                                <span class="font-semibold text-sm text-slate-900 dark:text-white">{{ resultat.etudiant.username }}</span>
+                            </td>
+                            <td class="px-6 py-3">
+                                <span class="font-bold text-sm text-slate-900 dark:text-white">{{ resultat.score }}/{{ resultat.noteMax }}</span>
+                                <span class="text-xs text-slate-400 ml-1">({{ pct }}%)</span>
+                            </td>
+                            <td class="px-6 py-3">
+                                {% if pct >= 50 %}
+                                    <span class="badge badge-green">Réussi</span>
+                                {% else %}
+                                    <span class="badge badge-red">Échoué</span>
+                                {% endif %}
+                            </td>
+                            <td class="px-6 py-3">
+                                <span class="text-xs text-slate-400">{{ resultat.datePassage|date('d/m/Y H:i') }}</span>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 {% endblock %}
