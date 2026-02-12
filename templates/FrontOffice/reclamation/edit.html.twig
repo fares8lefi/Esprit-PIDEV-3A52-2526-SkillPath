@@ -1,0 +1,97 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier Réclamation{% endblock %}
+
+{% block body %}
+<style>
+    /* Custom File Input Styling */
+    .form-input-file {
+        width: 100%;
+        padding: 0.875rem 1.25rem;
+        border-radius: 1rem;
+        border: 2px dashed rgba(124,58,237,0.2);
+        background: rgba(124,58,237,0.03);
+        transition: all 0.3s ease;
+        font-weight: 500;
+        color: #94A3B8;
+        cursor: pointer;
+    }
+    .dark .form-input-file {
+        background: rgba(124,58,237,0.05);
+        border-color: rgba(124,58,237,0.15);
+    }
+    .form-input-file:hover {
+        border-color: #7C3AED;
+        background: rgba(124,58,237,0.06);
+    }
+    .form-input-file::-webkit-file-upload-button {
+        background: #7C3AED;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 0.75rem;
+        font-weight: 700;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-right: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    .form-input-file::-webkit-file-upload-button:hover {
+        background: #6D28D9;
+        transform: translateY(-1px);
+    }
+</style>
+
+<div class="min-h-screen mesh-light dark:mesh-dark flex items-center justify-center p-6">
+    <div class="max-w-2xl w-full">
+        <!-- Back Link -->
+        <a href="{{ path('app_reclamation_show', {'id': reclamation.id}) }}" class="inline-flex items-center gap-2 text-xs font-bold text-slate-400 hover:text-primary transition-colors mb-8 animate-fade-up">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+            Retour à la réclamation
+        </a>
+
+        <div class="glass-card p-10 lg:p-14 rounded-3xl shadow-2xl animate-fade-up relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+            
+            <div class="relative z-10">
+                <div class="mb-10">
+                    <h1 class="text-4xl font-black text-slate-900 dark:text-white mb-4 tracking-tight">Modifier <span class="gradient-text">Réclamation</span></h1>
+                    <p class="text-slate-500 dark:text-slate-400 font-medium">Mettez à jour les informations de votre réclamation.</p>
+                </div>
+
+                {{ form_start(form, {'attr': {'class': 'space-y-8'}}) }}
+                    <div class="space-y-3">
+                        {{ form_label(form.sujet, 'Sujet ou Titre', {'label_attr': {'class': 'text-xs font-bold uppercase tracking-widest text-slate-400 ml-1'}}) }}
+                        {{ form_widget(form.sujet, {'attr': {'class': 'form-input', 'placeholder': 'Ex: Problème d\'accès au cours...'}}) }}
+                        {{ form_errors(form.sujet, {'attr': {'class': 'text-red-500 text-sm font-bold mt-2 ml-1'}}) }}
+                    </div>
+
+                    <div class="space-y-3">
+                        {{ form_label(form.description, 'Description détaillée', {'label_attr': {'class': 'text-xs font-bold uppercase tracking-widest text-slate-400 ml-1'}}) }}
+                        {{ form_widget(form.description, {'attr': {'class': 'form-input min-h-[150px]', 'placeholder': 'Expliquez ce qui s\'est passé...'}}) }}
+                        {{ form_errors(form.description, {'attr': {'class': 'text-red-500 text-sm font-bold mt-2 ml-1'}}) }}
+                    </div>
+
+                    <div class="space-y-3">
+                        {{ form_label(form.pieceJointe, 'Pièce jointe (optionnel)', {'label_attr': {'class': 'text-xs font-bold uppercase tracking-widest text-slate-400 ml-1'}}) }}
+                        {{ form_widget(form.pieceJointe, {'attr': {'class': 'form-input-file'}}) }}
+                        {{ form_errors(form.pieceJointe, {'attr': {'class': 'text-red-500 text-sm font-bold mt-2 ml-1'}}) }}
+                        {% if reclamation.pieceJointe %}
+                            <div class="flex items-center gap-2 p-3 bg-slate-50 dark:bg-white/5 rounded-xl border border-slate-100 dark:border-white/10 mt-2">
+                                <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" /></svg>
+                                <p class="text-[10px] font-bold text-slate-500 truncate">Fichier actuel : {{ reclamation.pieceJointe }}</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <button type="submit" class="btn-primary w-full !py-5 !text-lg mt-6">
+                        Enregistrer les modifications
+                    </button>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

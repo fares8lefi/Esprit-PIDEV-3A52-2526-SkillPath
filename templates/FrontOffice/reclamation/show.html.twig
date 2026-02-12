@@ -11,6 +11,14 @@
             Retour
         </a>
 
+        {# Flash Messages #}
+        {% for message in app.flashes('error') %}
+            <div class="bg-coral/8 text-coral px-6 py-4 rounded-xl mb-8 font-bold border border-coral/15 flex items-center gap-4 animate-fade-up" role="alert">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                <span class="block sm:inline">{{ message }}</span>
+            </div>
+        {% endfor %}
+
         <!-- Original Reclamation -->
         <div class="glass-card p-8 lg:p-10 rounded-3xl shadow-xl mb-8 border-l-4 border-primary animate-fade-up">
             <div class="flex justify-between items-start mb-6">
@@ -44,7 +52,12 @@
                     {% endif %}
                 </div>
                 {% if reclamation.statut == 'Pending' %}
-                    <span class="badge badge-amber">En attente</span>
+                    <div class="flex items-center gap-3">
+                        <a href="{{ path('app_reclamation_edit', {'id': reclamation.id}) }}" class="text-xs font-bold text-primary hover:text-primary-dark transition-colors">
+                            Modifier
+                        </a>
+                        <span class="badge badge-amber">En attente</span>
+                    </div>
                 {% elseif reclamation.statut == 'Resolved' %}
                     <span class="badge badge-green">Résolu</span>
                 {% else %}

@@ -38,7 +38,7 @@
         <!-- Header -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10 animate-fade-up">
             <div>
-                <a href="{{ path('app_front_office') }}" class="inline-flex items-center gap-2 text-xs font-bold text-slate-400 hover:text-primary transition-colors mb-3">
+                <a href="{{ path('app_home') }}" class="inline-flex items-center gap-2 text-xs font-bold text-slate-400 hover:text-primary transition-colors mb-3">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
                     Retour à l'accueil
                 </a>
@@ -53,13 +53,16 @@
         <!-- Reclamation Cards -->
         <div class="space-y-4">
             {% for reclamation in reclamations %}
-                <a href="{{ path('app_reclamation_show', {'id': reclamation.id}) }}" class="glass-card p-6 rounded-2xl flex flex-col md:flex-row md:items-center gap-4 group cursor-pointer animate-fade-up" style="animation-delay: {{ loop.index * 80 }}ms">
+                <div onclick="window.location.href='{{ path('app_reclamation_show', {'id': reclamation.id}) }}'" class="glass-card p-6 rounded-2xl flex flex-col md:flex-row md:items-center gap-4 group cursor-pointer animate-fade-up" style="animation-delay: {{ loop.index * 80 }}ms">
                     <div class="flex-1">
                         <div class="flex items-center gap-3 mb-2">
                             <h3 class="text-base font-bold text-slate-900 dark:text-white group-hover:text-primary dark:group-hover:text-primary-light transition-colors">{{ reclamation.sujet }}</h3>
-                            {% if reclamation.statut == 'pending' %}
+                            {% if reclamation.statut == 'pending' or reclamation.statut == 'Pending' %}
+                                <a href="{{ path('app_reclamation_edit', {'id': reclamation.id}) }}" 
+                                   class="text-[10px] font-black uppercase tracking-widest text-primary hover:underline z-10" 
+                                   onclick="event.stopPropagation();">Modifier</a>
                                 <span class="badge badge-amber">En attente</span>
-                            {% elseif reclamation.statut == 'resolved' %}
+                            {% elseif reclamation.statut == 'resolved' or reclamation.statut == 'Resolved' %}
                                 <span class="badge badge-green">Résolu</span>
                             {% else %}
                                 <span class="badge badge-purple">{{ reclamation.statut }}</span>
@@ -73,7 +76,7 @@
                         </span>
                         <svg class="w-4 h-4 text-slate-300 dark:text-slate-600 group-hover:text-primary group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                     </div>
-                </a>
+                </div>
             {% else %}
                 <div class="glass-card py-20 rounded-2xl text-center animate-fade-up">
                     <div class="w-16 h-16 rounded-2xl bg-primary/8 flex items-center justify-center mx-auto mb-5">

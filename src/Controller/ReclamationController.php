@@ -98,22 +98,46 @@ class ReclamationController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_reclamation_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Reclamation $reclamation, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, Reclamation $reclamation, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
         if ($reclamation->getUser() !== $this->getUser()) {
              throw $this->createAccessDeniedException('You cannot edit this reclamation.');
+        }
+
+        if ($reclamation->getStatut() !== 'Pending') {
+            $this->addFlash('error', 'Vous ne pouvez plus modifier cette réclamation car elle n\'est plus en attente.');
+            return $this->redirectToRoute('app_reclamation_show', ['id' => $reclamation->getId()]);
         }
 
         $form = $this->createForm(ReclamationType::class, $reclamation);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            /** @var UploadedFile $attachmentFile */
+            $attachmentFile = $form->get('pieceJointe')->getData();
+
+            if ($attachmentFile) {
+                $originalFilename = pathinfo($attachmentFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = $slugger->slug($originalFilename);
+                $newFilename = $safeFilename.'-'.uniqid().'.'.$attachmentFile->guessExtension();
+
+                try {
+                    $attachmentFile->move(
+                        $this->getParameter('reclamations_directory'),
+                        $newFilename
+                    );
+                    $reclamation->setPieceJointe($newFilename);
+                } catch (FileException $e) {
+                    // ... handle exception
+                }
+            }
+
             $entityManager->flush();
 
             return $this->redirectToRoute('app_reclamation_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->render('reclamation/edit.html.twig', [
+        return $this->render('FrontOffice/reclamation/edit.html.twig', [
             'reclamation' => $reclamation,
             'form' => $form,
         ]);
