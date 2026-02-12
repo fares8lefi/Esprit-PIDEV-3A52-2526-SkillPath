@@ -74,23 +74,25 @@
                         </div>
                         
                         <div class="space-y-4">
-                            {% for module in course.cours %}
-                                <div class="bg-gray-50/50 p-5 rounded-2xl border border-gray-100 flex items-center justify-between hover:bg-white hover:shadow-lg hover:shadow-brand-blue/5 hover:border-brand-blue/30 transition-all group cursor-pointer">
-                                    <div class="flex items-center gap-5">
-                                        <div class="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-brand-blue font-bold text-lg group-hover:bg-brand-blue group-hover:text-white transition-all transform group-hover:rotate-6">
-                                            {{ loop.index }}
-                                        </div>
-                                        <div>
-                                            <h3 class="font-bold text-brand-dark group-hover:text-brand-blue transition-colors">{{ module.titre }}</h3>
-                                            <div class="flex items-center gap-3 text-[10px] text-brand-muted mt-1 uppercase tracking-widest font-bold">
-                                                <span class="bg-white border border-gray-100 px-2 py-0.5 rounded-lg">{{ module.type }}</span>
+                            {% for module in course.modules %}
+                                <a href="{{ path('front_courses_module_show', {courseId: course.id, moduleId: module.id}) }}" class="block">
+                                    <div class="bg-gray-50/50 p-5 rounded-2xl border border-gray-100 flex items-center justify-between hover:bg-white hover:shadow-lg hover:shadow-brand-blue/5 hover:border-brand-blue/30 transition-all group cursor-pointer">
+                                        <div class="flex items-center gap-5">
+                                            <div class="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-brand-blue font-bold text-lg group-hover:bg-brand-blue group-hover:text-white transition-all transform group-hover:rotate-6">
+                                                {{ loop.index }}
+                                            </div>
+                                            <div>
+                                                <h3 class="font-bold text-brand-dark group-hover:text-brand-blue transition-colors">{{ module.name }}</h3>
+                                                <div class="flex items-center gap-3 text-[10px] text-brand-muted mt-1 uppercase tracking-widest font-bold">
+                                                    <span class="bg-white border border-gray-100 px-2 py-0.5 rounded-lg">{{ module.type }}</span>
+                                                </div>
                                             </div>
                                         </div>
+                                        <button class="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center text-brand-blue opacity-0 group-hover:opacity-100 transition-all hover:scale-110">
+                                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
+                                        </button>
                                     </div>
-                                    <button class="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center text-brand-blue opacity-0 group-hover:opacity-100 transition-all hover:scale-110">
-                                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
-                                    </button>
-                                </div>
+                                </a>
                             {% else %}
                                 <div class="text-center py-12 text-brand-muted italic bg-white rounded-2xl border border-dashed border-gray-200">
                                     Aucun module disponible pour ce cours.
