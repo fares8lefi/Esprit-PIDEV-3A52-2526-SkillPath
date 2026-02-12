@@ -4,63 +4,20 @@
 
 {% block content %}
 <div class="max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-700">
-    <div class="mb-10">
-        <div class="flex items-center gap-4 mb-2">
-            <a href="{{ path('module_list') }}" class="w-10 h-10 rounded-xl bg-neutral-800/50 border border-neutral-700/50 flex items-center justify-center text-neutral-400 hover:text-white hover:border-neutral-600 transition-all">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-            </a>
-            <h1 class="text-4xl font-extrabold text-white tracking-tight">Créer un <span class="vibrant-text">Module</span></h1>
+    <div class="mb-10 flex items-center gap-6">
+        <a href="{{ path('admin_module_list') }}" class="w-14 h-14 rounded-2xl glass border border-slate-200/50 dark:border-white/5 flex items-center justify-center text-slate-400 hover:text-primary hover:border-primary/30 transition-all group">
+            <svg class="w-6 h-6 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        </a>
+        <div>
+            <h1 class="text-4xl font-black text-slate-900 dark:text-white tracking-tight">Nouveau <span class="gradient-text">Module</span></h1>
+            <p class="text-slate-500 dark:text-slate-500 font-medium">Créez un nouveau chapitre interactif pour vos apprenants.</p>
         </div>
-        <p class="text-neutral-500 font-medium ml-14">Définissez une nouvelle thématique d'apprentissage pour vos étudiants.</p>
     </div>
 
-    <div class="glass-card rounded-[2.5rem] border border-neutral-800/50 overflow-hidden relative">
-        <div class="absolute top-0 left-0 w-full h-1 vibrant-gradient"></div>
+    <div class="glass-card rounded-[2.5rem] border-none overflow-hidden relative p-10">
+        <div class="absolute top-0 left-0 w-full h-1 gradient-primary opacity-50"></div>
         
-        {{ form_start(form, {'attr': {'class': 'p-10 space-y-8'}}) }}
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="space-y-2">
-                    <label class="block text-xs font-black text-neutral-500 uppercase tracking-widest ml-1">{{ form_label(form.name) }}</label>
-                    {{ form_widget(form.name, {'attr': {'class': 'w-full bg-neutral-900/50 border border-neutral-800 text-white rounded-2xl py-4 px-6 focus:outline-none focus:border-skillpath-blue/50 focus:ring-1 focus:ring-skillpath-blue/20 transition-all'}}) }}
-                    <div class="text-red-500 text-xs">{{ form_errors(form.name) }}</div>
-                </div>
-
-                <div class="space-y-2">
-                    <label class="block text-xs font-black text-neutral-500 uppercase tracking-widest ml-1">{{ form_label(form.level) }}</label>
-                    {{ form_widget(form.level, {'attr': {'class': 'w-full bg-neutral-900/50 border border-neutral-800 text-white rounded-2xl py-4 px-6 focus:outline-none focus:border-skillpath-blue/50 focus:ring-1 focus:ring-skillpath-blue/20 transition-all'}}) }}
-                    <div class="text-red-500 text-xs">{{ form_errors(form.level) }}</div>
-                </div>
-            </div>
-
-            <div class="space-y-2">
-                <label class="block text-xs font-black text-neutral-500 uppercase tracking-widest ml-1">{{ form_label(form.description) }}</label>
-                {{ form_widget(form.description, {'attr': {'class': 'w-full bg-neutral-900/50 border border-neutral-800 text-white rounded-2xl py-4 px-6 focus:outline-none focus:border-skillpath-blue/50 focus:ring-1 focus:ring-skillpath-blue/20 transition-all min-h-[120px]'}}) }}
-                <div class="text-red-500 text-xs">{{ form_errors(form.description) }}</div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="space-y-2">
-                    <label class="block text-xs font-black text-neutral-500 uppercase tracking-widest ml-1">{{ form_label(form.dateCreation) }}</label>
-                    {{ form_widget(form.dateCreation, {'attr': {'class': 'w-full bg-neutral-900/50 border border-neutral-800 text-white rounded-2xl py-4 px-6 focus:outline-none focus:border-skillpath-blue/50 transition-all'}}) }}
-                    <div class="text-red-500 text-xs">{{ form_errors(form.dateCreation) }}</div>
-                </div>
-
-                <div class="space-y-2">
-                    <label class="block text-xs font-black text-neutral-500 uppercase tracking-widest ml-1">{{ form_label(form.image) }}</label>
-                    {{ form_widget(form.image, {'attr': {'class': 'w-full bg-neutral-900/50 border border-neutral-800 text-white rounded-2xl py-4 px-6 focus:outline-none focus:border-skillpath-blue/50 transition-all'}}) }}
-                    <div class="text-red-500 text-xs">{{ form_errors(form.image) }}</div>
-                </div>
-            </div>
-
-            <div class="pt-6 flex items-center gap-4">
-                <button type="submit" class="flex-1 py-4 vibrant-gradient rounded-2xl text-sm font-bold text-white shadow-lg shadow-skillpath-blue/25 transform hover:scale-[1.02] active:scale-[0.98] transition-all">
-                    💾 Enregistrer le module
-                </button>
-                <a href="{{ path('module_list') }}" class="px-8 py-4 bg-neutral-800 text-white rounded-2xl text-sm font-bold hover:bg-neutral-700 transition-all border border-white/5">
-                    Annuler
-                </a>
-            </div>
-        {{ form_end(form) }}
+        {% include 'BackOffice/module/_form.html.twig' with {'button_label': 'Créer le module'} %}
     </div>
 </div>
 {% endblock %}

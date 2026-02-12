@@ -1,68 +1,107 @@
 <!DOCTYPE html>
 <html lang="fr" class="scroll-smooth">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>{% block title %}SkillPath{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-        
-        <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-        
-        <script>
-            if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SkillPath - Apprendre autrement{% endblock %}</title>
+
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
+
+    <!-- Fonts: Inter & Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS v4 -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+             if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                 document.documentElement.classList.add('dark')
             } else {
                 document.documentElement.classList.remove('dark')
             }
+        });
 
-            function toggleTheme() {
-                const html = document.documentElement;
-                html.style.transition = 'background-color 0.5s ease, color 0.5s ease';
-                if (html.classList.contains('dark')) {
-                    html.classList.remove('dark');
-                    localStorage.setItem('theme', 'light');
-                } else {
-                    html.classList.add('dark');
-                    localStorage.setItem('theme', 'dark');
-                }
+        function toggleTheme() {
+            const html = document.documentElement;
+            html.style.transition = 'background-color 0.5s ease, color 0.5s ease';
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
             }
-        </script>
+        }
+    </script>
 
-        <style type="text/tailwindcss">
-            @theme {
-                /* 2026 Dopamine Color Palette */
-                --color-primary: #7C3AED;
-                --color-primary-light: #A78BFA;
-                --color-primary-dark: #5B21B6;
-                --color-secondary: #F59E0B;
-                --color-secondary-light: #FCD34D;
-                --color-accent: #06B6D4;
-                --color-accent-light: #67E8F9;
-                --color-lavender: #C4B5FD;
-                --color-coral: #FB7185;
-                --color-mint: #34D399;
-                --color-peach: #FDBA74;
+    <style type="text/tailwindcss">
+        @theme {
+            /* 2026 Dopamine Color Palette */
+            --color-primary: #7C3AED;
+            --color-primary-light: #A78BFA;
+            --color-primary-dark: #5B21B6;
+            --color-secondary: #F59E0B;
+            --color-secondary-light: #FCD34D;
+            --color-accent: #06B6D4;
+            --color-accent-light: #67E8F9;
+            --color-lavender: #C4B5FD;
+            --color-coral: #FB7185;
+            --color-mint: #34D399;
+            --color-peach: #FDBA74;
 
-                /* Semantic */
-                --color-success: #10B981;
-                --color-warning: #F59E0B;
-                --color-danger: #EF4444;
-                --color-info: #3B82F6;
-            }
-            
+            /* Brand Colors for backwards compatibility */
+            --color-brand-blue: #1E88E5;
+            --color-brand-blue-light: #E3F2FD;
+            --color-brand-blue-dark: #1565C0;
+            --color-brand-green: #43A047;
+            --color-brand-green-light: #E8F5E9;
+            --color-brand-green-dark: #2E7D32;
+            --color-brand-yellow: #FBC02D;
+            --color-brand-yellow-light: #FFFDE7;
+            --color-brand-yellow-dark: #F9A825;
+            --color-brand-gray: #F8F9FB;
+            --color-brand-dark: #1A1D1F;
+            --color-brand-muted: #6F767E;
+
+            /* Semantic */
+            --color-success: #10B981;
+            --color-warning: #F59E0B;
+            --color-danger: #EF4444;
+            --color-info: #3B82F6;
+
+            --shadow-soft: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+            --shadow-gleam: 0 0 40px -5px rgba(30, 136, 229, 0.15);
+        }
+
+        @layer base {
             body {
-                font-family: 'Inter', sans-serif;
-                -webkit-font-smoothing: antialiased;
-                -moz-osx-font-smoothing: grayscale;
+                @apply font-sans antialiased overflow-x-hidden;
             }
-            .dark {
-                color-scheme: dark;
+        }
+
+        @layer components {
+            .btn-primary {
+                background: linear-gradient(135deg, #7C3AED, #6D28D9);
+                color: white;
+                font-weight: 700;
+                padding: 0.875rem 2rem;
+                border-radius: 1rem;
+                box-shadow: 0 4px 14px rgba(124,58,237,0.3);
+                transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+                @apply active:scale-95;
             }
-        </style>
+            .btn-primary:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(124,58,237,0.4);
+            }
+            .card {
+                @apply bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-white/5 shadow-soft hover:shadow-lg transition-all duration-300;
+            }
+        }
+    </style>
 
         <style>
             /* ============================================================
@@ -170,24 +209,7 @@
                 grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             }
 
-            /* -- Buttons -- */
-            .btn-primary {
-                background: linear-gradient(135deg, #7C3AED, #6D28D9);
-                color: white;
-                font-weight: 700;
-                padding: 0.875rem 2rem;
-                border-radius: 1rem;
-                box-shadow: 0 4px 14px rgba(124,58,237,0.3);
-                transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-            }
-            .btn-primary:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 8px 25px rgba(124,58,237,0.4);
-            }
-            .btn-primary:active {
-                transform: scale(0.97);
-            }
-
+            /* -- Buttons (Secondary) -- */
             .btn-secondary {
                 background: transparent;
                 color: #7C3AED;
@@ -303,36 +325,6 @@
             }
             .dark .form-input::placeholder {
                 color: #475569;
-            }
-
-            /* -- Dark Mode 2.0: Hue-shifted backgrounds -- */
-            .dark input:-webkit-autofill,
-            .dark input:-webkit-autofill:hover,
-            .dark input:-webkit-autofill:focus,
-            .dark input:-webkit-autofill:active {
-                -webkit-box-shadow: 0 0 0 30px #0B0F1A inset !important;
-                -webkit-text-fill-color: #F1F5F9 !important;
-            }
-            input:-webkit-autofill,
-            input:-webkit-autofill:hover,
-            input:-webkit-autofill:focus,
-            input:-webkit-autofill:active {
-                -webkit-box-shadow: 0 0 0 30px #FAFAFA inset !important;
-                -webkit-text-fill-color: #1E293B !important;
-            }
-
-            /* -- Progress indicator -- */
-            .progress-bar {
-                height: 6px;
-                border-radius: 3px;
-                background: rgba(124,58,237,0.1);
-                overflow: hidden;
-            }
-            .progress-bar-fill {
-                height: 100%;
-                border-radius: 3px;
-                background: linear-gradient(90deg, #7C3AED, #06B6D4);
-                transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
             }
 
             /* -- Scrollbar (Dark Mode 2.0) -- */

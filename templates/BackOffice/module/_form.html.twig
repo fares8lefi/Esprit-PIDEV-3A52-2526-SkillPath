@@ -1,0 +1,45 @@
+{{ form_start(form, {'attr': {'class': 'space-y-8', 'enctype': 'multipart/form-data'}}) }}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="space-y-2">
+            <label class="block text-xs font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 ml-1">Formation Parenterale</label>
+            {{ form_widget(form.cours, {'attr': {'class': 'form-input'}}) }}
+            <div class="text-red-500 text-xs mt-1">{{ form_errors(form.cours) }}</div>
+        </div>
+
+        <div class="space-y-2">
+            <label class="block text-xs font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 ml-1">Nom du Chapitre</label>
+            {{ form_widget(form.name, {'attr': {'class': 'form-input', 'placeholder': 'Ex: Introduction au PHP'}}) }}
+            <div class="text-red-500 text-xs mt-1">{{ form_errors(form.name) }}</div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="space-y-2">
+            <label class="block text-xs font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 ml-1">Type de Contenu</label>
+            {{ form_widget(form.type, {'attr': {'class': 'form-input'}}) }}
+            <div class="text-red-500 text-xs mt-1">{{ form_errors(form.type) }}</div>
+        </div>
+
+        <div class="space-y-2">
+            <label class="block text-xs font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 ml-1">Description Courte</label>
+            {{ form_widget(form.description, {'attr': {'class': 'form-input', 'placeholder': 'Bref résumé du chapitre...'}}) }}
+            <div class="text-red-500 text-xs mt-1">{{ form_errors(form.description) }}</div>
+        </div>
+    </div>
+
+    <div class="space-y-2">
+        <label class="block text-xs font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 ml-1">Contenu Principal</label>
+        {{ form_widget(form.contenu, {'attr': {'class': 'form-input min-h-[200px]', 'placeholder': 'Contenu markdown, texte ou lien vidéo...'}}) }}
+        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-2">{{ form_help(form.contenu) }}</p>
+        <div class="text-red-500 text-xs mt-1">{{ form_errors(form.contenu) }}</div>
+    </div>
+
+    <div class="pt-8 flex items-center gap-4 border-t border-slate-100 dark:border-white/5">
+        <button type="submit" class="btn-primary flex-1">
+            {{ button_label|default('Enregistrer le module') }}
+        </button>
+        <a href="{{ path('admin_module_list') }}" class="btn-secondary px-8">
+            Annuler
+        </a>
+    </div>
+{{ form_end(form) }}

@@ -12,10 +12,10 @@ use App\Repository\ModuleRepository;
 class MainController extends AbstractController
 {
     #[Route('/', name: 'app_home')]
-    public function index(ModuleRepository $moduleRepository): Response
+    public function index(CoursRepository $coursRepository): Response
     {
         return $this->render('FrontOffice/main/index.html.twig', [
-            'modules' => $moduleRepository->findAll(),
+            'courses' => $coursRepository->findAll(),
         ]);
     }
 

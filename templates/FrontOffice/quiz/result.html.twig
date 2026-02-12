@@ -122,4 +122,55 @@
         {% endif %}
     </div>
 </div>
+    </div>
+</div>
+
+<!-- Fun Fact Dialog -->
+<div id="funFactDialog" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-slate-900/50 backdrop-blur-sm opacity-0 transition-opacity duration-300">
+    <div class="glass-card p-8 rounded-3xl max-w-md w-full mx-4 transform scale-90 transition-transform duration-300" id="funFactContent">
+        <div class="text-center">
+            <div class="w-16 h-16 bg-amber-100 dark:bg-amber-900/30 rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce-slow">
+                <span class="text-3xl">💡</span>
+            </div>
+            <h3 class="text-xl font-black text-slate-900 dark:text-white mb-4">Le saviez-vous ?</h3>
+            <p class="text-slate-600 dark:text-slate-300 font-medium leading-relaxed mb-8">
+                {{ funFact }}
+            </p>
+            <button onclick="closeFunFact()" class="btn-primary w-full py-3 rounded-xl font-bold">
+                Continuer
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Show dialog with a slight delay for better UX
+        setTimeout(() => {
+            const dialog = document.getElementById('funFactDialog');
+            const content = document.getElementById('funFactContent');
+            
+            dialog.classList.remove('hidden');
+            // Trigger reflow
+            void dialog.offsetWidth;
+            
+            dialog.classList.remove('opacity-0');
+            content.classList.remove('scale-90');
+            content.classList.add('scale-100');
+        }, 800);
+    });
+
+    function closeFunFact() {
+        const dialog = document.getElementById('funFactDialog');
+        const content = document.getElementById('funFactContent');
+        
+        dialog.classList.add('opacity-0');
+        content.classList.remove('scale-100');
+        content.classList.add('scale-90');
+        
+        setTimeout(() => {
+            dialog.classList.add('hidden');
+        }, 300);
+    }
+</script>
 {% endblock %}

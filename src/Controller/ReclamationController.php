@@ -22,7 +22,7 @@ class ReclamationController extends AbstractController
     public function index(ReclamationRepository $reclamationRepository): Response
     {
         return $this->render('FrontOffice/reclamation/index.html.twig', [
-            'reclamations' => $reclamationRepository->findBy(['user' => $this->getUser()]),
+            'reclamations' => $reclamationRepository->findAll(),
         ]);
     }
 
@@ -34,8 +34,6 @@ class ReclamationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $reclamation->setUser($this->getUser());
-            $reclamation->setStatut('Pending');
             $entityManager->persist($reclamation);
             $entityManager->flush();
 
@@ -48,14 +46,13 @@ class ReclamationController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_reclamation_show', methods: ['GET', 'POST'])]
-    public function show(Request $request, Reclamation $reclamation, EntityManagerInterface $entityManager): Response
+    #[Route('/{id}', name: 'app_reclamation_show', methods: ['GET'])]
+    public function show(Reclamation $reclamation): Response
     {
         if ($reclamation->getUser() !== $this->getUser()) {
              throw $this->createAccessDeniedException('You cannot view this reclamation.');
         }
 
-        $reponse = new Reponse();
         $form = $this->createForm(ReponseType::class, $reponse);
         $form->handleRequest($request);
 

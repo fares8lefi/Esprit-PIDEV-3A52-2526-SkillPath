@@ -9,9 +9,9 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity(repositoryClass: CoursRepository::class)]  // ✅ Changé
-#[ORM\Table(name: 'cours')]  // ✅ IMPORTANT : Garde le nom de table existant
-class Cours  // ✅ Changé de Content à Cours
+#[ORM\Entity(repositoryClass: CoursRepository::class)]
+#[ORM\Table(name: 'cours')]
+class Cours
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -20,36 +20,31 @@ class Cours  // ✅ Changé de Content à Cours
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: 'Le titre est obligatoire')]
-    #[Assert\Length(
-        min: 3,
-        max: 255,
-        minMessage: 'Le titre doit contenir au moins {{ limit }} caractères',
-        maxMessage: 'Le titre ne peut pas dépasser {{ limit }} caractères'
-    )]
     private ?string $titre = null;
 
-    #[ORM\Column(length: 50)]
-    #[Assert\NotBlank(message: 'Le type est obligatoire')]
-    #[Assert\Choice(
-        choices: ['video', 'texte', 'quiz', 'exercice', 'document'],
-        message: 'Type invalide'
-    )]
-    private ?string $type = null;
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $description = null;
 
-    #[ORM\Column(type: Types::TEXT)]
-    #[Assert\NotBlank(message: 'Le contenu est obligatoire')]
-    private ?string $contenu = null;
+    #[ORM\Column(length: 30, nullable: true)]
+    private ?string $level = null;
 
-    #[ORM\ManyToOne(inversedBy: 'cours')]  // ✅ Changé de 'contents' à 'cours'
-    #[ORM\JoinColumn(nullable: false)]
-    #[Assert\NotNull(message: 'Le module est obligatoire')]
-    private ?Module $module = null;
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $image = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[ORM\Column(length: 50, nullable: true)]
+    private ?string $categorie = null;
+
+    #[ORM\Column(type: 'datetime')]
     private ?\DateTimeInterface $createdAt = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[ORM\Column(type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $updatedAt = null;
+
+    /**
+     * @var Collection<int, Module>
+     */
+    #[ORM\OneToMany(mappedBy: 'cours', targetEntity: Module::class, cascade: ['persist', 'remove'])]
+    private Collection $modules;
 
     /**
      * @var Collection<int, Quiz>
@@ -57,10 +52,18 @@ class Cours  // ✅ Changé de Content à Cours
     #[ORM\OneToMany(targetEntity: Quiz::class, mappedBy: 'cours')]
     private Collection $quizzes;
 
+    /**
+     * @var Collection<int, User>
+     */
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'cours')]
+    private Collection $users;
+
     public function __construct()
     {
         $this->createdAt = new \DateTime();
+        $this->modules = new ArrayCollection();
         $this->quizzes = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -79,36 +82,53 @@ class Cours  // ✅ Changé de Content à Cours
         return $this;
     }
 
-    public function getType(): ?string
+    // ✅ TWIG ALIAS: course.name -> titre
+    public function getName(): ?string
     {
-        return $this->type;
+        return $this->titre;
     }
 
-    public function setType(string $type): static
+    public function getDescription(): ?string
     {
-        $this->type = $type;
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): static
+    {
+        $this->description = $description;
         return $this;
     }
 
-    public function getContenu(): ?string
+    public function getLevel(): ?string
     {
-        return $this->contenu;
+        return $this->level;
     }
 
-    public function setContenu(string $contenu): static
+    public function setLevel(?string $level): static
     {
-        $this->contenu = $contenu;
+        $this->level = $level;
         return $this;
     }
 
-    public function getModule(): ?Module
+    public function getImage(): ?string
     {
-        return $this->module;
+        return $this->image;
     }
 
-    public function setModule(?Module $module): static
+    public function setImage(?string $image): static
     {
-        $this->module = $module;
+        $this->image = $image;
+        return $this;
+    }
+
+    public function getCategorie(): ?string
+    {
+        return $this->categorie;
+    }
+
+    public function setCategorie(?string $categorie): static
+    {
+        $this->categorie = $categorie;
         return $this;
     }
 
@@ -135,6 +155,45 @@ class Cours  // ✅ Changé de Content à Cours
     }
 
     /**
+     * @return Collection<int, Module>
+     */
+    public function getModules(): Collection
+    {
+        return $this->modules;
+    }
+
+    public function addModule(Module $module): static
+    {
+        if (!$this->modules->contains($module)) {
+            $this->modules->add($module);
+            $module->setCours($this);
+        }
+        return $this;
+    }
+
+    public function removeModule(Module $module): static
+    {
+        if ($this->modules->removeElement($module)) {
+            if ($module->getCours() === $this) {
+                $module->setCours(null);
+            }
+        }
+        return $this;
+    }
+
+    // ✅ TWIG ALIAS: course.cours -> modules
+    public function getCours(): Collection
+    {
+        return $this->modules;
+    }
+
+    // ✅ TWIG ALIAS: course.dateCreation -> createdAt
+    public function getDateCreation(): ?\DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    /**
      * @return Collection<int, Quiz>
      */
     public function getQuizzes(): Collection
@@ -157,6 +216,31 @@ class Cours  // ✅ Changé de Content à Cours
             if ($quiz->getCours() === $this) {
                 $quiz->setCours(null);
             }
+        }
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): static
+    {
+        if (!$this->users->contains($user)) {
+            $this->users->add($user);
+            $user->addCour($this);
+        }
+        return $this;
+    }
+
+    public function removeUser(User $user): static
+    {
+        if ($this->users->removeElement($user)) {
+            $user->removeCour($this);
         }
         return $this;
     }

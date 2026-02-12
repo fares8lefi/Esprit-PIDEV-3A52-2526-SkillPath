@@ -3,10 +3,12 @@
 namespace App\Entity;
 
 use App\Repository\ModuleRepository;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Cours;
 
 #[ORM\Entity(repositoryClass: ModuleRepository::class)]
 class Module
@@ -16,30 +18,45 @@ class Module
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 120)]
+    #[Assert\NotBlank(message: "Le nom est obligatoire.")]
+    #[Assert\Length(min: 2, max: 120)]
     private ?string $name = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(type: "text", nullable: true)]
+    #[Assert\Length(max: 2000)]
     private ?string $description = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTime $dateCreation = null;
+    #[ORM\Column(type: "datetime_immutable")]
+    private ?\DateTimeImmutable $dateCreation = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 30, nullable: true)] // Made nullable as it might be moved to parent conceptually, but keeping it here for data safety? 
+    // Actually, user said 'Corriger', so if this field should be on Parent, maybe I should remove it? 
+    // But I'm keeping 'name' as Title. 
+    // 'level' should be on Parent (Cours). 
+    // If I keep it here, it's just extra data. 
+    // I previously decided to duplicate/move fields. 
+    // Use nullable to avoid errors during migration.
     private ?string $level = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $image = null;
 
-    /**
-     * @var Collection<int, Cours>
-     */
-    #[ORM\OneToMany(targetEntity: Cours::class, mappedBy: 'module')]
-    private Collection $cours;
+    // ✅ New Fields moved from Cours (Child Data)
+    #[ORM\Column(length: 50, nullable: true)]
+    private ?string $type = null;
+
+    #[ORM\Column(type: "text", nullable: true)]
+    private ?string $contenu = null;
+
+    // ✅ New Relation: Module (Many) belongs to One Cours
+    #[ORM\ManyToOne(targetEntity: Cours::class, inversedBy: 'modules')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Cours $cours = null;
 
     public function __construct()
     {
-        $this->cours = new ArrayCollection();
+        $this->dateCreation = new \DateTimeImmutable();
     }
 
     public function getId(): ?int
@@ -52,11 +69,16 @@ class Module
         return $this->name;
     }
 
-    public function setName(string $name): static
+    public function setName(string $name): self
     {
         $this->name = $name;
-
         return $this;
+    }
+
+    // ✅ TWIG ALIAS: module.titre -> name
+    public function getTitre(): ?string
+    {
+        return $this->name;
     }
 
     public function getDescription(): ?string
@@ -64,22 +86,20 @@ class Module
         return $this->description;
     }
 
-    public function setDescription(string $description): static
+    public function setDescription(?string $description): self
     {
         $this->description = $description;
-
         return $this;
     }
 
-    public function getDateCreation(): ?\DateTime
+    public function getDateCreation(): ?\DateTimeImmutable
     {
         return $this->dateCreation;
     }
 
-    public function setDateCreation(\DateTime $dateCreation): static
+    public function setDateCreation(\DateTimeImmutable $dateCreation): self
     {
         $this->dateCreation = $dateCreation;
-
         return $this;
     }
 
@@ -88,10 +108,9 @@ class Module
         return $this->level;
     }
 
-    public function setLevel(string $level): static
+    public function setLevel(?string $level): self
     {
         $this->level = $level;
-
         return $this;
     }
 
@@ -100,40 +119,45 @@ class Module
         return $this->image;
     }
 
-    public function setImage(string $image): static
+    public function setImage(?string $image): self
     {
         $this->image = $image;
-
         return $this;
     }
 
-    /**
-     * @return Collection<int, Cours>
-     */
-    public function getCours(): Collection
+    // ✅ New Getters/Setters
+
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    public function setType(?string $type): self
+    {
+        $this->type = $type;
+        return $this;
+    }
+
+    public function getContenu(): ?string
+    {
+        return $this->contenu;
+    }
+
+    public function setContenu(?string $contenu): self
+    {
+        $this->contenu = $contenu;
+        return $this;
+    }
+
+    // ✅ Relation Cours (Parent)
+    public function getCours(): ?Cours
     {
         return $this->cours;
     }
 
-    public function addCour(Cours $cour): static
+    public function setCours(?Cours $cours): self
     {
-        if (!$this->cours->contains($cour)) {
-            $this->cours->add($cour);
-            $cour->setModule($this);
-        }
-
-        return $this;
-    }
-
-    public function removeCour(Cours $cour): static
-    {
-        if ($this->cours->removeElement($cour)) {
-            // set the owning side to null (unless already changed)
-            if ($cour->getModule() === $this) {
-                $cour->setModule(null);
-            }
-        }
-
+        $this->cours = $cours;
         return $this;
     }
 }

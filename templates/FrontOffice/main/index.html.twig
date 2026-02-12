@@ -187,23 +187,23 @@
 
         {% if app.user %}
             <div class="space-y-20">
-                {% for module in modules %}
+                {% for cours in courses %}
                     <div class="relative animate-fade-up" style="animation-delay: {{ loop.index * 100 }}ms">
                         <!-- Module Header -->
                         <div class="flex flex-col md:flex-row items-center gap-8 mb-10">
                             <div class="w-24 h-24 rounded-2xl glass-card !hover:transform-none flex items-center justify-center p-4 group">
-                                {% if module.image %}
-                                    <img src="{{ asset('uploads/' ~ module.image) }}" alt="{{ module.name }}" class="w-full h-full object-contain">
+                                {% if cours.image %}
+                                    <img src="{{ asset('uploads/modules/' ~ cours.image) }}" alt="{{ cours.titre }}" class="w-full h-full object-contain">
                                 {% else %}
                                     <div class="w-full h-full rounded-xl gradient-primary flex items-center justify-center text-2xl font-black text-white">
-                                        {{ module.name|first }}
+                                        {{ cours.titre|first }}
                                     </div>
                                 {% endif %}
                             </div>
                             <div class="flex-1 text-center md:text-left">
-                                <span class="badge badge-purple mb-2">Niveau {{ module.level }}</span>
-                                <h3 class="text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">{{ module.name }}</h3>
-                                <p class="text-slate-500 dark:text-slate-400 font-medium max-w-2xl leading-relaxed text-sm">{{ module.description }}</p>
+                                <span class="badge badge-purple mb-2">Niveau {{ cours.level }}</span>
+                                <h3 class="text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">{{ cours.titre }}</h3>
+                                <p class="text-slate-500 dark:text-slate-400 font-medium max-w-2xl leading-relaxed text-sm">{{ cours.description }}</p>
                             </div>
                             <div class="hidden lg:block">
                                 <span class="text-5xl font-black text-slate-100 dark:text-slate-800/50 tracking-tighter">{{ loop.index|format('%02d') }}</span>
@@ -212,50 +212,45 @@
 
                         <!-- Courses Bento Grid -->
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 ml-0 md:ml-8">
-                            {% for cours in module.cours %}
-                                <div class="glass-card p-7 rounded-2xl group relative overflow-hidden">
-                                    <!-- Type glow -->
-                                    <div class="absolute top-0 right-0 w-24 h-24 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500
-                                        {% if cours.type == 'video' %}bg-primary/10{% elseif cours.type == 'quiz' %}bg-accent/10{% else %}bg-mint/10{% endif %}">
-                                    </div>
+                            {% for module in cours.modules %}
+                                <a href="{{ path('app_front_office_module_show', {'id': module.id}) }}" class="block group">
+                                    <div class="glass-card p-7 rounded-2xl group relative overflow-hidden h-full hover:bg-white dark:hover:bg-white/5 transition-colors">
+                                        <!-- Type glow -->
+                                        <div class="absolute top-0 right-0 w-24 h-24 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500
+                                            {% if module.type == 'video' %}bg-primary/10{% elseif module.type == 'quiz' %}bg-accent/10{% else %}bg-mint/10{% endif %}">
+                                        </div>
 
-                                    <div class="relative z-10">
-                                        <div class="flex items-center justify-between mb-5">
-                                            {% set typeIcon = {
-                                                'video': '<svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>',
-                                                'quiz': '<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>',
-                                                'texte': '<svg class="w-5 h-5 text-mint" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>'
-                                            } %}
-                                            <div class="w-10 h-10 rounded-xl {% if cours.type == 'video' %}bg-primary/8{% elseif cours.type == 'quiz' %}bg-accent/8{% else %}bg-mint/8{% endif %} flex items-center justify-center">
-                                                {{ typeIcon[cours.type]|default('<svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>')|raw }}
+                                        <div class="relative z-10">
+                                            <div class="flex items-center justify-between mb-5">
+                                                {% set typeIcon = {
+                                                    'video': '<svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>',
+                                                    'quiz': '<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>',
+                                                    'texte': '<svg class="w-5 h-5 text-mint" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>'
+                                                } %}
+                                                <div class="w-10 h-10 rounded-xl {% if module.type == 'video' %}bg-primary/8{% elseif module.type == 'quiz' %}bg-accent/8{% else %}bg-mint/8{% endif %} flex items-center justify-center">
+                                                    {{ typeIcon[module.type]|default('<svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>')|raw }}
+                                                </div>
+                                                <span class="badge {% if module.type == 'video' %}badge-purple{% elseif module.type == 'quiz' %}badge-cyan{% else %}badge-green{% endif %}">{{ module.type|default('Texte') }}</span>
                                             </div>
-                                            <span class="badge {% if cours.type == 'video' %}badge-purple{% elseif cours.type == 'quiz' %}badge-cyan{% else %}badge-green{% endif %}">{{ cours.type }}</span>
-                                        </div>
-                                        <h4 class="text-lg font-bold text-slate-900 dark:text-white mb-2 group-hover:text-primary dark:group-hover:text-primary-light transition-colors">{{ cours.titre }}</h4>
-                                        <div class="flex items-center gap-2 mb-3">
-                                            {% if cours.quizzes|length > 0 %}
-                                                <span class="badge badge-cyan text-[9px] py-1 px-2 flex items-center gap-1">
-                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
-                                                    Quiz disponible
-                                                </span>
-                                            {% endif %}
-                                        </div>
-                                        <p class="text-slate-500 dark:text-slate-400 text-sm font-medium leading-relaxed mb-5 line-clamp-2">{{ cours.contenu }}</p>
-                                        
-                                        <div class="pt-5 border-t border-slate-100/50 dark:border-white/5 flex items-center justify-between">
-                                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Durée : 45 min</span>
-                                            <a href="{{ path('app_front_office_cours_show', {'id': cours.id}) }}" class="w-9 h-9 rounded-xl bg-primary/8 dark:bg-primary/15 flex items-center justify-center text-primary dark:text-primary-light hover:gradient-primary hover:text-white transition-all hover:shadow-lg hover:shadow-purple-500/20">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                                            </a>
+                                            <h4 class="text-lg font-bold text-slate-900 dark:text-white mb-2 group-hover:text-primary dark:group-hover:text-primary-light transition-colors">{{ module.name }}</h4>
+
+                                            <p class="text-slate-500 dark:text-slate-400 text-sm font-medium leading-relaxed mb-5 line-clamp-2">{{ module.description }}</p>
+                                            
+                                            <div class="pt-5 border-t border-slate-100/50 dark:border-white/5 flex items-center justify-between">
+                                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Durée : 45 min</span>
+                                                <div class="w-9 h-9 rounded-xl bg-primary/8 dark:bg-primary/15 flex items-center justify-center text-primary dark:text-primary-light hover:gradient-primary hover:text-white transition-all hover:shadow-lg hover:shadow-purple-500/20">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                </a>
                             {% else %}
                                 <div class="col-span-full py-12 text-center glass-card rounded-2xl border-2 border-dashed border-slate-200/50 dark:border-white/5">
                                     <div class="w-12 h-12 rounded-xl bg-slate-100 dark:bg-white/5 flex items-center justify-center mx-auto mb-3">
                                         <svg class="w-6 h-6 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
                                     </div>
-                                    <p class="text-slate-400 font-semibold text-sm">Aucun cours disponible pour le moment.</p>
+                                    <p class="text-slate-400 font-semibold text-sm">Aucun module disponible pour ce cours.</p>
                                 </div>
                             {% endfor %}
                         </div>

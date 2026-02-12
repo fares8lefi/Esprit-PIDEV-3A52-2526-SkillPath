@@ -2,52 +2,96 @@
 
 {% block title %}Ajouter un contenu - SkillPath{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .gradient-text {
+            background: linear-gradient(135deg, #1E88E5 0%, #43A047 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+{% endblock %}
+
 {% block body %}
-    <div class="container mx-auto px-4 py-8">
-        <div class="max-w-3xl mx-auto">
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
-                <div class="mb-6">
-                    <h1 class="text-2xl font-bold text-gray-900">Ajouter un contenu</h1>
-                    <p class="text-gray-600 mt-2">Créez un nouveau contenu de cours</p>
+    <div class="min-h-screen bg-gray-50 flex">
+        <!-- Sidebar -->
+        {% include 'BackOffice/_sidebar.html.twig' %}
+
+        <!-- Main Content -->
+        <div class="lg:ml-72 flex-1">
+            <div class="p-8">
+                <!-- Breadcrumb -->
+                <nav class="mb-6">
+                    <ol class="flex items-center space-x-2 text-sm">
+                        <li>
+                            <a href="{{ path('admin_cours_list') }}" class="text-gray-500 hover:text-gray-700">
+                                Tableau de bord
+                            </a>
+                        </li>
+                        <li class="text-gray-400">/</li>
+                        <li>
+                            <a href="{{ path('admin_cours_list') }}" class="text-gray-500 hover:text-gray-700">
+                                Gestion des cours
+                            </a>
+                        </li>
+                        <li class="text-gray-400">/</li>
+                        <li class="text-gray-900 font-medium">Nouveau</li>
+                    </ol>
+                </nav>
+
+                <div class="max-w-3xl mx-auto">
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+                        <div class="mb-6">
+                            <h1 class="text-2xl font-bold text-gray-900">Ajouter un contenu</h1>
+                            <p class="text-gray-600 mt-2">Créez un nouveau contenu de cours</p>
+                        </div>
+
+                        {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
+                            
+                            <div>
+                                {{ form_label(form.titre, null, {'label_attr': {'class': 'block text-sm font-semibold text-gray-700 mb-2'}}) }}
+                                {{ form_widget(form.titre) }}
+                                {{ form_errors(form.titre) }}
+                            </div>
+
+                            <div>
+                                {{ form_label(form.level, null, {'label_attr': {'class': 'block text-sm font-semibold text-gray-700 mb-2'}}) }}
+                                {{ form_widget(form.level) }}
+                                {{ form_errors(form.level) }}
+                            </div>
+
+                            <div>
+                                {{ form_label(form.categorie, null, {'label_attr': {'class': 'block text-sm font-semibold text-gray-700 mb-2'}}) }}
+                                {{ form_widget(form.categorie) }}
+                                {{ form_errors(form.categorie) }}
+                            </div>
+
+                            <div>
+                                {{ form_label(form.description, null, {'label_attr': {'class': 'block text-sm font-semibold text-gray-700 mb-2'}}) }}
+                                {{ form_widget(form.description) }}
+                                {{ form_errors(form.description) }}
+                            </div>
+
+                            <div>
+                                {{ form_label(form.imageFile, null, {'label_attr': {'class': 'block text-sm font-semibold text-gray-700 mb-2'}}) }}
+                                {{ form_widget(form.imageFile) }}
+                                {{ form_errors(form.imageFile) }}
+                            </div>
+
+                            <div class="flex gap-4 pt-4 border-t border-gray-200">
+                                <a href="{{ path('admin_cours_list') }}" class="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-all text-center">
+                                    Annuler
+                                </a>
+                                <button type="submit" class="flex-1 px-6 py-3 bg-gradient-to-r from-brand-green to-brand-green-dark text-white rounded-xl font-semibold hover:shadow-lg transition-all">
+                                    Ajouter
+                                </button>
+                            </div>
+
+                        {{ form_end(form) }}
+                    </div>
                 </div>
-
-                {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
-                    
-                    <div>
-                        {{ form_label(form.titre, null, {'label_attr': {'class': 'block text-sm font-semibold text-gray-700 mb-2'}}) }}
-                        {{ form_widget(form.titre) }}
-                        {{ form_errors(form.titre) }}
-                    </div>
-
-                    <div>
-                        {{ form_label(form.type, null, {'label_attr': {'class': 'block text-sm font-semibold text-gray-700 mb-2'}}) }}
-                        {{ form_widget(form.type) }}
-                        {{ form_errors(form.type) }}
-                    </div>
-
-                    <div>
-                        {{ form_label(form.module, null, {'label_attr': {'class': 'block text-sm font-semibold text-gray-700 mb-2'}}) }}
-                        {{ form_widget(form.module) }}
-                        {{ form_errors(form.module) }}
-                    </div>
-
-                    <div>
-                        {{ form_label(form.contenu, null, {'label_attr': {'class': 'block text-sm font-semibold text-gray-700 mb-2'}}) }}
-                        {{ form_widget(form.contenu) }}
-                        <p class="mt-2 text-xs text-gray-500">{{ form_help(form.contenu) }}</p>
-                        {{ form_errors(form.contenu) }}
-                    </div>
-
-                    <div class="flex gap-4 pt-4 border-t border-gray-200">
-                        <a href="{{ path('admin_cours_list') }}" class="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-all text-center">
-                            Annuler
-                        </a>
-                        <button type="submit" class="flex-1 px-6 py-3 bg-gradient-to-r from-skillpath-green to-skillpath-green-dark text-white rounded-xl font-semibold hover:shadow-lg transition-all">
-                            Ajouter
-                        </button>
-                    </div>
-
-                {{ form_end(form) }}
             </div>
         </div>
     </div>

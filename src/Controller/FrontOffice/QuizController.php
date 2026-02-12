@@ -127,7 +127,7 @@ class QuizController extends AbstractController
     }
 
     #[Route('/{id}/result', name: 'app_front_office_quiz_result', methods: ['GET'])]
-    public function result(Quiz $quiz, Request $request): Response
+    public function result(Quiz $quiz, Request $request, HttpClientInterface $httpClient): Response
     {
         $score = $request->query->get('score', 0);
         $totalPoints = $request->query->get('totalPoints', 0);
@@ -135,11 +135,35 @@ class QuizController extends AbstractController
         // Retrieve user answers from session for review
         $userAnswers = $request->getSession()->get('quiz_answers_' . $quiz->getId(), []);
 
+        // Fun Fact Logic
+        $fallbacks = [
+            "La persévérance est la clé de la réussite en programmation !",
+            "Chaque erreur est une opportunité d'apprendre quelque chose de nouveau.",
+            "Le code propre est un code qui semble avoir été écrit par quelqu'un qui s'en soucie.",
+            "L'apprentissage continu est la seule voie vers l'excellence."
+        ];
+        $funFact = $fallbacks[array_rand($fallbacks)]; 
+
+        try {
+            $response = $httpClient->request('GET', 'https://numbersapi.com/random/trivia?json&t=' . time(), [
+                'timeout' => 2,
+                'verify_peer' => false,
+            ]);
+            
+            if ($response->getStatusCode() === 200) {
+                $content = $response->toArray();
+                $funFact = $content['text'] ?? $funFact;
+            }
+        } catch (\Exception $e) {
+            // Fallback remains active
+        }
+
         return $this->render('FrontOffice/quiz/result.html.twig', [
             'quiz' => $quiz,
             'score' => $score,
             'totalPoints' => $totalPoints,
             'userAnswers' => $userAnswers,
+            'funFact' => $funFact,
         ]);
     }
 }

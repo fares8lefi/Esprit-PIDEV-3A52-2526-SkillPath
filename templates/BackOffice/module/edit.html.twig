@@ -4,63 +4,73 @@
 
 {% block content %}
 <div class="max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-700">
-    <div class="mb-10">
-        <div class="flex items-center gap-4 mb-2">
-            <a href="{{ path('module_list') }}" class="w-10 h-10 rounded-xl bg-neutral-800/50 border border-neutral-700/50 flex items-center justify-center text-neutral-400 hover:text-white hover:border-neutral-600 transition-all">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-            </a>
-            <h1 class="text-4xl font-extrabold text-white tracking-tight">Modifier <span class="vibrant-text">Module</span></h1>
+    <div class="mb-10 flex items-center gap-6">
+        <a href="{{ path('admin_module_list') }}" class="w-14 h-14 rounded-2xl glass border border-slate-200/50 dark:border-white/5 flex items-center justify-center text-slate-400 hover:text-primary hover:border-primary/30 transition-all group">
+            <svg class="w-6 h-6 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        </a>
+        <div>
+            <h1 class="text-4xl font-black text-slate-900 dark:text-white tracking-tight">Modifier <span class="gradient-text">Module</span></h1>
+            <p class="text-slate-500 dark:text-slate-500 font-medium">Mise à jour de : <span class="text-primary font-bold">{{ module.name }}</span></p>
         </div>
-        <p class="text-neutral-500 font-medium ml-14">Mise à jour des informations pour le module : <span class="text-skillpath-blue">{{ module.name }}</span></p>
     </div>
 
-    <div class="glass-card rounded-[2.5rem] border border-neutral-800/50 overflow-hidden relative">
-        <div class="absolute top-0 left-0 w-full h-1 vibrant-gradient"></div>
+    <div class="glass-card rounded-[2.5rem] border-none overflow-hidden relative p-10">
+        <div class="absolute top-0 left-0 w-full h-1 gradient-primary opacity-50"></div>
         
-        {{ form_start(form, {'attr': {'class': 'p-10 space-y-8'}}) }}
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="space-y-2">
-                    <label class="block text-xs font-black text-neutral-500 uppercase tracking-widest ml-1">{{ form_label(form.name) }}</label>
-                    {{ form_widget(form.name, {'attr': {'class': 'w-full bg-neutral-900/50 border border-neutral-800 text-white rounded-2xl py-4 px-6 focus:outline-none focus:border-skillpath-blue/50 focus:ring-1 focus:ring-skillpath-blue/20 transition-all'}}) }}
-                    <div class="text-red-500 text-xs">{{ form_errors(form.name) }}</div>
-                </div>
-
-                <div class="space-y-2">
-                    <label class="block text-xs font-black text-neutral-500 uppercase tracking-widest ml-1">{{ form_label(form.level) }}</label>
-                    {{ form_widget(form.level, {'attr': {'class': 'w-full bg-neutral-900/50 border border-neutral-800 text-white rounded-2xl py-4 px-6 focus:outline-none focus:border-skillpath-blue/50 focus:ring-1 focus:ring-skillpath-blue/20 transition-all'}}) }}
-                    <div class="text-red-500 text-xs">{{ form_errors(form.level) }}</div>
-                </div>
-            </div>
-
-            <div class="space-y-2">
-                <label class="block text-xs font-black text-neutral-500 uppercase tracking-widest ml-1">{{ form_label(form.description) }}</label>
-                {{ form_widget(form.description, {'attr': {'class': 'w-full bg-neutral-900/50 border border-neutral-800 text-white rounded-2xl py-4 px-6 focus:outline-none focus:border-skillpath-blue/50 focus:ring-1 focus:ring-skillpath-blue/20 transition-all min-h-[120px]'}}) }}
-                <div class="text-red-500 text-xs">{{ form_errors(form.description) }}</div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="space-y-2">
-                    <label class="block text-xs font-black text-neutral-500 uppercase tracking-widest ml-1">{{ form_label(form.dateCreation) }}</label>
-                    {{ form_widget(form.dateCreation, {'attr': {'class': 'w-full bg-neutral-900/50 border border-neutral-800 text-white rounded-2xl py-4 px-6 focus:outline-none focus:border-skillpath-blue/50 transition-all'}}) }}
-                    <div class="text-red-500 text-xs">{{ form_errors(form.dateCreation) }}</div>
-                </div>
-
-                <div class="space-y-2">
-                    <label class="block text-xs font-black text-neutral-500 uppercase tracking-widest ml-1">{{ form_label(form.image) }}</label>
-                    {{ form_widget(form.image, {'attr': {'class': 'w-full bg-neutral-900/50 border border-neutral-800 text-white rounded-2xl py-4 px-6 focus:outline-none focus:border-skillpath-blue/50 transition-all'}}) }}
-                    <div class="text-red-500 text-xs">{{ form_errors(form.image) }}</div>
-                </div>
-            </div>
-
-            <div class="pt-6 flex items-center gap-4">
-                <button type="submit" class="flex-1 py-4 vibrant-gradient rounded-2xl text-sm font-bold text-white shadow-lg shadow-skillpath-blue/25 transform hover:scale-[1.02] active:scale-[0.98] transition-all">
-                    💾 Mettre à jour le module
-                </button>
-                <a href="{{ path('module_list') }}" class="px-8 py-4 bg-neutral-800 text-white rounded-2xl text-sm font-bold hover:bg-neutral-700 transition-all border border-white/5">
-                    Annuler
-                </a>
-            </div>
-        {{ form_end(form) }}
+        {% include 'BackOffice/module/_form.html.twig' with {'button_label': 'Mettre à jour'} %}
+        
+        <div class="mt-8 pt-6 border-t border-slate-100 dark:border-white/5 flex justify-end">
+             <button type="button" 
+                    onclick="openDeleteModal('{{ path('admin_module_delete', {id: module.id}) }}', '{{ csrf_token('delete_module' ~ module.id) }}')"
+                    class="text-red-500/60 hover:text-red-500 text-xs font-black uppercase tracking-widest transition-colors flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                Supprimer ce module
+            </button>
+        </div>
     </div>
 </div>
+
+<!-- Modal Suppression (Identique à list.html.twig) -->
+<div id="deleteModal" class="fixed inset-0 z-[100] hidden">
+    <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4">
+        <div class="glass-card max-w-md w-full p-8 rounded-[2.5rem] shadow-2xl relative animate-scale-in">
+            <div class="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-red-500/20">
+                <svg class="w-10 h-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+            </div>
+            <h3 class="text-2xl font-black text-slate-900 dark:text-white text-center mb-2 tracking-tight">Supprimer définitivement ?</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-center mb-8 font-medium">Cette action supprimera ce chapitre et toutes ses ressources.</p>
+            
+            <form id="deleteForm" method="POST">
+                <input type="hidden" name="_token" id="deleteToken">
+                <div class="grid grid-cols-2 gap-4">
+                    <button type="button" onclick="closeDeleteModal()" class="btn-secondary">Annuler</button>
+                    <button type="submit" class="w-full py-4 bg-red-500 text-white font-bold rounded-2xl shadow-lg shadow-red-500/20 hover:bg-red-600 transition-all">Supprimer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+    function openDeleteModal(url, token) {
+        const modal = document.getElementById('deleteModal');
+        const form = document.getElementById('deleteForm');
+        const tokenInput = document.getElementById('deleteToken');
+        
+        form.action = url;
+        tokenInput.value = token;
+        
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeDeleteModal() {
+        const modal = document.getElementById('deleteModal');
+        modal.classList.add('hidden');
+        document.body.style.overflow = '';
+    }
+</script>
 {% endblock %}

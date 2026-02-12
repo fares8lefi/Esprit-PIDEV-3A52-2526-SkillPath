@@ -6,17 +6,17 @@
 <div class="space-y-8 animate-in fade-in duration-500">
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-            <h1 class="text-4xl font-extrabold text-white tracking-tight">Gestion des <span class="vibrant-text">Modules</span></h1>
-            <p class="text-neutral-500 mt-2 font-medium">Configurez les parcours d'apprentissage et les thématiques.</p>
+            <h1 class="text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">Gestion des <span class="gradient-text">Modules</span></h1>
+            <p class="text-slate-500 dark:text-slate-400 mt-2 font-medium">Configurez les chapitres et le contenu de vos formations.</p>
         </div>
-        <a href="{{ path('module_new') }}" class="px-6 py-3 vibrant-gradient rounded-2xl text-sm font-bold text-white shadow-lg shadow-skill-blue/25 flex items-center gap-2 transform hover:scale-105 active:scale-95 transition-all">
+        <a href="{{ path('admin_module_new') }}" class="btn-primary flex items-center gap-2">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
             Ajouter un module
         </a>
     </div>
 
     {% for message in app.flashes('success') %}
-        <div class="bg-green-500/10 border border-green-500/20 text-green-400 px-6 py-4 rounded-2xl flex items-center gap-3">
+        <div class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 px-6 py-4 rounded-2xl flex items-center gap-3">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
             </svg>
@@ -24,61 +24,186 @@
         </div>
     {% endfor %}
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {% for m in modules %}
-            <div class="glass-card rounded-[2.5rem] p-8 group relative overflow-hidden">
-                <div class="relative z-10">
-                    <div class="flex justify-between items-start mb-6">
-                        <div class="w-16 h-16 rounded-2xl bg-neutral-800/50 border border-neutral-700/50 flex items-center justify-center group-hover:border-skillpath-blue/30 transition-all">
-                            {% if m.image %}
-                                <img src="{{ asset('uploads/' ~ m.image) }}" alt="{{ m.name }}" class="w-12 h-12 object-cover rounded-xl">
-                            {% else %}
-                                <div class="w-12 h-12 rounded-xl vibrant-gradient flex items-center justify-center text-xl font-black text-white shadow-inner">
-                                    {{ m.name|first|upper }}
-                                </div>
-                            {% endif %}
-                        </div>
-                        <span class="px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-wider bg-skillpath-blue/10 text-skillpath-blue border border-skillpath-blue/20">
-                            Niveau {{ m.level }}
-                        </span>
-                    </div>
-
-                    <h3 class="text-xl font-bold text-white mb-2 group-hover:text-skillpath-blue transition-colors">{{ m.name }}</h3>
-                    <p class="text-neutral-500 text-sm line-clamp-3 mb-6">{{ m.description }}</p>
-
-                    <div class="flex items-center justify-between pt-6 border-t border-neutral-800/50">
-                        <div class="text-xs text-neutral-600 font-bold uppercase tracking-widest">
-                            {{ m.dateCreation ? m.dateCreation|date('d/m/Y') : 'Récemment' }}
-                        </div>
-                        <div class="flex gap-2">
-                            <a href="{{ path('module_edit', {'id': m.id}) }}" class="p-2.5 bg-neutral-800/50 text-neutral-400 hover:text-skillpath-green hover:bg-skillpath-green/10 rounded-xl transition-all border border-neutral-700/50" title="Modifier">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                                </svg>
-                            </a>
-                            <a href="{{ path('module_delete', {'id': m.id}) }}" onclick="return confirm('Voulez-vous supprimer ce module ?')" class="p-2.5 bg-neutral-800/50 text-neutral-400 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all border border-neutral-700/50" title="Supprimer">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
-                                </svg>
-                            </a>
-                        </div>
-                    </div>
+    <!-- Filters -->
+    <div class="glass-card rounded-[2rem] p-6 mb-6">
+        <form method="get" action="{{ path('admin_module_list') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+            <div class="md:col-span-2">
+                <label class="block text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">Rechercher</label>
+                <div class="relative group">
+                    <input type="text" name="search" value="{{ app.request.get('search') }}"
+                           placeholder="Nom ou description..."
+                           class="form-input pl-10">
+                    <svg class="absolute left-3.5 top-3.5 w-5 h-5 text-slate-400 group-focus-within:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
                 </div>
-                <!-- Card background glow -->
-                <div class="absolute -right-12 -bottom-12 w-32 h-32 bg-skillpath-blue/5 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700"></div>
             </div>
-        {% else %}
-            <div class="col-span-full py-20 text-center glass-card rounded-[2.5rem]">
-                <div class="w-20 h-20 bg-neutral-800/50 rounded-full flex items-center justify-center mx-auto mb-6 border border-neutral-700/50">
-                    <svg class="w-10 h-10 text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
-                </div>
-                <h3 class="text-xl font-bold text-white">Aucun module</h3>
-                <p class="text-neutral-500 mt-2 mb-8">Commencez par créer votre premier module d'apprentissage.</p>
-                <a href="{{ path('module_new') }}" class="px-8 py-3 vibrant-gradient rounded-2xl text-sm font-bold text-white shadow-lg shadow-skillpath-blue/25 transition-all">
-                    Créer un module
+
+            <div class="flex gap-2">
+                <button type="submit" class="flex-1 px-6 py-3 bg-slate-100 dark:bg-white/5 text-slate-900 dark:text-white rounded-xl font-bold hover:bg-slate-200 dark:hover:bg-white/10 transition-all">
+                    Filtrer
+                </button>
+                <a href="{{ path('admin_module_list') }}" class="px-6 py-3 border border-slate-200 dark:border-white/10 text-slate-500 rounded-xl font-bold hover:bg-slate-50 dark:hover:bg-white/5 transition-all flex items-center justify-center">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
                 </a>
             </div>
-        {% endfor %}
+        </form>
+    </div>
+
+    <!-- Table -->
+    <div class="glass-card rounded-[2rem] overflow-hidden border-none">
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-slate-50/50 dark:bg-white/5 border-b border-slate-100 dark:border-white/5">
+                    <tr>
+                        <th class="px-8 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">Module / Chapitre</th>
+                        <th class="px-8 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">Formation</th>
+                        <th class="px-8 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">Type</th>
+                        <th class="px-8 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">Créé le</th>
+                        <th class="px-8 py-5 text-right text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 dark:divide-white/5">
+                    {% for module in modules %}
+                        <tr class="group hover:bg-slate-50/50 dark:hover:bg-white/2 transition-all">
+                            <td class="px-8 py-5">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-bold">
+                                        {{ module.name|first|upper }}
+                                    </div>
+                                    <div>
+                                        <div class="text-sm font-bold text-slate-900 dark:text-white">{{ module.name }}</div>
+                                        <div class="text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-wider font-bold">ID: #{{ module.id }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-8 py-5">
+                                <span class="badge badge-purple">
+                                    {{ module.cours.titre|default('Non assigné') }}
+                                </span>
+                            </td>
+                            <td class="px-8 py-5">
+                                <span class="badge {% if module.type == 'video' %}badge-cyan{% elseif module.type == 'quiz' %}badge-amber{% else %}badge-purple{% endif %}">
+                                    {{ module.type|default('texte')|upper }}
+                                </span>
+                            </td>
+                            <td class="px-8 py-5">
+                                <div class="text-sm font-medium text-slate-500 dark:text-slate-400">
+                                    {{ module.dateCreation ? module.dateCreation|date('d M Y') : '—' }}
+                                </div>
+                            </td>
+                            <td class="px-8 py-5">
+                                <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <a href="{{ path('admin_module_show', {id: module.id}) }}" class="p-2 text-slate-400 hover:text-primary dark:hover:text-primary-light transition-colors" title="Détails">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                    </a>
+                                    <a href="{{ path('admin_module_edit', {id: module.id}) }}" class="p-2 text-slate-400 hover:text-emerald-500 transition-colors" title="Modifier">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                    </a>
+                                    <button type="button" 
+                                            onclick="openDeleteModal('{{ path('admin_module_delete', {id: module.id}) }}', '{{ csrf_token('delete_module' ~ module.id) }}')"
+                                            class="p-2 text-slate-400 hover:text-red-500 transition-colors" title="Supprimer">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="5" class="px-8 py-20 text-center">
+                                <div class="w-20 h-20 bg-slate-50 dark:bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6">
+                                    <svg class="w-10 h-10 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                                </div>
+                                <h3 class="text-xl font-bold text-slate-900 dark:text-white">Aucun module</h3>
+                                <p class="text-slate-500 dark:text-slate-400 mt-2 mb-8">Commencez par créer votre premier module d'apprentissage.</p>
+                                <a href="{{ path('admin_module_new') }}" class="btn-primary">Créer un module</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    {% if modules.haveToPaginate is defined and modules.haveToPaginate %}
+        <div class="flex items-center justify-between pt-8">
+            <p class="text-sm font-bold text-slate-400 uppercase tracking-widest">
+                {{ modules.totalItemCount }} Modules au total
+            </p>
+            <div class="flex gap-2">
+                {% if modules.currentPageNumber > 1 %}
+                    <a href="{{ path('admin_module_list', app.request.query.all|merge({page: modules.currentPageNumber - 1})) }}" class="w-12 h-12 flex items-center justify-center glass-card rounded-xl hover:border-primary/30 transition-all">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                    </a>
+                {% endif %}
+                
+                {% for page in 1..modules.paginationData.pageCount %}
+                    {% if page == modules.currentPageNumber %}
+                        <div class="w-12 h-12 flex items-center justify-center bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/20">{{ page }}</div>
+                    {% elseif page >= modules.currentPageNumber - 1 and page <= modules.currentPageNumber + 1 %}
+                        <a href="{{ path('admin_module_list', app.request.query.all|merge({page: page})) }}" class="w-12 h-12 flex items-center justify-center glass-card rounded-xl hover:border-primary/30 transition-all font-bold text-slate-500">{{ page }}</a>
+                    {% endif %}
+                {% endfor %}
+
+                {% if modules.currentPageNumber < modules.paginationData.pageCount %}
+                    <a href="{{ path('admin_module_list', app.request.query.all|merge({page: modules.currentPageNumber + 1})) }}" class="w-12 h-12 flex items-center justify-center glass-card rounded-xl hover:border-primary/30 transition-all">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Modal Suppression -->
+<div id="deleteModal" class="fixed inset-0 z-[100] hidden">
+    <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4">
+        <div class="glass-card max-w-md w-full p-8 rounded-[2.5rem] shadow-2xl relative animate-scale-in">
+            <div class="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-red-500/20">
+                <svg class="w-10 h-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+            </div>
+            <h3 class="text-2xl font-black text-slate-900 dark:text-white text-center mb-2 tracking-tight">Supprimer le module ?</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-center mb-8 font-medium">Cette action est irréversible et supprimera tout le contenu associé.</p>
+            
+            <form id="deleteForm" method="POST">
+                <input type="hidden" name="_token" id="deleteToken">
+                <div class="grid grid-cols-2 gap-4">
+                    <button type="button" onclick="closeDeleteModal()" class="btn-secondary">Annuler</button>
+                    <button type="submit" class="w-full py-4 bg-red-500 text-white font-bold rounded-2xl shadow-lg shadow-red-500/20 hover:bg-red-600 transition-all">Supprimer</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+    function openDeleteModal(url, token) {
+        const modal = document.getElementById('deleteModal');
+        const form = document.getElementById('deleteForm');
+        const tokenInput = document.getElementById('deleteToken');
+        
+        form.action = url;
+        tokenInput.value = token;
+        
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeDeleteModal() {
+        const modal = document.getElementById('deleteModal');
+        modal.classList.add('hidden');
+        document.body.style.overflow = '';
+    }
+
+    // Fermer au clic sur l'overlay
+    document.getElementById('deleteModal').addEventListener('click', function(e) {
+        if (e.target === this.firstElementChild || e.target === this) {
+            closeDeleteModal();
+        }
+    });
+</script>
 {% endblock %}
