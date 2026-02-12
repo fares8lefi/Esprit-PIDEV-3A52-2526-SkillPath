@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Take Quiz - {{ quiz.titre }}{% endblock %}
+
+{% block body %}
+    <div class="container mx-auto p-4 max-w-3xl">
+        <div class="bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-700">
+            <h1 class="text-2xl font-bold mb-2 text-white">{{ quiz.titre }}</h1>
+            <p class="text-gray-300 mb-6">{{ quiz.description }}</p>
+            
+            <form method="post" action="{{ path('app_front_office_quiz_take', {'id': quiz.id}) }}">
+                {% for question in quiz.questions %}
+                    <div class="mb-8 border-b border-gray-700 pb-6 last:border-b-0">
+                        <h3 class="text-lg font-semibold mb-3 text-white">{{ loop.index }}. {{ question.enonce }} <span class="text-sm text-gray-400 font-normal">({{ question.points }} pts)</span></h3>
+                        
+                        <div class="space-y-2">
+                            {% if question.choixA %}
+                                <label class="flex items-center space-x-3 cursor-pointer p-2 rounded hover:bg-gray-700 transition">
+                                    <input type="radio" name="question_{{ question.id }}" value="A" class="form-radio h-5 w-5 text-blue-600 bg-gray-700 border-gray-600 focus:ring-blue-500" required>
+                                    <span class="text-gray-200">A. {{ question.choixA }}</span>
+                                </label>
+                            {% endif %}
+                            
+                            {% if question.choixB %}
+                                <label class="flex items-center space-x-3 cursor-pointer p-2 rounded hover:bg-gray-700 transition">
+                                    <input type="radio" name="question_{{ question.id }}" value="B" class="form-radio h-5 w-5 text-blue-600 bg-gray-700 border-gray-600 focus:ring-blue-500">
+                                    <span class="text-gray-200">B. {{ question.choixB }}</span>
+                                </label>
+                            {% endif %}
+                            
+                            {% if question.choixC %}
+                                <label class="flex items-center space-x-3 cursor-pointer p-2 rounded hover:bg-gray-700 transition">
+                                    <input type="radio" name="question_{{ question.id }}" value="C" class="form-radio h-5 w-5 text-blue-600 bg-gray-700 border-gray-600 focus:ring-blue-500">
+                                    <span class="text-gray-200">C. {{ question.choixC }}</span>
+                                </label>
+                            {% endif %}
+                            
+                            {% if question.choixD %}
+                                <label class="flex items-center space-x-3 cursor-pointer p-2 rounded hover:bg-gray-700 transition">
+                                    <input type="radio" name="question_{{ question.id }}" value="D" class="form-radio h-5 w-5 text-blue-600 bg-gray-700 border-gray-600 focus:ring-blue-500">
+                                    <span class="text-gray-200">D. {{ question.choixD }}</span>
+                                </label>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+                
+                <div class="mt-8 text-center">
+                    <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-lg shadow transition duration-300 transform hover:scale-105">
+                        Submit Quiz
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
