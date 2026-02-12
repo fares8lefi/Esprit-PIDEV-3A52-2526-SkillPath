@@ -1,216 +1,428 @@
-{% extends 'BackOffice/layout.html.twig' %}
+{% extends 'base.html.twig' %}
 
-{% block title %}Gestion des Formations - SkillPath{% endblock %}
+{% block title %}Gestion du Contenu des Cours - SkillPath{% endblock %}
 
-{% block content %}
-<div class="space-y-8 animate-in fade-in duration-500">
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div>
-            <h1 class="text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">Gestion des <span class="gradient-text">Cours</span></h1>
-            <p class="text-slate-500 dark:text-slate-400 mt-2 font-medium">Gérez votre catalogue de formations et leur progression.</p>
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .gradient-text {
+            background: linear-gradient(135deg, #1E88E5 0%, #43A047 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .slide-down {
+            animation: slideDown 0.3s ease-out;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    
+    <!-- Sidebar -->
+    <aside id="sidebar" class="fixed top-0 left-0 z-40 w-72 h-screen transition-transform -translate-x-full lg:translate-x-0">
+        <div class="h-full px-6 py-6 overflow-y-auto bg-white border-r border-gray-200 shadow-xl">
+            
+            <!-- Logo -->
+            <div class="flex items-center gap-3 mb-10 pb-6 border-b border-gray-200">
+                <svg class="w-10 h-10" viewBox="0 0 40 40" fill="none">
+                    <path d="M10 30C10 30 15 25 20 25C25 25 30 30 30 30" stroke="#1E88E5" stroke-width="3" stroke-linecap="round"/>
+                    <path d="M10 15C10 15 15 10 20 10C25 10 30 15 30 15" stroke="#43A047" stroke-width="3" stroke-linecap="round"/>
+                    <circle cx="12" cy="20" r="2" fill="#FBC02D"/>
+                    <circle cx="28" cy="20" r="2" fill="#FBC02D"/>
+                </svg>
+                <div>
+                    <span class="text-2xl font-extrabold gradient-text">SkillPath</span>
+                    <p class="text-xs text-gray-500 font-medium">Gestion des Cours</p>
+                </div>
+            </div>
+            
+            <!-- Navigation -->
+            <nav class="space-y-2">
+                <a href="{{ path('app_admin_dashboard') }}" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-xl font-medium transition-all duration-300">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                    </svg>
+                    <span>Tableau de bord</span>
+                </a>
+                
+                <a href="{{ path('admin_cours_list') }}" class="flex items-center gap-3 px-4 py-3 text-white bg-gradient-to-r from-brand-blue to-brand-blue-dark rounded-xl font-semibold transition-all duration-300 shadow-md">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                    </svg>
+                    <span>Gestion des cours</span>
+                </a>
+                
+                <a href="{{ path('admin_module_list') }}" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-xl font-medium transition-all duration-300">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                    </svg>
+                    <span>Modules</span>
+                </a>
+            </nav>
         </div>
-        <a href="{{ path('admin_cours_new') }}" class="btn-primary flex items-center gap-2">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-            Nouveau cours
-        </a>
+    </aside>
+    
+    <!-- Main cours -->
+    <div class="lg:ml-72">
+        
+        <!-- Top Bar -->
+        <header class="bg-white border-b border-gray-200 sticky top-0 z-30">
+            <div class="px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <button id="mobile-menu-btn" class="lg:hidden text-gray-600 hover:text-gray-900">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                    </button>
+                    
+                    <div class="flex items-center gap-4">
+                        <h1 class="text-2xl font-bold text-gray-900">Gestion du Contenu des Cours</h1>
+                    </div>
+                    
+                    <a href="{{ path('admin_cours_new') }}" class="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-brand-blue to-brand-blue-dark text-white rounded-xl font-semibold hover:shadow-lg transition-all">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                        </svg>
+                        <span class="hidden sm:inline">Ajouter un contenu</span>
+                    </a>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Main cours Area -->
+        <main class="p-6">
+            
+            <!-- Flash Messages -->
+            {% for message in app.flashes('success') %}
+                <div class="bg-green-50 border-l-4 border-green-500 p-4 mb-6 rounded-lg">
+                    <div class="flex items-center gap-3">
+                        <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                        <p class="text-green-700 font-medium">{{ message }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+            
+            {% for message in app.flashes('error') %}
+                <div class="bg-gray-50
+-50 border-l-4 border-red-500 p-4 mb-6 rounded-lg">
+                    <div class="flex items-center gap-3">
+                        <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                        <p class="text-red-700 font-medium">{{ message }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+            
+            <!-- Filters -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 mb-6">
+                <form method="get" action="{{ path('admin_cours_list') }}">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <!-- Search -->
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Rechercher</label>
+                            <div class="relative">
+                                <input type="text" name="search" value="{{ app.request.get('search') }}" placeholder="Rechercher par titre ou description..." class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent">
+                                <svg class="absolute left-3 top-3 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                </svg>
+                            </div>
+                        </div>
+                        
+                        <!-- Filter by Module removed -->
+                        
+                        <!-- Filter by Level -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Niveau</label>
+                            <select name="level" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent">
+                                <option value="">Tous les niveaux</option>
+                                <option value="Débutant" {% if app.request.get('level') == 'Débutant' %}selected{% endif %}>Débutant</option>
+                                <option value="Intermédiaire" {% if app.request.get('level') == 'Intermédiaire' %}selected{% endif %}>Intermédiaire</option>
+                                <option value="Avancé" {% if app.request.get('level') == 'Avancé' %}selected{% endif %}>Avancé</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="hidden">Filtrer</button>
+                </form>
+            </div>
+            
+            <!-- cours Table -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50 border-b border-gray-200">
+                            <tr>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">ID</th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Titre de la Formation</th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Catégorie</th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Nombre de Modules</th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Niveau</th>
+                                <th class="px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            {% if cours is empty or cours|length == 0 %}
+                                <tr>
+                                    <td colspan="6" class="px-6 py-12 text-center text-gray-500">
+                                        <div class="flex flex-col items-center gap-3">
+                                            <svg class="w-16 h-16 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                            </svg>
+                                            <p class="font-medium">Aucun contenu trouvé</p>
+                                            <a href="{{ path('admin_cours_new') }}" class="mt-2 px-6 py-2 bg-brand-blue text-white rounded-lg hover:bg-brand-blue-dark transition-all">
+                                                Ajouter le premier contenu
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                {% for cours in cours %}
+                                    <tr class="hover:bg-gray-50 transition-all">
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="text-sm font-bold text-gray-900">#{{ cours.id }}</span>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="text-sm font-semibold text-gray-900">{{ cours.titre }}</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {{ cours.categorie|default('N/A') }}
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-3 py-1 bg-brand-blue/10 text-brand-blue rounded-full text-xs font-bold">
+                                                {{ cours.modules|length }} chapitre(s)
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold 
+                                                {% if cours.level == 'Débutant' %}bg-green-100 text-green-700
+                                                {% elseif cours.level == 'Intermédiaire' %}bg-yellow-100 text-yellow-700
+                                                {% else %}bg-red-100 text-red-700{% endif %}">
+                                                {{ cours.level|default('N/A') }}
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-right">
+                                            <div class="flex items-center justify-end gap-2">
+                                                <a href="{{ path('admin_cours_show', {id: cours.id}) }}" class="p-2 text-brand-blue hover:bg-blue-50 rounded-lg transition-all" title="Voir">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                                    </svg>
+                                                </a>
+                                                <a href="{{ path('admin_cours_edit', {id: cours.id}) }}" class="p-2 text-brand-green hover:bg-green-50 rounded-lg transition-all" title="Modifier">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                                    </svg>
+                                                </a>
+                                              <button onclick="deletecours({{ cours.id }}, '{{ csrf_token('delete' ~ cours.id) }}')"
+        class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-all"
+        title="Supprimer">
+
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+    </svg>
+
+</button>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Pagination -->
+                {% if cours.haveToPaginate is defined and cours.haveToPaginate %}
+                    <div class="bg-gray-50 px-6 py-4 border-t border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <div class="text-sm text-gray-600">
+                                Affichage de <span class="font-semibold">{{ cours.currentItemCount > 0 ? ((cours.currentPageNumber - 1) * cours.itemNumberPerPage + 1) : 0 }}</span> 
+                                à <span class="font-semibold">{{ (cours.currentPageNumber - 1) * cours.itemNumberPerPage + cours.currentItemCount }}</span> 
+                                sur <span class="font-semibold">{{ cours.totalItemCount }}</span> résultats
+                            </div>
+                            <div class="flex gap-2">
+                                {% if cours.currentPageNumber > 1 %}
+                                    <a href="{{ path('admin_cours_list', app.request.query.all|merge({page: cours.currentPageNumber - 1})) }}" class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 transition-all">
+                                        Précédent
+                                    </a>
+                                {% else %}
+                                    <span class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-400 cursor-not-allowed">
+                                        Précédent
+                                    </span>
+                                {% endif %}
+                                
+                                {% for page in 1..cours.paginationData.pageCount %}
+                                    {% if page == cours.currentPageNumber %}
+                                        <span class="px-4 py-2 bg-brand-blue text-white rounded-lg text-sm font-medium">{{ page }}</span>
+                                    {% elseif page >= cours.currentPageNumber - 2 and page <= cours.currentPageNumber + 2 %}
+                                        <a href="{{ path('admin_cours_list', app.request.query.all|merge({page: page})) }}" class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 transition-all">
+                                            {{ page }}
+                                        </a>
+                                    {% endif %}
+                                {% endfor %}
+                                
+                                {% if cours.currentPageNumber < cours.paginationData.pageCount %}
+                                    <a href="{{ path('admin_cours_list', app.request.query.all|merge({page: cours.currentPageNumber + 1})) }}" class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 transition-all">
+                                        Suivant
+                                    </a>
+                                {% else %}
+                                    <span class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-400 cursor-not-allowed">
+                                        Suivant
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+            
+        </main>
     </div>
-
-    {% for message in app.flashes('success') %}
-        <div class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 px-6 py-4 rounded-2xl flex items-center gap-3">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-            </svg>
-            <span class="font-medium">{{ message }}</span>
-        </div>
-    {% endfor %}
-
-    <!-- Filters -->
-    <div class="glass-card rounded-[2rem] p-6 mb-6">
-        <form method="get" action="{{ path('admin_cours_list') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-            <div class="md:col-span-2">
-                <label class="block text-xs font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 mb-2 font-bold">Rechercher</label>
-                <div class="relative group">
-                    <input type="text" name="search" value="{{ app.request.get('search') }}"
-                           placeholder="Titre ou catégorie..."
-                           class="form-input pl-10">
-                    <svg class="absolute left-3.5 top-3.5 w-5 h-5 text-slate-400 group-focus-within:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+    
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full fade-in">
+            <div class="p-8">
+                <div class="w-16 h-16 bg-gray-50
+-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
                     </svg>
                 </div>
+                <h3 class="text-xl font-bold text-gray-900 text-center mb-2">Confirmer la suppression</h3>
+                <p class="text-gray-600 text-center mb-6">Êtes-vous sûr de vouloir supprimer ce contenu ? Cette action est irréversible.</p>
+                
+                <form id="deleteForm" method="post" action="">
+                    <input type="hidden" name="_token" id="deleteToken" value="">
+                    <div class="flex gap-4">
+                        <button type="button" onclick="closeDeleteModal()" class="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-all">
+                            Annuler
+                        </button>
+                        <button type="submit"
+    class="flex-1 px-6 py-3 bg-red-600 text-white rounded-xl font-semibold hover:bg-red-700 transition-all">
+    Supprimer
+</button>
+                    </div>
+                </form>
             </div>
-
+        </div>
+    </div>
+    
+    <!-- Success Toast -->
+    <div id="successToast" class="hidden fixed top-6 right-6 bg-white border-l-4 border-brand-green rounded-lg shadow-xl p-4 z-50 slide-down">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                <svg class="w-5 h-5 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+            </div>
             <div>
-                <label class="block text-xs font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 mb-2 font-bold">Niveau</label>
-                <select name="level" class="form-input" onchange="this.form.submit()">
-                    <option value="">Tous les niveaux</option>
-                    <option value="Débutant" {% if app.request.get('level') == 'Débutant' %}selected{% endif %}>Débutant</option>
-                    <option value="Intermédiaire" {% if app.request.get('level') == 'Intermédiaire' %}selected{% endif %}>Intermédiaire</option>
-                    <option value="Avancé" {% if app.request.get('level') == 'Avancé' %}selected{% endif %}>Avancé</option>
-                </select>
+                <p class="font-semibold text-gray-900">Succès</p>
+                <p id="toastMessage" class="text-sm text-gray-600">Opération effectuée avec succès</p>
             </div>
-
-            <div class="flex gap-2">
-                <button type="submit" class="flex-1 px-6 py-3 bg-slate-100 dark:bg-white/5 text-slate-900 dark:text-white rounded-xl font-bold hover:bg-slate-200 dark:hover:bg-white/10 transition-all">
-                    Filtrer
-                </button>
-                <a href="{{ path('admin_cours_list') }}" class="px-6 py-3 border border-slate-200 dark:border-white/10 text-slate-500 rounded-xl font-bold hover:bg-slate-50 dark:hover:bg-white/5 transition-all flex items-center justify-center">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-                </a>
-            </div>
-        </form>
-    </div>
-
-    <!-- Table -->
-    <div class="glass-card rounded-[2rem] overflow-hidden border-none text-left">
-        <div class="overflow-x-auto">
-            <table class="w-full">
-                <thead class="bg-slate-50/50 dark:bg-white/5 border-b border-slate-100 dark:border-white/5">
-                    <tr>
-                        <th class="px-8 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 font-bold">Formation</th>
-                        <th class="px-8 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 font-bold">Catégorie</th>
-                        <th class="px-8 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 font-bold">Progression</th>
-                        <th class="px-8 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 font-bold">Niveau</th>
-                        <th class="px-8 py-5 text-right text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 font-bold">Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-100 dark:divide-white/5">
-                    {% for item in cours %}
-                        <tr class="group hover:bg-slate-50/50 dark:hover:bg-white/2 transition-all">
-                            <td class="px-8 py-5">
-                                <div class="flex items-center gap-4 text-left">
-                                    <div class="w-12 h-12 rounded-xl bg-primary/10 flex-shrink-0 flex items-center justify-center overflow-hidden">
-                                        {% if item.image %}
-                                            <img src="{{ item.image }}" class="w-full h-full object-cover">
-                                        {% else %}
-                                            <span class="text-primary font-black">{{ item.titre|first|upper }}</span>
-                                        {% endif %}
-                                    </div>
-                                    <div class="text-left">
-                                        <div class="text-sm font-bold text-slate-900 dark:text-white">{{ item.titre }}</div>
-                                        <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">ID: #{{ item.id }}</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-8 py-5">
-                                <span class="badge badge-purple">
-                                    {{ item.categorie|default('Général') }}
-                                </span>
-                            </td>
-                            <td class="px-8 py-5">
-                                <div class="flex flex-col gap-1">
-                                    <span class="text-xs font-bold text-slate-500 dark:text-slate-400">
-                                        {{ item.modules|length }} Chapitres
-                                    </span>
-                                    <div class="progress-bar w-32">
-                                        <div class="progress-bar-fill" style="width: {{ (item.modules|length > 0) ? '100%' : '0%' }}"></div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-8 py-5">
-                                <span class="badge {% if item.level == 'Débutant' %}badge-green{% elseif item.level == 'Intermédiaire' %}badge-amber{% else %}badge-red{% endif %}">
-                                    {{ item.level|default('Débutant')|upper }}
-                                </span>
-                            </td>
-                            <td class="px-8 py-5">
-                                <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <a href="{{ path('admin_cours_show', {id: item.id}) }}" class="p-2 text-slate-400 hover:text-primary dark:hover:text-primary-light transition-colors" title="Détails">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                                    </a>
-                                    <a href="{{ path('admin_cours_edit', {id: item.id}) }}" class="p-2 text-slate-400 hover:text-emerald-500 transition-colors" title="Modifier">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                                    </a>
-                                    <button onclick="openDeleteModal('{{ path('admin_cours_delete', {id: item.id}) }}', '{{ csrf_token('delete' ~ item.id) }}')" class="p-2 text-slate-400 hover:text-red-500 transition-colors" title="Supprimer">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    {% else %}
-                        <tr>
-                            <td colspan="5" class="px-8 py-20 text-center">
-                                <div class="w-20 h-20 bg-slate-50 dark:bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6">
-                                    <svg class="w-10 h-10 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
-                                </div>
-                                <h3 class="text-xl font-bold text-slate-900 dark:text-white">Aucun cours</h3>
-                                <p class="text-slate-500 dark:text-slate-400 mt-2 mb-8">Commencez par créer votre première formation.</p>
-                                <a href="{{ path('admin_cours_new') }}" class="btn-primary">Créer un cours</a>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
         </div>
     </div>
 
-    <!-- Pagination -->
-    {% if cours.haveToPaginate is defined and cours.haveToPaginate %}
-        <div class="flex items-center justify-between pt-8">
-            <p class="text-sm font-bold text-slate-400 uppercase tracking-widest font-bold">
-                {{ cours.totalItemCount }} Cours au total
-            </p>
-            <div class="flex gap-2">
-                {# Pagination logic standard #}
-                {% if cours.currentPageNumber > 1 %}
-                    <a href="{{ path('admin_cours_list', app.request.query.all|merge({page: cours.currentPageNumber - 1})) }}" class="w-12 h-12 flex items-center justify-center glass-card rounded-xl hover:border-primary/30 transition-all">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-                    </a>
-                {% endif %}
-                
-                <div class="w-12 h-12 flex items-center justify-center bg-primary text-white font-bold rounded-xl">{{ cours.currentPageNumber }}</div>
-                
-                {% if cours.currentPageNumber < cours.paginationData.pageCount %}
-                    <a href="{{ path('admin_cours_list', app.request.query.all|merge({page: cours.currentPageNumber + 1})) }}" class="w-12 h-12 flex items-center justify-center glass-card rounded-xl hover:border-primary/30 transition-all">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                    </a>
-                {% endif %}
-            </div>
-        </div>
-    {% endif %}
-</div>
-
-<!-- Modal Suppression -->
-<div id="deleteModal" class="fixed inset-0 z-[100] hidden">
-    <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
-    <div class="absolute inset-0 flex items-center justify-center p-4">
-        <div class="glass-card max-w-md w-full p-8 rounded-[2.5rem] shadow-2xl relative animate-scale-in">
-            <div class="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-red-500/20">
-                <svg class="w-10 h-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-            </div>
-            <h3 class="text-2xl font-black text-slate-900 dark:text-white text-center mb-2 tracking-tight">Supprimer la formation ?</h3>
-            <p class="text-slate-500 dark:text-slate-400 text-center mb-8 font-medium">Cette action supprimera également tous les chapitres (modules) liés à ce cours.</p>
-            
-            <form id="deleteForm" method="POST">
-                {# CSRF est géré dans le JS par concaténation si besoin, mais ici on va utiliser le token passé #}
-                <input type="hidden" name="_token" id="deleteToken">
-                <input type="hidden" name="_method" value="DELETE">
-                <div class="grid grid-cols-2 gap-4">
-                    <button type="button" onclick="closeDeleteModal()" class="btn-secondary">Annuler</button>
-                    <button type="submit" class="w-full py-4 bg-red-500 text-white font-bold rounded-2xl shadow-lg shadow-red-500/20 hover:bg-red-600 transition-all">Supprimer</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 {% endblock %}
 
 {% block javascripts %}
-<script>
-    function openDeleteModal(url, token) {
-        const modal = document.getElementById('deleteModal');
-        const form = document.getElementById('deleteForm');
-        const tokenInput = document.getElementById('deleteToken');
+    {{ parent() }}
+    <script>
+        // Delete cours
+        let deleteTargetId = null;
         
-        form.action = url;
-        tokenInput.value = token;
-        
-        modal.classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-    }
+        function deletecours(id, csrfToken) {
+    deleteTargetId = id;
 
-    function closeDeleteModal() {
-        const modal = document.getElementById('deleteModal');
-        modal.classList.add('hidden');
-        document.body.style.overflow = '';
-    }
-</script>
+    const deleteForm = document.getElementById('deleteForm');
+
+    // URL EXACTE du controller
+    deleteForm.action = "/admin/cours/" + id;
+
+    // VRAI token généré par Symfony
+    document.getElementById('deleteToken').value = csrfToken;
+
+    document.getElementById('deleteModal').classList.remove('hidden');
+}
+
+        
+        // Show Toast
+        function showToast(message) {
+            const toast = document.getElementById('successToast');
+            document.getElementById('toastMessage').textcours = message;
+            toast.classList.remove('hidden');
+            
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+        
+        // Mobile menu
+        document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('-translate-x-full');
+        });
+        
+        // Close modal on outside click
+        document.getElementById('deleteModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeDeleteModal();
+            }
+        });
+        
+        // Auto-submit filters on change
+        document.querySelectorAll('select[name="module"], select[name="type"]').forEach(select => {
+            select.addEventListener('change', function() {
+                this.closest('form').submit();
+            });
+        });
+        
+        // Search with debounce
+        let searchTimeout;
+        const searchInput = document.querySelector('input[name="search"]');
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    this.closest('form').submit();
+                }, 500);
+            });
+        }
+    </script>
 {% endblock %}
