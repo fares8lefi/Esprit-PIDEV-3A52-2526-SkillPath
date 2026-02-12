@@ -1,0 +1,72 @@
+{% extends 'BackOffice/layout.html.twig' %}
+
+{% block title %}{{ event.title }} - SkillPath{% endblock %}
+
+{% block content %}
+<div class="space-y-8 animate-in fade-in duration-500">
+    <div class="flex items-center gap-4 mb-2">
+        <a href="{{ path('admin_event_list') }}" class="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-white/5 transition-all">
+            <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        </a>
+        <div>
+            <h1 class="text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">{{ event.title }}</h1>
+            <p class="text-slate-500 dark:text-slate-400 mt-1 font-medium">ID: #{{ event.id }}</p>
+        </div>
+    </div>
+
+    <div class="glass-card rounded-[2rem] p-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Date -->
+            <div>
+                <h3 class="text-xs font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 mb-2">Date</h3>
+                <span class="badge badge-purple">{{ event.eventDate ? event.eventDate|date('d/m/Y') : 'N/A' }}</span>
+            </div>
+
+            <!-- Lieu -->
+            <div>
+                <h3 class="text-xs font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 mb-2">Lieu</h3>
+                <span class="badge badge-green">{{ event.location ? event.location.name : 'Non défini' }}</span>
+            </div>
+
+            <!-- Horaire -->
+            <div>
+                <h3 class="text-xs font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 mb-2">Heure de début</h3>
+                <p class="font-bold text-slate-900 dark:text-white">{{ event.startTime ? event.startTime|date('H:i') : 'N/A' }}</p>
+            </div>
+
+            <div>
+                <h3 class="text-xs font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 mb-2">Heure de fin</h3>
+                <p class="font-bold text-slate-900 dark:text-white">{{ event.endTime ? event.endTime|date('H:i') : 'N/A' }}</p>
+            </div>
+        </div>
+
+        <!-- Description -->
+        <div class="mt-8 pt-6 border-t border-slate-200/50 dark:border-white/5">
+            <h3 class="text-xs font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 mb-3">Description</h3>
+            <div class="bg-slate-50/50 dark:bg-white/5 rounded-2xl p-6 text-slate-700 dark:text-slate-300 leading-relaxed">
+                {{ event.description ? event.description|nl2br : 'Aucune description.' }}
+            </div>
+        </div>
+
+        <!-- Image -->
+        {% if event.image %}
+        <div class="mt-8 pt-6 border-t border-slate-200/50 dark:border-white/5">
+            <h3 class="text-xs font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 mb-3">Image</h3>
+            <img src="{{ asset('uploads/events/' ~ event.image) }}" class="max-w-md h-auto rounded-2xl shadow-sm" alt="{{ event.title }}">
+        </div>
+        {% endif %}
+
+        <!-- Actions -->
+        <div class="flex gap-4 pt-8 mt-8 border-t border-slate-200/50 dark:border-white/5">
+            <a href="{{ path('admin_event_list') }}" class="btn-secondary">
+                <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                Retour
+            </a>
+            <a href="{{ path('admin_event_edit', {id: event.id}) }}" class="btn-primary">
+                <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                Modifier
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

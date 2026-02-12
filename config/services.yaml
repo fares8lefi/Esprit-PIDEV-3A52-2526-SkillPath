@@ -1,6 +1,8 @@
 # config/services.yaml
 parameters:
   modules_upload_dir: '%kernel.project_dir%/public/uploads/modules'
+  events_upload_dir: '%kernel.project_dir%/public/uploads/events'
+  locations_upload_dir: '%kernel.project_dir%/public/uploads/locations'
   hf_token: '%env(HF_TOKEN)%'
   hf_model: '%env(HF_MODEL)%'
 
