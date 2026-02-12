@@ -19,12 +19,12 @@ class CoursRepository extends ServiceEntityRepository
     /**
      * Recherche de contenus avec filtres
      * 
-     * @param string|null $search Texte de recherche
-     * @param int|null $moduleId ID du module
-     * @param string|null $type Type de contenu
+     * @param string|null $search
+     * @param string|null $level
+     * @param string|null $category
      * @return Cours[]
      */
-    public function findByFilters(?string $search = null): array
+    public function findByFilters(?string $search = null, ?string $level = null, ?string $category = null): array
     {
         $qb = $this->createQueryBuilder('c');
 
@@ -33,12 +33,34 @@ class CoursRepository extends ServiceEntityRepository
                ->setParameter('search', '%' . $search . '%');
         }
 
-        // Module and Type filters removed as they are no longer on Cours entity directly
-        // To filter by Child Module Type, we would need a Join.
+        if ($level) {
+            $qb->andWhere('c.level = :level')
+               ->setParameter('level', $level);
+        }
+
+        if ($category) {
+            $qb->andWhere('c.categorie = :category')
+               ->setParameter('category', $category);
+        }
 
         return $qb->orderBy('c.id', 'DESC')
                   ->getQuery()
                   ->getResult();
+    }
+
+    /**
+     * Récupère le nombre de cours par catégorie
+     * 
+     * @return array
+     */
+    public function countByCategories(): array
+    {
+        return $this->createQueryBuilder('c')
+            ->select('c.categorie as name, COUNT(c.id) as count')
+            ->where('c.categorie IS NOT NULL')
+            ->groupBy('c.categorie')
+            ->getQuery()
+            ->getArrayResult();
     }
 
     /**

@@ -38,6 +38,9 @@ class Cours
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $image = null;
 
+    #[ORM\Column(length: 50, nullable: true)]
+    private ?string $categorie = null;
+
     // ✅ New Relation: Cours (One) has Many Modules
     #[ORM\OneToMany(mappedBy: 'cours', targetEntity: Module::class, cascade: ['persist', 'remove'])]
     private Collection $modules;
@@ -110,6 +113,17 @@ class Cours
     public function setImage(?string $image): static
     {
         $this->image = $image;
+        return $this;
+    }
+
+    public function getCategorie(): ?string
+    {
+        return $this->categorie;
+    }
+
+    public function setCategorie(?string $categorie): static
+    {
+        $this->categorie = $categorie;
         return $this;
     }
 
