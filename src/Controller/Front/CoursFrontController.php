@@ -5,6 +5,7 @@ namespace App\Controller\Front;
 use App\Entity\Cours;
 use App\Repository\CoursRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -12,11 +13,21 @@ use Symfony\Component\Routing\Annotation\Route;
 class CoursFrontController extends AbstractController
 {
     #[Route('/', name: 'index', methods: ['GET'])]
-    public function index(CoursRepository $coursRepository): Response
+    public function index(Request $request, CoursRepository $coursRepository): Response
     {
-        // Renaming variable 'modules' to 'courses' for the template
+        $search = $request->query->get('search');
+        $level = $request->query->get('level');
+        $category = $request->query->get('category');
+
+        $courses = $coursRepository->findByFilters($search, $level, $category);
+        $categoriesCount = $coursRepository->countByCategories();
+
         return $this->render('front/cours/index.html.twig', [
-            'courses' => $coursRepository->findAll(),
+            'courses' => $courses,
+            'categoriesCount' => $categoriesCount,
+            'currentSearch' => $search,
+            'currentLevel' => $level,
+            'currentCategory' => $category,
         ]);
     }
 
