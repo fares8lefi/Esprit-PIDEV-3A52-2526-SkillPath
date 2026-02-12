@@ -38,39 +38,59 @@
             </div>
         </div>
 
-        <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
-            <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="md:col-span-1">
-                    {% if module.image %}
-                        <img src="{{ asset('uploads/modules/' ~ module.image) }}" class="w-full h-56 object-cover rounded-2xl border border-gray-200" alt="">
-                    {% else %}
-                        <div class="w-full h-56 rounded-2xl bg-gray-100 flex items-center justify-center text-gray-500 font-bold text-5xl">
-                            {{ module.name|slice(0,1)|upper }}
-                        </div>
-                    {% endif %}
-                </div>
-
-                <div class="md:col-span-2">
-                    <div class="flex items-center gap-3 mb-4">
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold
-                            {% if module.level == 'Débutant' %}bg-green-100 text-green-700
-                            {% elseif module.level == 'Intermédiaire' %}bg-yellow-100 text-yellow-700
-                            {% else %}bg-red-100 text-red-700{% endif %}">
-                            {{ module.level }}
+            <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="md:col-span-2 space-y-6">
+                    <div class="flex items-center gap-3">
+                        <span class="inline-flex items-center px-4 py-1.5 rounded-full text-xs font-bold bg-brand-blue/10 text-brand-blue uppercase tracking-wider">
+                            Formation : {{ module.cours.titre|default('N/A') }}
                         </span>
-
-                        <span class="text-sm text-gray-500">
-                            Créé le {{ module.dateCreation|date('d/m/Y H:i') }}
+                        
+                        <span class="inline-flex items-center px-4 py-1.5 rounded-full text-xs font-bold bg-gray-100 text-gray-600 uppercase tracking-wider">
+                            Type : {{ module.type|default('Autre')|upper }}
                         </span>
                     </div>
 
-                    <h2 class="text-lg font-bold text-gray-900 mb-2">Description</h2>
-                    <p class="text-gray-700 leading-relaxed">
-                        {{ module.description ? module.description : 'Aucune description.' }}
-                    </p>
+                    <div>
+                        <h2 class="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-brand-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"/>
+                            </svg>
+                            Description
+                        </h2>
+                        <div class="text-gray-700 leading-relaxed bg-gray-50 rounded-2xl p-6 border border-gray-100">
+                            {{ module.description ? module.description|nl2br : 'Aucune description fournie.' }}
+                        </div>
+                    </div>
+
+                    <div>
+                        <h2 class="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-brand-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            Contenu du module
+                        </h2>
+                        <div class="bg-gray-900 text-gray-300 rounded-2xl p-6 font-mono text-sm overflow-x-auto shadow-inner">
+                            {{ module.contenu ? module.contenu : '— Aucun contenu disponible —' }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="md:col-span-1 border-l border-gray-100 pl-8 space-y-6">
+                    <div>
+                        <h3 class="text-sm font-semibold text-gray-500 uppercase mb-4">Informations Système</h3>
+                        <div class="space-y-4">
+                            <div class="flex flex-col">
+                                <span class="text-xs text-gray-400">Date de création</span>
+                                <span class="text-sm font-medium text-gray-900">{{ module.dateCreation|date('d/m/Y H:i') }}</span>
+                            </div>
+                            <div class="flex flex-col">
+                                <span class="text-xs text-gray-400">ID Unique</span>
+                                <span class="text-sm font-mono text-gray-600">MOD-{{ module.id|format('%04d') }}</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
 
         <!-- Delete card -->
         <div class="mt-6 bg-white border border-gray-200 rounded-2xl shadow-sm p-6">

@@ -24,9 +24,9 @@ class ModuleController extends AbstractController
         PaginatorInterface $paginator
     ): Response {
         $search = $request->query->get('search', '');
-        $level  = $request->query->get('level', '');
+        // Level filter removed
 
-        $qb = $moduleRepository->qbSearch($search, $level);
+        $qb = $moduleRepository->qbSearch($search);
 
         $modules = $paginator->paginate(
             $qb->getQuery(),
@@ -42,29 +42,15 @@ class ModuleController extends AbstractController
     #[Route('/new', name: 'new', methods: ['GET', 'POST'])]
     public function new(
         Request $request,
-        EntityManagerInterface $em,
-        SluggerInterface $slugger
+        EntityManagerInterface $em
     ): Response {
         $module = new Module();
         $form = $this->createForm(ModuleType::class, $module);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
-            $imageFile = $form->get('imageFile')->getData();
-            if ($imageFile) {
-                $original = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
-                $safeName = $slugger->slug($original);
-                $newName  = $safeName . '-' . uniqid() . '.' . $imageFile->guessExtension();
-
-                try {
-                    $imageFile->move($this->getParameter('modules_upload_dir'), $newName);
-                    $module->setImage($newName);
-                } catch (FileException $e) {
-                    $this->addFlash('error', "Upload échoué.");
-                }
-            }
-
+            // Image logic removed (moved to Cours)
+            
             $em->persist($module);
             $em->flush();
 
@@ -90,27 +76,13 @@ class ModuleController extends AbstractController
     public function edit(
         Request $request,
         Module $module,
-        EntityManagerInterface $em,
-        SluggerInterface $slugger
+        EntityManagerInterface $em
     ): Response {
         $form = $this->createForm(ModuleType::class, $module);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
-            $imageFile = $form->get('imageFile')->getData();
-            if ($imageFile) {
-                $original = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
-                $safeName = $slugger->slug($original);
-                $newName  = $safeName . '-' . uniqid() . '.' . $imageFile->guessExtension();
-
-                try {
-                    $imageFile->move($this->getParameter('modules_upload_dir'), $newName);
-                    $module->setImage($newName);
-                } catch (FileException $e) {
-                    $this->addFlash('error', "Upload échoué.");
-                }
-            }
+            // Image logic removed
 
             $em->flush();
 

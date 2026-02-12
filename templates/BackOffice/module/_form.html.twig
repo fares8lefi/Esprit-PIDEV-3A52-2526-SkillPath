@@ -2,46 +2,44 @@
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
     <div>
+        {{ form_label(form.cours, null, {'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-2'}}) }}
+        {{ form_widget(form.cours) }}
+        {{ form_errors(form.cours) }}
+    </div>
+
+    <div>
         {{ form_label(form.name, null, {'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-2'}}) }}
         {{ form_widget(form.name) }}
         {{ form_errors(form.name) }}
     </div>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div>
+        {{ form_label(form.type, null, {'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-2'}}) }}
+        {{ form_widget(form.type) }}
+        {{ form_errors(form.type) }}
+    </div>
 
     <div>
-        {{ form_label(form.level, null, {'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-2'}}) }}
-        {{ form_widget(form.level) }}
-        {{ form_errors(form.level) }}
+        {{ form_label(form.description, null, {'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-2'}}) }}
+        {{ form_widget(form.description) }}
+        {{ form_errors(form.description) }}
     </div>
 </div>
 
 <div>
-    {{ form_label(form.description, null, {'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-2'}}) }}
-    {{ form_widget(form.description) }}
-    {{ form_errors(form.description) }}
+    {{ form_label(form.contenu, null, {'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-2'}}) }}
+    {{ form_widget(form.contenu) }}
+    <p class="mt-2 text-xs text-gray-500">{{ form_help(form.contenu) }}</p>
+    {{ form_errors(form.contenu) }}
 </div>
 
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-    <div>
-        {{ form_label(form.imageFile, null, {'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-2'}}) }}
-        {{ form_widget(form.imageFile) }}
-        {{ form_errors(form.imageFile) }}
-        <p class="text-xs text-gray-500 mt-2">Formats acceptés : JPG / PNG / WEBP (max 3MB)</p>
-    </div>
-
-    {% if module.image %}
-        <div class="bg-gray-50 border border-gray-200 rounded-2xl p-4">
-            <p class="text-sm font-semibold text-gray-800 mb-3">Image actuelle</p>
-            <img src="{{ asset('uploads/modules/' ~ module.image) }}" class="w-full h-40 object-cover rounded-xl border border-gray-200" alt="">
-        </div>
-    {% endif %}
-</div>
-
-<div class="flex items-center gap-3 pt-2">
-    <button class="px-6 py-3 bg-gradient-to-r from-skillpath-blue to-skillpath-blue-dark text-white rounded-xl font-semibold hover:shadow-lg transition-all">
+<div class="flex items-center gap-3 pt-4 border-t border-gray-100">
+    <button class="px-8 py-3 bg-gradient-to-r from-brand-blue to-brand-blue-dark text-white rounded-xl font-bold hover:shadow-lg transition-all">
         {{ button_label|default('Enregistrer') }}
     </button>
-
-    <a href="{{ path('admin_module_list') }}" class="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-all">
+    <a href="{{ path('admin_module_list') }}" class="px-8 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-all">
         Annuler
     </a>
 </div>
