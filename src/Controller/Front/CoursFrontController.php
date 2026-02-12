@@ -41,4 +41,43 @@ class CoursFrontController extends AbstractController
             'course' => $course,
         ]);
     }
+
+    #[Route('/{courseId}/module/{moduleId}', name: 'module_show', methods: ['GET'])]
+    public function showModule(int $courseId, int $moduleId, CoursRepository $coursRepository): Response
+    {
+        $course = $coursRepository->find($courseId);
+        
+        if (!$course) {
+            throw $this->createNotFoundException('Cours non trouvé');
+        }
+
+        $module = null;
+        $moduleIndex = 0;
+        $totalModules = $course->getModules()->count();
+
+        foreach ($course->getModules() as $index => $m) {
+            if ($m->getId() === $moduleId) {
+                $module = $m;
+                $moduleIndex = $index;
+                break;
+            }
+        }
+
+        if (!$module) {
+            throw $this->createNotFoundException('Module non trouvé');
+        }
+
+        // Get previous and next modules
+        $previousModule = $moduleIndex > 0 ? $course->getModules()[$moduleIndex - 1] : null;
+        $nextModule = $moduleIndex < $totalModules - 1 ? $course->getModules()[$moduleIndex + 1] : null;
+
+        return $this->render('front/cours/module.html.twig', [
+            'course' => $course,
+            'module' => $module,
+            'previousModule' => $previousModule,
+            'nextModule' => $nextModule,
+            'moduleNumber' => $moduleIndex + 1,
+            'totalModules' => $totalModules,
+        ]);
+    }
 }
