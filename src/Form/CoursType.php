@@ -43,6 +43,21 @@ class CoursType extends AbstractType
                     new NotBlank(['message' => 'Le niveau est obligatoire'])
                 ]
             ])
+            ->add('categorie', ChoiceType::class, [
+                'label' => 'Catégorie',
+                'choices' => [
+                    'Sélectionner une catégorie' => '',
+                    'Développement' => 'Développement',
+                    'Design' => 'Design',
+                    'Marketing' => 'Marketing',
+                ],
+                'attr' => [
+                    'class' => 'w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-skillpath-blue focus:border-transparent transition-all'
+                ],
+                'constraints' => [
+                    new NotBlank(['message' => 'La catégorie est obligatoire'])
+                ]
+            ])
             ->add('description', TextareaType::class, [
                 'label' => 'Description',
                 'required' => false,
