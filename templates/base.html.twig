@@ -1,43 +1,67 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Welcome!{% endblock %}</title>
+    <title>{% block title %}SkillPath - Apprendre autrement{% endblock %}</title>
 
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚡️</text></svg>">
 
-    <!-- LEUR TAILWIND -->
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Fonts: Outfit (Modern, Geometric, Premium) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <style type="text/tailwindcss">
-        @theme {
-            --color-skill-blue: rgb(30, 136, 229);
-            --color-skill-green: rgb(60, 160, 71);
-            --color-skill-yellow: rgb(251, 192, 45);
-        }
-    </style>
-
-    <!-- ✅ TES COULEURS EN PLUS (NE CASSE RIEN) -->
+    <!-- Tailwind CSS v3.4 (Stable) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
     <script>
         tailwind.config = {
             theme: {
                 extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    },
                     colors: {
-                        'skillpath-blue': '#1E88E5',
-                        'skillpath-blue-dark': '#1565C0',
-                        'skillpath-blue-light': '#42A5F5',
-                        'skillpath-green': '#43A047',
-                        'skillpath-green-dark': '#2E7D32',
-                        'skillpath-green-light': '#66BB6A',
-                        'skillpath-yellow': '#FBC02D',
-                        'skillpath-yellow-dark': '#F9A825',
-                        'skillpath-yellow-light': '#FFEB3B',
+                        brand: {
+                            blue: '#1E88E5',       // Trust
+                            'blue-light': '#E3F2FD',
+                            'blue-dark': '#1565C0',
+                            green: '#43A047',      // Progress
+                            'green-light': '#E8F5E9',
+                            'green-dark': '#2E7D32',
+                            yellow: '#FBC02D',     // Achievement
+                            'yellow-light': '#FFFDE7',
+                            'yellow-dark': '#F9A825',
+                            gray: '#F8F9FB',       // Premium Background
+                            dark: '#1A1D1F',       // Text Main
+                            muted: '#6F767E',      // Text Secondary
+                        }
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        'gleam': '0 0 40px -5px rgba(30, 136, 229, 0.15)',
                     }
                 }
             }
         }
     </script>
+
+    <style type="text/tailwindcss">
+        @layer base {
+            body {
+                @apply font-sans text-brand-dark bg-brand-gray antialiased;
+            }
+        }
+        @layer components {
+            .btn-primary {
+                @apply bg-brand-blue hover:bg-brand-blue-dark text-white font-semibold py-2.5 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-brand-blue/30 active:scale-95;
+            }
+            .card {
+                @apply bg-white rounded-2xl border border-gray-100 shadow-soft hover:shadow-lg transition-all duration-300;
+            }
+        }
+    </style>
 
     {% block stylesheets %}
     {% endblock %}
