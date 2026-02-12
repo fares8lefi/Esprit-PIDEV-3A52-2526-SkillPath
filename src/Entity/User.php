@@ -10,6 +10,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Gedmo\Mapping\Annotation as Gedmo;
+use App\Entity\Event;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
@@ -56,10 +57,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Course::class, inversedBy: 'users')]
     private Collection $courses;
 
+    #[ORM\ManyToMany(targetEntity: Event::class, inversedBy: 'participants')]
+    #[ORM\JoinTable(name: 'user_joined_events')]
+    private Collection $joinedEvents;
+
+    #[ORM\ManyToMany(targetEntity: Event::class, inversedBy: 'favoritedBy')]
+    #[ORM\JoinTable(name: 'user_favorite_events')]
+    private Collection $favoriteEvents;
     
     public function __construct()
     {
         $this->cours = new ArrayCollection();
+        $this->joinedEvents = new ArrayCollection();
+        $this->favoriteEvents = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -214,6 +224,54 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setCreatedAt(\DateTimeInterface $createdAt): static
     {
         $this->createdAt = $createdAt;
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Event>
+     */
+    public function getJoinedEvents(): Collection
+    {
+        return $this->joinedEvents;
+    }
+
+    public function addJoinedEvent(Event $event): static
+    {
+        if (!$this->joinedEvents->contains($event)) {
+            $this->joinedEvents->add($event);
+        }
+
+        return $this;
+    }
+
+    public function removeJoinedEvent(Event $event): static
+    {
+        $this->joinedEvents->removeElement($event);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Event>
+     */
+    public function getFavoriteEvents(): Collection
+    {
+        return $this->favoriteEvents;
+    }
+
+    public function addFavoriteEvent(Event $event): static
+    {
+        if (!$this->favoriteEvents->contains($event)) {
+            $this->favoriteEvents->add($event);
+        }
+
+        return $this;
+    }
+
+    public function removeFavoriteEvent(Event $event): static
+    {
+        $this->favoriteEvents->removeElement($event);
+
         return $this;
     }
 }
