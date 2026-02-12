@@ -67,6 +67,13 @@
                                 </div>
 
                                 <div>
+                                    <h3 class="text-sm font-semibold text-gray-600 mb-2">Catégorie</h3>
+                                    <span class="px-4 py-2 bg-purple-100 text-purple-700 rounded-lg text-sm font-medium">
+                                        {{ cours.categorie|default('N/A') }}
+                                    </span>
+                                </div>
+
+                                <div>
                                     <h3 class="text-sm font-semibold text-gray-600 mb-2">Créé le</h3>
                                     <p class="text-gray-900">{{ cours.createdAt|date('d/m/Y à H:i') }}</p>
                                 </div>

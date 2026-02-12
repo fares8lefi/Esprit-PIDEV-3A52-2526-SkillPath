@@ -191,6 +191,7 @@
                             <tr>
                                 <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">ID</th>
                                 <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Titre de la Formation</th>
+                                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Catégorie</th>
                                 <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Nombre de Modules</th>
                                 <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Niveau</th>
                                 <th class="px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
@@ -219,6 +220,9 @@
                                         </td>
                                         <td class="px-6 py-4">
                                             <div class="text-sm font-semibold text-gray-900">{{ cours.titre }}</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {{ cours.categorie|default('N/A') }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <span class="px-3 py-1 bg-brand-blue/10 text-brand-blue rounded-full text-xs font-bold">

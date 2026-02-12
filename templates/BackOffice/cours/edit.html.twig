@@ -102,6 +102,19 @@
                                 </div>
                             </div>
 
+                            <!-- Catégorie -->
+                            <div>
+                                {{ form_label(form.categorie, null, {
+                                    'label_attr': {'class': 'block text-sm font-semibold text-gray-700 mb-2'},
+                                    'label_html': true,
+                                    'label': 'Catégorie <span class="text-red-500">*</span>'
+                                }) }}
+                                {{ form_widget(form.categorie) }}
+                                <div class="mt-1">
+                                    {{ form_errors(form.categorie) }}
+                                </div>
+                            </div>
+
                             <!-- Description -->
                             <div>
                                 {{ form_label(form.description, null, {

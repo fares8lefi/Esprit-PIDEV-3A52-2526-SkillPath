@@ -63,6 +63,12 @@
                             </div>
 
                             <div>
+                                {{ form_label(form.categorie, null, {'label_attr': {'class': 'block text-sm font-semibold text-gray-700 mb-2'}}) }}
+                                {{ form_widget(form.categorie) }}
+                                {{ form_errors(form.categorie) }}
+                            </div>
+
+                            <div>
                                 {{ form_label(form.description, null, {'label_attr': {'class': 'block text-sm font-semibold text-gray-700 mb-2'}}) }}
                                 {{ form_widget(form.description) }}
                                 {{ form_errors(form.description) }}
