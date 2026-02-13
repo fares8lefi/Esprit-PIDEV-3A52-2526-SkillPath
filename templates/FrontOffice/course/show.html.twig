@@ -104,7 +104,7 @@
                     <p>{{ course.description|nl2br }}</p>
                     
                     <h2 class="text-2xl font-bold text-white mt-12 mb-4 italic italic">What you will learn</h2>
-                    <ul class="space-y-4">
+                    <ul class="space-y-4 mb-12">
                         {% for module in course.modules %}
                             <li class="flex items-start gap-4">
                                 <div class="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0"></div>
@@ -112,6 +112,39 @@
                             </li>
                         {% endfor %}
                     </ul>
+
+                    <h2 class="text-2xl font-bold text-white mt-12 mb-4 italic italic">Quizzes & Assessments</h2>
+                    {% if course.quizzes|length > 0 %}
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6 not-prose">
+                            {% for quiz in course.quizzes %}
+                                <a href="{{ path('app_front_office_quiz_take', {'id': quiz.id}) }}" class="glass p-5 rounded-2xl border border-white/5 hover:bg-white/5 transition-all group flex items-center justify-between">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-400 group-hover:bg-purple-500 group-hover:text-white transition-all">
+                                           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg> 
+                                        </div>
+                                        <div>
+                                            <h3 class="font-bold text-white text-lg group-hover:text-primary transition-colors leading-tight">{{ quiz.titre }}</h3>
+                                            <div class="flex items-center gap-3 mt-1 text-xs text-slate-400 font-medium">
+                                                <span class="flex items-center gap-1"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> {{ quiz.questions|length }} Questions</span>
+                                                <span class="w-1 h-1 rounded-full bg-slate-600"></span>
+                                                <span class="flex items-center gap-1"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> {{ quiz.duree }} min</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-slate-400 group-hover:border-primary group-hover:text-primary transition-all">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                                    </div>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="glass p-8 rounded-2xl border border-white/5 text-center">
+                            <div class="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-4 text-slate-500">
+                                <svg class="w-8 h-8 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            </div>
+                            <p class="text-slate-400 font-medium">No quizzes available at the moment.</p>
+                        </div>
+                    {% endif %}
                 </div>
 
                 <div class="flex gap-4 pt-12 border-t border-white/5">

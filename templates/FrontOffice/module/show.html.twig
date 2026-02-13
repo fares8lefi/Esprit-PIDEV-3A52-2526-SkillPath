@@ -44,6 +44,35 @@
         </div>
 
         <nav class="flex-grow overflow-y-auto py-6 px-4 custom-scrollbar">
+            {# Quizzes Section #}
+            {% if module.course.quizzes|length > 0 %}
+                <div class="mb-6">
+                    <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-2 mb-3 flex items-center gap-2">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                        Évaluations
+                    </h3>
+                    <div class="space-y-2">
+                        {% for quiz in module.course.quizzes %}
+                            <a href="{{ path('app_front_office_quiz_take', {id: quiz.id}) }}" 
+                               class="flex items-center gap-3 p-3 rounded-xl transition-all group hover:bg-purple-50 dark:hover:bg-purple-500/10 border border-transparent hover:border-purple-200 dark:hover:border-purple-500/20 text-slate-500 hover:text-purple-600 dark:text-slate-400 dark:hover:text-purple-400">
+                                <div class="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs bg-purple-100 dark:bg-purple-500/20 text-purple-600 dark:text-purple-300">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                </div>
+                                <div class="flex-grow min-w-0">
+                                    <p class="text-xs font-bold truncate">{{ quiz.titre }}</p>
+                                    <p class="text-[10px] opacity-60">{{ quiz.questions|length }} Questions • {{ quiz.duree }} min</p>
+                                </div>
+                            </a>
+                        {% endfor %}
+                    </div>
+                    <div class="w-full h-px bg-slate-200 dark:bg-white/5 my-4"></div>
+                </div>
+            {% endif %}
+
+            <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-2 mb-3 flex items-center gap-2">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                Modules du cours
+            </h3>
             <div class="space-y-2">
                 {% for m in module.course.modules %}
                     {% set isActive = m.id == module.id %}

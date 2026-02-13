@@ -29,6 +29,23 @@
             <div class="prose dark:prose-invert max-w-none">
                 <p class="text-slate-600 dark:text-slate-300 font-medium leading-relaxed whitespace-pre-line text-lg">{{ reclamation.description }}</p>
             </div>
+            
+            {% if app.user == reclamation.user or is_granted('ROLE_ADMIN') %}
+                <div class="flex gap-4 mt-6 pt-6 border-t border-slate-200 dark:border-white/10">
+                    {% if app.user == reclamation.user %}
+                        <a href="{{ path('app_reclamation_edit', {'id': reclamation.id}) }}" class="btn-secondary !py-2 !px-4 text-xs">
+                            Modifier
+                        </a>
+                    {% endif %}
+                    
+                    <form method="post" action="{{ path('app_reclamation_delete', {'id': reclamation.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette réclamation ?');">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ reclamation.id) }}">
+                        <button class="btn-primary !bg-red-500 !text-white !border-red-500 hover:!bg-red-600 !py-2 !px-4 text-xs">
+                            Supprimer
+                        </button>
+                    </form>
+                </div>
+            {% endif %}
         </div>
 
         <!-- Conversation Stream -->

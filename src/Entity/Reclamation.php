@@ -27,7 +27,7 @@ class Reclamation
     /**
      * @var Collection<int, Reponse>
      */
-    #[ORM\OneToMany(targetEntity: Reponse::class, mappedBy: 'reclamation')]
+    #[ORM\OneToMany(targetEntity: Reponse::class, mappedBy: 'reclamation', orphanRemoval: true, cascade: ['remove'])]
     private Collection $reponses;
 
     #[ORM\ManyToOne]
@@ -36,6 +36,7 @@ class Reclamation
     public function __construct()
     {
         $this->reponses = new ArrayCollection();
+        $this->statut = 'En attente';
     }
 
     public function getId(): ?int

@@ -291,6 +291,7 @@ class UserController extends AbstractController
             $this->addFlash('error', 'Compte introuvable ou déjà vérifié.');
         }
 
+        return $this->redirectToRoute('app_user_verify', ['email' => $email]);
     }
 
     #[Route('/profile', name: 'app_user_profile', methods: ['GET', 'POST'])]

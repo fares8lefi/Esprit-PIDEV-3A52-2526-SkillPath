@@ -34,6 +34,7 @@ class ReclamationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $reclamation->setUser($this->getUser());
             $entityManager->persist($reclamation);
             $entityManager->flush();
 
@@ -46,13 +47,16 @@ class ReclamationController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_reclamation_show', methods: ['GET'])]
-    public function show(Reclamation $reclamation): Response
+    #[Route('/{id}', name: 'app_reclamation_show', methods: ['GET', 'POST'])]
+    public function show(Reclamation $reclamation, Request $request, EntityManagerInterface $entityManager): Response
     {
-        if ($reclamation->getUser() !== $this->getUser()) {
+        // Allow access if user is owner OR has ROLE_ADMIN
+        $user = $this->getUser();
+        if ($reclamation->getUser() !== $user && !$this->isGranted('ROLE_ADMIN')) {
              throw $this->createAccessDeniedException('You cannot view this reclamation.');
         }
 
+        $reponse = new Reponse();
         $form = $this->createForm(ReponseType::class, $reponse);
         $form->handleRequest($request);
 
@@ -67,7 +71,45 @@ class ReclamationController extends AbstractController
 
         return $this->render('FrontOffice/reclamation/show.html.twig', [
             'reclamation' => $reclamation,
-            'response_form' => $form,
+            'response_form' => $form->createView(),
         ]);
+    }
+    #[Route('/{id}/edit', name: 'app_reclamation_edit', methods: ['GET', 'POST'])]
+    public function edit(Request $request, Reclamation $reclamation, EntityManagerInterface $entityManager): Response
+    {
+        // Only owner can edit
+        if ($reclamation->getUser() !== $this->getUser()) {
+             throw $this->createAccessDeniedException('You cannot edit this reclamation.');
+        }
+
+        $form = $this->createForm(ReclamationType::class, $reclamation);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->flush();
+
+            return $this->redirectToRoute('app_reclamation_index', [], Response::HTTP_SEE_OTHER);
+        }
+
+        return $this->render('FrontOffice/reclamation/edit.html.twig', [
+            'reclamation' => $reclamation,
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/{id}/delete', name: 'app_reclamation_delete', methods: ['POST'])]
+    public function delete(Request $request, Reclamation $reclamation, EntityManagerInterface $entityManager): Response
+    {
+        // Owner OR Admin can delete
+        if ($reclamation->getUser() !== $this->getUser() && !$this->isGranted('ROLE_ADMIN')) {
+             throw $this->createAccessDeniedException('You cannot delete this reclamation.');
+        }
+
+        if ($this->isCsrfTokenValid('delete'.$reclamation->getId(), $request->request->get('_token'))) {
+            $entityManager->remove($reclamation);
+            $entityManager->flush();
+        }
+
+        return $this->redirectToRoute('app_reclamation_index', [], Response::HTTP_SEE_OTHER);
     }
 }

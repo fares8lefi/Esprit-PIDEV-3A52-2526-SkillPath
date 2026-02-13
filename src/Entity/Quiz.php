@@ -206,4 +206,20 @@ class Quiz
         $this->course = $course;
         return $this;
     }
+
+    public function getTitle(): ?string
+    {
+        return $this->titre;
+    }
+
+    public function setTitle(string $title): static
+    {
+        $this->titre = $title;
+        return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->titre ?? '';
+    }
 }

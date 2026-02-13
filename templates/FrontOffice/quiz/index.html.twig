@@ -78,8 +78,8 @@
                             <h2 class="text-lg font-black text-slate-900 dark:text-white">{{ quiz.titre }}</h2>
                             <span class="badge badge-purple flex-shrink-0 ml-2">{{ quiz.questions|length }} Q</span>
                         </div>
-                        {% if quiz.cours %}
-                            <span class="badge badge-green text-[10px] mb-2 inline-flex">📚 {{ quiz.cours.titre }}</span>
+                        {% if quiz.course %}
+                            <span class="badge badge-green text-[10px] mb-2 inline-flex">📚 {{ quiz.course.title }}</span>
                         {% endif %}
                         <p class="text-sm text-slate-500 dark:text-slate-400 mb-5 line-clamp-3 leading-relaxed">{{ quiz.description }}</p>
                         

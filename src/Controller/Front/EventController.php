@@ -30,7 +30,7 @@ class EventController extends AbstractController
             ->getQuery()
             ->getResult();
 
-        return $this->render('Front/event/index.html.twig', [
+        return $this->render('FrontOffice/event/index.html.twig', [
             'events' => $events,
         ]);
     }
@@ -42,7 +42,7 @@ class EventController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        return $this->render('Front/event/my_events.html.twig', [
+        return $this->render('FrontOffice/event/my_events.html.twig', [
             'joinedEvents' => $user->getJoinedEvents(),
             'favoriteEvents' => $user->getFavoriteEvents(),
         ]);
@@ -51,7 +51,7 @@ class EventController extends AbstractController
     #[Route('/{id}', name: 'show', methods: ['GET'])]
     public function show(Event $event): Response
     {
-        return $this->render('Front/event/show.html.twig', [
+        return $this->render('FrontOffice/event/show.html.twig', [
             'event' => $event,
         ]);
     }

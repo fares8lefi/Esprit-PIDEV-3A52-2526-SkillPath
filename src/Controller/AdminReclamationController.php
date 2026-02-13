@@ -57,7 +57,7 @@ class AdminReclamationController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_admin_reclamation_delete', methods: ['POST'])]
+    #[Route('/{id}/delete', name: 'app_admin_reclamation_delete', methods: ['POST'])]
     public function delete(Request $request, Reclamation $reclamation, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$reclamation->getId(), $request->request->get('_token'))) {

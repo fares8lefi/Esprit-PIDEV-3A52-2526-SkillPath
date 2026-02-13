@@ -120,16 +120,35 @@ document.addEventListener('DOMContentLoaded', function() {
             // Update visual state for all options of this question
             const siblings = document.querySelectorAll(`[data-question="${questionId}"]`);
             siblings.forEach(sib => {
-                sib.classList.remove('border-primary/30', 'bg-primary/[0.05]');
-                sib.querySelector('.option-letter').classList.remove('border-primary', 'bg-primary', 'text-white');
-                sib.querySelector('.option-letter').classList.add('border-slate-200', 'dark:border-slate-600', 'text-slate-400');
+                // Reset to default state
+                sib.classList.remove('bg-purple-600', 'border-purple-600', 'shadow-md', 'scale-[1.01]');
+                sib.classList.add('border-transparent');
+                
+                // Reset text color
+                const textSpan = sib.querySelector('span:last-child');
+                textSpan.classList.remove('text-white');
+                textSpan.classList.add('text-slate-700', 'dark:text-slate-300');
+                
+                // Reset letter box
+                const letter = sib.querySelector('.option-letter');
+                letter.classList.remove('bg-white', 'text-purple-600', 'border-white');
+                letter.classList.add('border-slate-200', 'dark:border-slate-600', 'text-slate-400');
             });
 
-            this.classList.add('border-primary/30', 'bg-primary/[0.05]');
+            // Set selected state (Solid Purple)
+            this.classList.remove('border-transparent');
+            this.classList.add('bg-purple-600', 'border-purple-600', 'shadow-md', 'scale-[1.01]');
+            
+            // Set text to white
+            const textSpan = this.querySelector('span:last-child');
+            textSpan.classList.remove('text-slate-700', 'dark:text-slate-300');
+            textSpan.classList.add('text-white');
+
+            // Invert letter box (White bg, purple text)
             const letter = this.querySelector('.option-letter');
             letter.classList.remove('border-slate-200', 'dark:border-slate-600', 'text-slate-400');
-            letter.classList.add('border-primary', 'bg-primary', 'text-white');
-
+            letter.classList.add('bg-white', 'text-purple-600', 'border-white');
+        
             // Update progress
             answered.add(questionId);
             const percent = (answered.size / totalQuestions) * 100;
