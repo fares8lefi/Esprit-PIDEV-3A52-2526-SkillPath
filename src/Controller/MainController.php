@@ -9,6 +9,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use App\Repository\UserRepository;
 use App\Repository\CourseRepository;
 use App\Repository\ModuleRepository;
+use App\Repository\ReclamationRepository;
+use App\Repository\EventRepository;
+use App\Repository\ResultatRepository;
 
 class MainController extends AbstractController
 {
@@ -22,13 +25,78 @@ class MainController extends AbstractController
 
     #[Route('/admin', name: 'app_admin_dashboard')]
     #[IsGranted('ROLE_ADMIN')]
-    public function adminDashboard(UserRepository $userRepository, CourseRepository $courseRepository, ModuleRepository $moduleRepository): Response
-    {
+    public function adminDashboard(
+        UserRepository $userRepository, 
+        CourseRepository $courseRepository, 
+        ModuleRepository $moduleRepository,
+        ReclamationRepository $reclamationRepository,
+        EventRepository $eventRepository,
+        ResultatRepository $resultatRepository
+    ): Response {
+        $users = $userRepository->findAll();
+        
+        // Roles Data
+        $rolesData = ['admin' => 0, 'user' => 0];
+        foreach ($users as $user) {
+            $role = strtolower($user->getRole() ?? 'user');
+            if (isset($rolesData[$role])) {
+                $rolesData[$role]++;
+            } else {
+                $rolesData['user']++;
+            }
+        }
+
+        // Categories Data
+        $courses = $courseRepository->findAll();
+        $categoriesData = [];
+        foreach ($courses as $course) {
+            $cat = $course->getCategory() ?: 'Non classé';
+            $categoriesData[$cat] = ($categoriesData[$cat] ?? 0) + 1;
+        }
+
+        // Reclamation Data
+        $reclamations = $reclamationRepository->findAll();
+        $reclamationStats = ['En attente' => 0, 'Traité' => 0, 'En cours' => 0];
+        foreach ($reclamations as $reclamation) {
+            $status = $reclamation->getStatut() ?: 'En attente';
+            if (isset($reclamationStats[$status])) {
+                $reclamationStats[$status]++;
+            }
+        }
+
+        // Registration Data (Last 7 days)
+        $registrationData = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $date = (new \DateTime())->modify("-$i days")->format('Y-m-d');
+            $registrationData[$date] = 0;
+        }
+        foreach ($users as $user) {
+            if ($user->getCreatedAt()) {
+                $date = $user->getCreatedAt()->format('Y-m-d');
+                if (isset($registrationData[$date])) {
+                    $registrationData[$date]++;
+                }
+            }
+        }
+
         return $this->render('BackOffice/main/dashboard.html.twig', [
-            'userCount' => $userRepository->count([]),
-            'courseCount' => $courseRepository->count([]),
+            'userCount' => count($users),
+            'courseCount' => count($courses),
             'moduleCount' => $moduleRepository->count([]),
-            'recentUsers' => $userRepository->findBy([], ['id' => 'DESC'], 3),
+            'reclamationCount' => count($reclamations),
+            'eventCount' => $eventRepository->count([]),
+            'resultatCount' => $resultatRepository->count([]),
+            'recentUsers' => $userRepository->findBy([], ['id' => 'DESC'], 5),
+            
+            // Chart Data - Formatted for Twig/JS
+            'rolesLabels' => array_keys($rolesData),
+            'rolesValues' => array_values($rolesData),
+            'categoriesLabels' => array_keys($categoriesData),
+            'categoriesValues' => array_values($categoriesData),
+            'reclamationLabels' => array_keys($reclamationStats),
+            'reclamationValues' => array_values($reclamationStats),
+            'registrationLabels' => array_keys($registrationData),
+            'registrationValues' => array_values($registrationData),
         ]);
     }
 
