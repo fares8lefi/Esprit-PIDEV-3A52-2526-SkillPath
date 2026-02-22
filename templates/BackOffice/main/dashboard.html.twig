@@ -8,12 +8,16 @@
         <section class="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
                 <h1 class="text-3xl font-black text-slate-900 dark:text-white tracking-tight">Tableau de Bord <span class="gradient-text">Admin</span></h1>
-                <p class="text-slate-500 dark:text-slate-400 mt-1 font-medium text-sm">Bon retour, {{ app.user.username }}. Voici l'aperçu de votre plateforme.</p>
+                <p class="text-slate-500 dark:text-slate-400 mt-1 font-medium text-sm">Bon retour, {{ app.user.username }}. Voici l'aperçu analytique de SkillPath.</p>
             </div>
             <div class="flex gap-3">
-                <button class="btn-secondary !py-2.5 !px-5 text-sm flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                    Analytique
+                <button onclick="exportToPDF()" class="btn-secondary !py-2.5 !px-5 text-sm flex items-center gap-2 group">
+                    <svg class="w-4 h-4 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                    PDF
+                </button>
+                <button onclick="exportToExcel()" class="btn-secondary !py-2.5 !px-5 text-sm flex items-center gap-2 group">
+                    <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    Excel
                 </button>
                 <a href="{{ path('app_user_admin_create') }}" class="btn-primary !py-2.5 !px-5 text-sm flex items-center gap-2 !rounded-xl">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
@@ -23,57 +27,107 @@
         </section>
 
         <!-- Stats Bento Grid -->
-        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-5">
             <!-- Users -->
-            <div class="glass-card p-6 rounded-2xl">
-                <div class="flex justify-between items-start mb-5">
-                    <div class="w-11 h-11 bg-primary/8 dark:bg-primary/15 text-primary dark:text-primary-light rounded-xl flex items-center justify-center">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+            <div class="glass-card p-5 rounded-2xl border-b-4 border-primary">
+                <div class="flex justify-between items-start mb-3">
+                    <div class="w-10 h-10 bg-primary/10 text-primary rounded-xl flex items-center justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
                     </div>
-                    <span class="badge badge-purple">Global</span>
                 </div>
-                <p class="text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase tracking-widest">Utilisateurs Actifs</p>
-                <h3 class="text-3xl font-black text-slate-900 dark:text-white mt-1">{{ userCount }}</h3>
-                <div class="progress-bar mt-4"><div class="progress-bar-fill" style="width: 65%"></div></div>
-            </div>
-
-            <!-- Modules -->
-            <div class="glass-card p-6 rounded-2xl">
-                <div class="flex justify-between items-start mb-5">
-                    <div class="w-11 h-11 bg-secondary/10 text-secondary rounded-xl flex items-center justify-center">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
-                    </div>
-                    <span class="badge badge-amber">Modules</span>
-                </div>
-                <p class="text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase tracking-widest">Unités d'Apprentissage</p>
-                <h3 class="text-3xl font-black text-slate-900 dark:text-white mt-1">{{ moduleCount }}</h3>
-                <div class="progress-bar mt-4"><div class="progress-bar-fill" style="width: 45%"></div></div>
+                <p class="text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase tracking-widest">Utilisateurs</p>
+                <h3 class="text-2xl font-black text-slate-900 dark:text-white mt-1">{{ userCount }}</h3>
             </div>
 
             <!-- Courses -->
-            <div class="glass-card p-6 rounded-2xl">
-                <div class="flex justify-between items-start mb-5">
-                    <div class="w-11 h-11 bg-accent/10 text-accent rounded-xl flex items-center justify-center">
+            <div class="glass-card p-5 rounded-2xl border-b-4 border-secondary">
+                <div class="flex justify-between items-start mb-3">
+                    <div class="w-10 h-10 bg-secondary/10 text-secondary rounded-xl flex items-center justify-center">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
                     </div>
-                    <span class="badge badge-cyan">Contenu</span>
                 </div>
-                <p class="text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase tracking-widest">Cours Maîtres</p>
-                <h3 class="text-3xl font-black text-slate-900 dark:text-white mt-1">{{ courseCount }}</h3>
-                <div class="progress-bar mt-4"><div class="progress-bar-fill" style="width: 80%"></div></div>
+                <p class="text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase tracking-widest">Cours</p>
+                <h3 class="text-2xl font-black text-slate-900 dark:text-white mt-1">{{ courseCount }}</h3>
             </div>
 
-            <!-- Status -->
-            <div class="glass-card p-6 rounded-2xl">
-                <div class="flex justify-between items-start mb-5">
-                    <div class="w-11 h-11 bg-mint/10 text-mint rounded-xl flex items-center justify-center">
+            <!-- Modules -->
+            <div class="glass-card p-5 rounded-2xl border-b-4 border-accent">
+                <div class="flex justify-between items-start mb-3">
+                    <div class="w-10 h-10 bg-accent/10 text-accent rounded-xl flex items-center justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                    </div>
+                </div>
+                <p class="text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase tracking-widest">Modules</p>
+                <h3 class="text-2xl font-black text-slate-900 dark:text-white mt-1">{{ moduleCount }}</h3>
+            </div>
+
+            <!-- Reclamations -->
+            <div class="glass-card p-5 rounded-2xl border-b-4 border-rose-500">
+                <div class="flex justify-between items-start mb-3">
+                    <div class="w-10 h-10 bg-rose-500/10 text-rose-500 rounded-xl flex items-center justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                    </div>
+                </div>
+                <p class="text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase tracking-widest">Réclamations</p>
+                <h3 class="text-2xl font-black text-slate-900 dark:text-white mt-1">{{ reclamationCount }}</h3>
+            </div>
+
+            <!-- Events -->
+            <div class="glass-card p-5 rounded-2xl border-b-4 border-indigo-500">
+                <div class="flex justify-between items-start mb-3">
+                    <div class="w-10 h-10 bg-indigo-500/10 text-indigo-500 rounded-xl flex items-center justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    </div>
+                </div>
+                <p class="text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase tracking-widest">Événements</p>
+                <h3 class="text-2xl font-black text-slate-900 dark:text-white mt-1">{{ eventCount }}</h3>
+            </div>
+
+            <!-- Quizzes/Results -->
+            <div class="glass-card p-5 rounded-2xl border-b-4 border-mint">
+                <div class="flex justify-between items-start mb-3">
+                    <div class="w-10 h-10 bg-mint/10 text-mint rounded-xl flex items-center justify-center">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     </div>
-                    <span class="badge badge-green">En Ligne</span>
                 </div>
-                <p class="text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase tracking-widest">Plateforme Optimale</p>
-                <h3 class="text-3xl font-black text-slate-900 dark:text-white mt-1">Prime</h3>
-                <div class="progress-bar mt-4"><div class="progress-bar-fill animate-pulse" style="width: 100%; background: linear-gradient(90deg, #10B981, #34D399)"></div></div>
+                <p class="text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase tracking-widest">Résultats</p>
+                <h3 class="text-2xl font-black text-slate-900 dark:text-white mt-1">{{ resultatCount }}</h3>
+            </div>
+        </section>
+
+        <!-- Charts Section -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Registrations Chart -->
+            <div class="glass-card p-6 rounded-2xl">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-lg font-bold text-slate-900 dark:text-white">Croissance des Utilisateurs</h3>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">7 derniers jours</span>
+                </div>
+                <div class="h-[300px] w-full">
+                    <canvas id="registrationChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Categories & Roles Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="glass-card p-6 rounded-2xl">
+                    <h3 class="text-base font-bold text-slate-900 dark:text-white mb-4 text-center">Répartition des Rôles</h3>
+                    <div class="h-[200px] flex items-center justify-center">
+                        <canvas id="rolesChart"></canvas>
+                    </div>
+                </div>
+                <div class="glass-card p-6 rounded-2xl">
+                    <h3 class="text-base font-bold text-slate-900 dark:text-white mb-4 text-center">Réclamations</h3>
+                    <div class="h-[200px] flex items-center justify-center">
+                        <canvas id="reclamationChart"></canvas>
+                    </div>
+                </div>
+                <div class="glass-card p-6 rounded-2xl md:col-span-2">
+                    <h3 class="text-base font-bold text-slate-900 dark:text-white mb-4">Cours par Catégorie</h3>
+                    <div class="h-[200px]">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -84,70 +138,220 @@
                 <div class="flex justify-between items-center mb-6">
                     <div>
                         <h3 class="text-lg font-bold text-slate-900 dark:text-white">Recrues Récentes</h3>
-                        <p class="text-slate-500 dark:text-slate-400 text-xs mt-0.5 font-medium">Membres récemment inscrits sur SkillPath.</p>
+                        <p class="text-slate-500 dark:text-slate-400 text-xs mt-0.5 font-medium">Les 5 derniers membres inscrits.</p>
                     </div>
-                    <a href="{{ path('app_user_index') }}" class="text-primary dark:text-primary-light hover:underline font-bold text-xs transition-colors">Tout Explorer →</a>
+                    <a href="{{ path('app_user_index') }}" class="text-primary dark:text-primary-light hover:underline font-bold text-xs transition-colors">Tout Voir →</a>
                 </div>
 
                 <div class="space-y-4">
                     {% for user in recentUsers %}
-                    <div class="flex items-center gap-4 group cursor-pointer">
-                        <div class="w-11 h-11 rounded-xl gradient-primary flex items-center justify-center text-xs font-bold text-white shadow-md shadow-purple-500/10 group-hover:scale-105 transition-transform">
+                    <div class="flex items-center gap-4 group">
+                        <div class="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center text-xs font-bold text-white shadow-md shadow-purple-500/10">
                             {{ user.username|first|upper }}
                         </div>
                         <div class="flex-1 flex justify-between items-center border-b border-slate-100/50 dark:border-white/5 pb-4 group-last:border-0">
                             <div>
-                                <p class="text-sm font-bold text-slate-900 dark:text-white group-hover:text-primary dark:group-hover:text-primary-light transition-colors">{{ user.username }}</p>
-                                <p class="text-xs text-slate-400 font-medium">{{ user.email }}</p>
+                                <p class="text-sm font-bold text-slate-900 dark:text-white group-hover:text-primary transition-colors">{{ user.username }}</p>
+                                <p class="text-[10px] text-slate-400 font-medium">{{ user.email }}</p>
                             </div>
                             <div class="text-right">
-                                <span class="badge badge-purple text-[9px]">ID: #{{ user.id }}</span>
-                                <p class="text-[10px] text-slate-400 mt-1 font-medium">
-                                    {{ user.createdAt ? user.createdAt|date('M d, H:i') : 'Membre Historique' }}
+                                <span class="badge {{ user.role == 'admin' ? 'badge-purple' : 'badge-slate' }} text-[8px] px-2">
+                                    {{ user.role|upper }}
+                                </span>
+                                <p class="text-[9px] text-slate-400 mt-1 font-medium italic">
+                                    {{ user.createdAt ? user.createdAt|date('d/m/Y H:i') : 'N/A' }}
                                 </p>
                             </div>
                         </div>
                     </div>
                     {% else %}
-                    <p class="text-slate-400 text-center py-10 font-medium text-sm">Silence dans les couloirs.</p>
+                    <p class="text-slate-400 text-center py-10 font-medium text-sm">Aucun utilisateur trouvé.</p>
                     {% endfor %}
                 </div>
             </div>
 
-            <!-- Info Column -->
+            <!-- Quick Access -->
             <div class="space-y-6">
-                <!-- CTA Card -->
                 <div class="gradient-primary rounded-2xl p-7 relative overflow-hidden shadow-xl shadow-purple-500/15 group">
                     <div class="relative z-10">
-                        <h3 class="text-xl font-black text-white leading-tight">Programme <br>Maître</h3>
-                        <p class="text-white/70 mt-2 text-sm font-medium">Accès rapide à la gestion des unités d'apprentissage.</p>
-                        <a href="{{ path('admin_module_index') }}" class="mt-5 block w-full py-3 bg-white text-primary text-center font-bold rounded-xl hover:bg-slate-50 transition-all active:scale-95 shadow-lg text-sm">Lancer les Modules</a>
+                        <h3 class="text-xl font-black text-white leading-tight">Gestion des <br>Cours</h3>
+                        <p class="text-white/70 mt-2 text-sm font-medium">Contrôlez les contenus pédagogiques.</p>
+                        <a href="{{ path('admin_course_index') }}" class="mt-5 block w-full py-3 bg-white text-primary text-center font-bold rounded-xl hover:scale-[1.02] transition-all shadow-lg text-sm">Accéder aux Cours</a>
                     </div>
-                    <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-white/5 rounded-full blur-3xl group-hover:scale-125 transition-transform duration-700"></div>
                 </div>
 
-                <!-- System Status -->
                 <div class="glass-card rounded-2xl p-7">
-                    <h3 class="text-base font-bold text-slate-900 dark:text-white mb-5">Intégrité du Noyau</h3>
-                    <div class="space-y-3">
-                        <div class="flex items-center justify-between p-3.5 bg-slate-50/50 dark:bg-white/3 rounded-xl">
-                            <span class="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Infrastructure</span>
-                            <span class="flex items-center gap-1.5 text-mint text-[10px] font-bold">
-                                <span class="w-1.5 h-1.5 bg-mint rounded-full animate-pulse"></span>
-                                OPTIMISÉ
-                            </span>
-                        </div>
-                        <div class="flex items-center justify-between p-3.5 bg-slate-50/50 dark:bg-white/3 rounded-xl">
-                            <span class="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Moteur</span>
-                            <span class="text-slate-900 dark:text-white text-[10px] font-bold">SkillPath v2.1</span>
-                        </div>
-                        <div class="flex items-center justify-between p-3.5 bg-slate-50/50 dark:bg-white/3 rounded-xl">
-                            <span class="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Charge Neurale</span>
-                            <span class="text-slate-900 dark:text-white text-[10px] font-bold">Latence Minimale</span>
-                        </div>
+                    <h3 class="text-base font-bold text-slate-900 dark:text-white mb-5">Raccourcis</h3>
+                    <div class="grid grid-cols-2 gap-3">
+                        <a href="{{ path('app_reclamation_index') }}" class="p-3 bg-slate-50 dark:bg-white/5 rounded-xl text-center group">
+                            <p class="text-[10px] font-bold text-slate-500 group-hover:text-primary">Soutien</p>
+                        </a>
+                        <a href="{{ path('app_event_index') }}" class="p-3 bg-slate-50 dark:bg-white/5 rounded-xl text-center group">
+                            <p class="text-[10px] font-bold text-slate-500 group-hover:text-secondary">Événements</p>
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Chart.js, html2pdf and SheetJS CDNs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
+        // PDF Export Function
+        function exportToPDF() {
+            const element = document.querySelector('main') || document.body;
+            const opt = {
+                margin: 0.5,
+                filename: 'SkillPath_Dashboard_Report.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'landscape' }
+            };
+            
+            // Show loading state or feedback if needed
+            html2pdf().set(opt).from(element).save();
+        }
+
+        // Excel Export Function
+        function exportToExcel() {
+            // Prepare data from the stats and recent users
+            const stats = [
+                ["Indicateur", "Valeur"],
+                ["Utilisateurs", "{{ userCount }}"],
+                ["Cours", "{{ courseCount }}"],
+                ["Modules", "{{ moduleCount }}"],
+                ["Réclamations", "{{ reclamationCount }}"],
+                ["Événements", "{{ eventCount }}"],
+                ["Résultats", "{{ resultatCount }}"]
+            ];
+
+            const recentUsers = [
+                [], // Empty line
+                ["Derniers Utilisateurs", "Email", "Rôle", "Date d'inscription"],
+                {% for user in recentUsers %}
+                ["{{ user.username }}", "{{ user.email }}", "{{ user.role|upper }}", "{{ user.createdAt ? user.createdAt|date('d/m/Y') : 'N/A' }}"],
+                {% endfor %}
+            ];
+
+            const wb = XLSX.utils.book_new();
+            const ws_data = stats.concat(recentUsers);
+            const ws = XLSX.utils.aoa_to_sheet(ws_data);
+            
+            // Add some styling (optional)
+            XLSX.utils.book_append_sheet(wb, ws, "Dashboard Summary");
+            XLSX.writeFile(wb, "SkillPath_Dashboard_Export.xlsx");
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Colors from the design system
+            const colors = {
+                primary: '#7C3AED',
+                secondary: '#F59E0B',
+                accent: '#10B981',
+                rose: '#F43F5E',
+                indigo: '#6366F1',
+                mint: '#059669',
+                slate: '#64748B'
+            };
+
+            // 1. Registration Chart (Line)
+            const regCtx = document.getElementById('registrationChart').getContext('2d');
+            new Chart(regCtx, {
+                type: 'line',
+                data: {
+                    labels: {{ registrationLabels|json_encode|raw }},
+                    datasets: [{
+                        label: 'Nouveaux Utilisateurs',
+                        data: {{ registrationValues|json_encode|raw }},
+                        borderColor: colors.primary,
+                        backgroundColor: 'rgba(124, 58, 237, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 3,
+                        pointBackgroundColor: colors.primary,
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, grid: { display: false }, ticks: { stepSize: 1 } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+
+            // 2. Roles Chart (Doughnut)
+            const rolesCtx = document.getElementById('rolesChart').getContext('2d');
+            new Chart(rolesCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: {{ rolesLabels|json_encode|raw }},
+                    datasets: [{
+                        data: {{ rolesValues|json_encode|raw }},
+                        backgroundColor: [colors.primary, colors.slate],
+                        borderWidth: 0,
+                        hoverOffset: 10
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10, weight: 'bold' } } } }
+                }
+            });
+
+            // 3. Reclamation Chart (Pie)
+            const recCtx = document.getElementById('reclamationChart').getContext('2d');
+            new Chart(recCtx, {
+                type: 'pie',
+                data: {
+                    labels: {{ reclamationLabels|json_encode|raw }},
+                    datasets: [{
+                        data: {{ reclamationValues|json_encode|raw }},
+                        backgroundColor: [colors.rose, colors.mint, colors.secondary],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10, weight: 'bold' } } } }
+                }
+            });
+
+            // 4. Category Chart (Bar)
+            const catCtx = document.getElementById('categoryChart').getContext('2d');
+            new Chart(catCtx, {
+                type: 'bar',
+                data: {
+                    labels: {{ categoriesLabels|json_encode|raw }},
+                    datasets: [{
+                        label: 'Nombre de Cours',
+                        data: {{ categoriesValues|json_encode|raw }},
+                        backgroundColor: 'rgba(245, 158, 11, 0.6)',
+                        borderRadius: 8,
+                        hoverBackgroundColor: colors.secondary
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, grid: { borderDash: [2, 2] } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        });
+    </script>
 {% endblock %}
