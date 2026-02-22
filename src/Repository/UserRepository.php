@@ -16,28 +16,30 @@ class UserRepository extends ServiceEntityRepository
         parent::__construct($registry, User::class);
     }
 
-    //    /**
-    //     * @return User[] Returns an array of User objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('u')
-    //            ->andWhere('u.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('u.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    /**
+     * @return User[]
+     */
+    public function findByAdvancedSearch(?string $query, ?string $role, ?string $status): array
+    {
+        $qb = $this->createQueryBuilder('u');
 
-    //    public function findOneBySomeField($value): ?User
-    //    {
-    //        return $this->createQueryBuilder('u')
-    //            ->andWhere('u.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        if ($query) {
+            $qb->andWhere('u.username LIKE :query OR u.email LIKE :query')
+               ->setParameter('query', '%' . $query . '%');
+        }
+
+        if ($role) {
+            $qb->andWhere('u.role = :role')
+               ->setParameter('role', $role);
+        }
+
+        if ($status) {
+            $qb->andWhere('u.status = :status')
+               ->setParameter('status', $status);
+        }
+
+        return $qb->orderBy('u.id', 'DESC')
+                  ->getQuery()
+                  ->getResult();
+    }
 }
