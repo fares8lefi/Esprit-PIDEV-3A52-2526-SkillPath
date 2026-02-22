@@ -2,21 +2,56 @@
 
 {% block title %}Tableau de Bord Admin - SkillPath{% endblock %}
 
+{% block stylesheets %}
+<style>
+    @media print {
+        aside, header, nav, [data-html2canvas-ignore], .btn-primary, .btn-secondary, button {
+            display: none !important;
+        }
+        main {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            background: white !important;
+        }
+        #dashboard-content {
+            padding: 10px !important;
+            margin: 0 !important;
+        }
+        .glass-card {
+            border: 1px solid #eee !important;
+            box-shadow: none !important;
+            break-inside: avoid;
+            background: white !important;
+            color: black !important;
+        }
+        .dark .glass-card {
+            background: white !important;
+            color: black !important;
+        }
+        canvas {
+            max-width: 100% !important;
+            height: auto !important;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-    <div class="space-y-8 animate-fade-up">
+    <div id="dashboard-content" class="space-y-8 animate-fade-up">
         <!-- Welcome -->
         <section class="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
                 <h1 class="text-3xl font-black text-slate-900 dark:text-white tracking-tight">Tableau de Bord <span class="gradient-text">Admin</span></h1>
                 <p class="text-slate-500 dark:text-slate-400 mt-1 font-medium text-sm">Bon retour, {{ app.user.username }}. Voici l'aperçu analytique de SkillPath.</p>
             </div>
-            <div class="flex gap-3">
-                <button onclick="exportToPDF()" class="btn-secondary !py-2.5 !px-5 text-sm flex items-center gap-2 group">
-                    <svg class="w-4 h-4 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+            <div class="flex gap-3" data-html2canvas-ignore>
+                <button onclick="exportToPDF(event)" class="btn-secondary !py-2.5 !px-5 text-sm flex items-center gap-2 group">
+                    <svg class="w-4 h-4 text-coral" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
                     PDF
                 </button>
-                <button onclick="exportToExcel()" class="btn-secondary !py-2.5 !px-5 text-sm flex items-center gap-2 group">
-                    <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                <button onclick="exportToExcel(event)" class="btn-secondary !py-2.5 !px-5 text-sm flex items-center gap-2 group">
+                    <svg class="w-4 h-4 text-mint" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                     Excel
                 </button>
                 <a href="{{ path('app_user_admin_create') }}" class="btn-primary !py-2.5 !px-5 text-sm flex items-center gap-2 !rounded-xl">
@@ -27,70 +62,70 @@
         </section>
 
         <!-- Stats Bento Grid -->
-        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-5">
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-5">
             <!-- Users -->
-            <div class="glass-card p-5 rounded-2xl border-b-4 border-primary">
+            <div class="glass-card p-5 rounded-2xl border-b-4 border-primary hover-lift group">
                 <div class="flex justify-between items-start mb-3">
-                    <div class="w-10 h-10 bg-primary/10 text-primary rounded-xl flex items-center justify-center">
+                    <div class="w-10 h-10 bg-primary/10 text-primary rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
                     </div>
                 </div>
-                <p class="text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase tracking-widest">Utilisateurs</p>
+                <p class="text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-widest">Utilisateurs</p>
                 <h3 class="text-2xl font-black text-slate-900 dark:text-white mt-1">{{ userCount }}</h3>
             </div>
 
             <!-- Courses -->
-            <div class="glass-card p-5 rounded-2xl border-b-4 border-secondary">
+            <div class="glass-card p-5 rounded-2xl border-b-4 border-secondary hover-lift group">
                 <div class="flex justify-between items-start mb-3">
-                    <div class="w-10 h-10 bg-secondary/10 text-secondary rounded-xl flex items-center justify-center">
+                    <div class="w-10 h-10 bg-secondary/10 text-secondary rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
                     </div>
                 </div>
-                <p class="text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase tracking-widest">Cours</p>
+                <p class="text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-widest">Cours</p>
                 <h3 class="text-2xl font-black text-slate-900 dark:text-white mt-1">{{ courseCount }}</h3>
             </div>
 
             <!-- Modules -->
-            <div class="glass-card p-5 rounded-2xl border-b-4 border-accent">
+            <div class="glass-card p-5 rounded-2xl border-b-4 border-accent hover-lift group">
                 <div class="flex justify-between items-start mb-3">
-                    <div class="w-10 h-10 bg-accent/10 text-accent rounded-xl flex items-center justify-center">
+                    <div class="w-10 h-10 bg-accent/10 text-accent rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
                     </div>
                 </div>
-                <p class="text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase tracking-widest">Modules</p>
+                <p class="text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-widest">Modules</p>
                 <h3 class="text-2xl font-black text-slate-900 dark:text-white mt-1">{{ moduleCount }}</h3>
             </div>
 
             <!-- Reclamations -->
-            <div class="glass-card p-5 rounded-2xl border-b-4 border-rose-500">
+            <div class="glass-card p-5 rounded-2xl border-b-4 border-coral hover-lift group">
                 <div class="flex justify-between items-start mb-3">
-                    <div class="w-10 h-10 bg-rose-500/10 text-rose-500 rounded-xl flex items-center justify-center">
+                    <div class="w-10 h-10 bg-coral/10 text-coral rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
                     </div>
                 </div>
-                <p class="text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase tracking-widest">Réclamations</p>
+                <p class="text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-widest">Réclamations</p>
                 <h3 class="text-2xl font-black text-slate-900 dark:text-white mt-1">{{ reclamationCount }}</h3>
             </div>
 
             <!-- Events -->
-            <div class="glass-card p-5 rounded-2xl border-b-4 border-indigo-500">
+            <div class="glass-card p-5 rounded-2xl border-b-4 border-lavender hover-lift group">
                 <div class="flex justify-between items-start mb-3">
-                    <div class="w-10 h-10 bg-indigo-500/10 text-indigo-500 rounded-xl flex items-center justify-center">
+                    <div class="w-10 h-10 bg-lavender/10 text-lavender rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                     </div>
                 </div>
-                <p class="text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase tracking-widest">Événements</p>
+                <p class="text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-widest">Événements</p>
                 <h3 class="text-2xl font-black text-slate-900 dark:text-white mt-1">{{ eventCount }}</h3>
             </div>
 
             <!-- Quizzes/Results -->
-            <div class="glass-card p-5 rounded-2xl border-b-4 border-mint">
+            <div class="glass-card p-5 rounded-2xl border-b-4 border-mint hover-lift group">
                 <div class="flex justify-between items-start mb-3">
-                    <div class="w-10 h-10 bg-mint/10 text-mint rounded-xl flex items-center justify-center">
+                    <div class="w-10 h-10 bg-mint/10 text-mint rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     </div>
                 </div>
-                <p class="text-slate-500 dark:text-slate-400 text-[10px] font-bold uppercase tracking-widest">Résultats</p>
+                <p class="text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-widest">Résultats</p>
                 <h3 class="text-2xl font-black text-slate-900 dark:text-white mt-1">{{ resultatCount }}</h3>
             </div>
         </section>
@@ -143,29 +178,36 @@
                     <a href="{{ path('app_user_index') }}" class="text-primary dark:text-primary-light hover:underline font-bold text-xs transition-colors">Tout Voir →</a>
                 </div>
 
-                <div class="space-y-4">
+                <div class="space-y-3">
                     {% for user in recentUsers %}
-                    <div class="flex items-center gap-4 group">
-                        <div class="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center text-xs font-bold text-white shadow-md shadow-purple-500/10">
+                    <div class="flex items-center gap-4 p-3 rounded-2xl hover:bg-slate-50 dark:hover:bg-white/5 transition-all group">
+                        <div class="w-12 h-12 rounded-2xl gradient-primary flex items-center justify-center text-sm font-black text-white shadow-lg shadow-purple-500/10 group-hover:scale-110 transition-transform">
                             {{ user.username|first|upper }}
                         </div>
-                        <div class="flex-1 flex justify-between items-center border-b border-slate-100/50 dark:border-white/5 pb-4 group-last:border-0">
+                        <div class="flex-1 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                             <div>
-                                <p class="text-sm font-bold text-slate-900 dark:text-white group-hover:text-primary transition-colors">{{ user.username }}</p>
-                                <p class="text-[10px] text-slate-400 font-medium">{{ user.email }}</p>
+                                <p class="text-[0.9rem] font-black text-slate-900 dark:text-white">{{ user.username }}</p>
+                                <p class="text-[0.7rem] text-slate-500 dark:text-slate-400 font-medium">{{ user.email }}</p>
                             </div>
-                            <div class="text-right">
-                                <span class="badge {{ user.role == 'admin' ? 'badge-purple' : 'badge-slate' }} text-[8px] px-2">
-                                    {{ user.role|upper }}
-                                </span>
-                                <p class="text-[9px] text-slate-400 mt-1 font-medium italic">
-                                    {{ user.createdAt ? user.createdAt|date('d/m/Y H:i') : 'N/A' }}
+                            <div class="flex items-center gap-3 sm:text-right">
+                                <div class="hidden xs:block">
+                                    <span class="badge {{ user.role == 'admin' ? 'badge-purple' : 'badge-cyan' }}">
+                                        {{ user.role|upper }}
+                                    </span>
+                                </div>
+                                <p class="text-[0.7rem] text-slate-400 font-semibold tabular-nums">
+                                    {{ user.createdAt ? user.createdAt|date('d/m/Y') : 'N/A' }}
                                 </p>
                             </div>
                         </div>
                     </div>
                     {% else %}
-                    <p class="text-slate-400 text-center py-10 font-medium text-sm">Aucun utilisateur trouvé.</p>
+                    <div class="flex flex-col items-center justify-center py-12 text-center">
+                        <div class="w-16 h-16 bg-slate-100 dark:bg-white/5 rounded-2xl flex items-center justify-center mb-4">
+                            <svg class="w-8 h-8 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                        </div>
+                        <p class="text-slate-500 dark:text-slate-400 font-bold text-sm">Aucun utilisateur trouvé.</p>
+                    </div>
                     {% endfor %}
                 </div>
             </div>
@@ -195,29 +237,175 @@
         </div>
     </div>
 
-    <!-- Chart.js, html2pdf and SheetJS CDNs -->
+    <!-- Chart.js, jsPDF, jsPDF-AutoTable and SheetJS CDNs -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script>
-        // PDF Export Function
-        function exportToPDF() {
-            const element = document.querySelector('main') || document.body;
-            const opt = {
-                margin: 0.5,
-                filename: 'SkillPath_Dashboard_Report.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true },
-                jsPDF: { unit: 'in', format: 'letter', orientation: 'landscape' }
-            };
-            
-            // Show loading state or feedback if needed
-            html2pdf().set(opt).from(element).save();
+        // PDF Export Function — builds PDF from data + chart images
+        function exportToPDF(event) {
+            const btn = event.currentTarget;
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path></svg> Génération...';
+            btn.disabled = true;
+
+            setTimeout(function() {
+                try {
+                    var jsPDF = window.jspdf.jsPDF;
+                    var doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+                    var pageW = doc.internal.pageSize.getWidth();
+                    var pageH = doc.internal.pageSize.getHeight();
+                    var margin = 15;
+                    var y = margin;
+
+                    // ─── Header ───
+                    doc.setFillColor(124, 58, 237);
+                    doc.rect(0, 0, pageW, 28, 'F');
+                    doc.setTextColor(255, 255, 255);
+                    doc.setFontSize(20);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('SkillPath — Rapport du Tableau de Bord', margin, 18);
+                    doc.setFontSize(9);
+                    doc.setFont('helvetica', 'normal');
+                    var now = new Date();
+                    doc.text('Généré le ' + now.toLocaleDateString('fr-FR') + ' à ' + now.toLocaleTimeString('fr-FR'), pageW - margin, 18, { align: 'right' });
+                    y = 36;
+
+                    // ─── Stats Table ───
+                    doc.setTextColor(60, 60, 60);
+                    doc.setFontSize(13);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('Indicateurs Clés', margin, y);
+                    y += 4;
+
+                    doc.autoTable({
+                        startY: y,
+                        margin: { left: margin, right: margin },
+                        head: [['Indicateur', 'Valeur']],
+                        body: [
+                            ['Utilisateurs', '{{ userCount }}'],
+                            ['Cours', '{{ courseCount }}'],
+                            ['Modules', '{{ moduleCount }}'],
+                            ['Réclamations', '{{ reclamationCount }}'],
+                            ['Événements', '{{ eventCount }}'],
+                            ['Résultats', '{{ resultatCount }}']
+                        ],
+                        headStyles: { fillColor: [124, 58, 237], textColor: 255, fontStyle: 'bold', fontSize: 10 },
+                        bodyStyles: { fontSize: 10 },
+                        alternateRowStyles: { fillColor: [245, 243, 255] },
+                        columnStyles: { 0: { cellWidth: 80 }, 1: { cellWidth: 40, halign: 'center', fontStyle: 'bold' } },
+                        tableWidth: 130,
+                        theme: 'grid'
+                    });
+                    y = doc.lastAutoTable.finalY + 10;
+
+                    // ─── Charts (capture canvas elements as images) ───
+                    var chartIds = ['registrationChart', 'rolesChart', 'reclamationChart', 'categoryChart'];
+                    var chartTitles = ['Croissance des Utilisateurs', 'Répartition des Rôles', 'Réclamations', 'Cours par Catégorie'];
+                    var chartW = (pageW - margin * 3) / 2;
+                    var chartH = 55;
+                    var col = 0;
+                    var startX = margin;
+
+                    doc.setFontSize(13);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('Graphiques', margin, y);
+                    y += 6;
+                    var rowY = y;
+
+                    for (var i = 0; i < chartIds.length; i++) {
+                        var canvas = document.getElementById(chartIds[i]);
+                        if (canvas) {
+                            var imgData = canvas.toDataURL('image/png', 1.0);
+                            var x = startX + col * (chartW + margin);
+
+                            // Title
+                            doc.setFontSize(9);
+                            doc.setFont('helvetica', 'bold');
+                            doc.setTextColor(100, 100, 100);
+                            doc.text(chartTitles[i], x + 2, rowY);
+
+                            // Border box
+                            doc.setDrawColor(220, 220, 220);
+                            doc.roundedRect(x, rowY + 2, chartW, chartH, 3, 3, 'S');
+
+                            // Image
+                            doc.addImage(imgData, 'PNG', x + 2, rowY + 4, chartW - 4, chartH - 6);
+
+                            col++;
+                            if (col >= 2) {
+                                col = 0;
+                                rowY += chartH + 12;
+
+                                // New page if not enough space
+                                if (rowY + chartH + 12 > pageH - margin) {
+                                    doc.addPage();
+                                    rowY = margin;
+                                }
+                            }
+                        }
+                    }
+                    y = rowY + (col > 0 ? chartH + 12 : 0);
+
+                    // ─── Recent Users Table ───
+                    if (y + 40 > pageH - margin) {
+                        doc.addPage();
+                        y = margin;
+                    }
+                    doc.setTextColor(60, 60, 60);
+                    doc.setFontSize(13);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('Derniers Utilisateurs Inscrits', margin, y);
+                    y += 4;
+
+                    doc.autoTable({
+                        startY: y,
+                        margin: { left: margin, right: margin },
+                        head: [['Nom', 'Email', 'Rôle', 'Date d\'inscription']],
+                        body: [
+                            {% for user in recentUsers %}
+                            ['{{ user.username }}', '{{ user.email }}', '{{ user.role|upper }}', '{{ user.createdAt ? user.createdAt|date("d/m/Y") : "N/A" }}'],
+                            {% endfor %}
+                        ],
+                        headStyles: { fillColor: [124, 58, 237], textColor: 255, fontStyle: 'bold', fontSize: 10 },
+                        bodyStyles: { fontSize: 9 },
+                        alternateRowStyles: { fillColor: [245, 243, 255] },
+                        theme: 'grid'
+                    });
+
+                    // ─── Footer ───
+                    var totalPages = doc.internal.getNumberOfPages();
+                    for (var p = 1; p <= totalPages; p++) {
+                        doc.setPage(p);
+                        doc.setFontSize(8);
+                        doc.setTextColor(160, 160, 160);
+                        doc.text('SkillPath © ' + now.getFullYear() + ' — Page ' + p + '/' + totalPages, pageW / 2, pageH - 7, { align: 'center' });
+                    }
+
+                    // ─── Save ───
+                    doc.save('SkillPath_Dashboard_Report.pdf');
+
+                    btn.innerHTML = originalHTML;
+                    btn.disabled = false;
+                } catch (err) {
+                    console.error('PDF Generation Error:', err);
+                    btn.innerHTML = originalHTML;
+                    btn.disabled = false;
+                    alert('Erreur: ' + err.message);
+                }
+            }, 300);
         }
 
         // Excel Export Function
-        function exportToExcel() {
-            // Prepare data from the stats and recent users
+        function exportToExcel(event) {
+            const btn = event.currentTarget;
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = 'Export...';
+            btn.disabled = true;
+            
+            try {
+                // Prepare data from the stats and recent users
             const stats = [
                 ["Indicateur", "Valeur"],
                 ["Utilisateurs", "{{ userCount }}"],
@@ -243,19 +431,34 @@
             // Add some styling (optional)
             XLSX.utils.book_append_sheet(wb, ws, "Dashboard Summary");
             XLSX.writeFile(wb, "SkillPath_Dashboard_Export.xlsx");
+            } catch (err) {
+                console.error('Excel Export Error:', err);
+                alert('Erreur lors de l\'export Excel.');
+            } finally {
+                btn.innerHTML = originalHTML;
+                btn.disabled = false;
+            }
         }
 
         document.addEventListener('DOMContentLoaded', function() {
+            const isDark = document.documentElement.classList.contains('dark');
+            const textColor = isDark ? '#94A3B8' : '#64748B';
+            const gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)';
+
             // Colors from the design system
             const colors = {
                 primary: '#7C3AED',
                 secondary: '#F59E0B',
-                accent: '#10B981',
-                rose: '#F43F5E',
-                indigo: '#6366F1',
-                mint: '#059669',
+                accent: '#06B6D4',
+                coral: '#FB7185',
+                lavender: '#C4B5FD',
+                mint: '#34D399',
                 slate: '#64748B'
             };
+
+            Chart.defaults.color = textColor;
+            Chart.defaults.font.family = "'Outfit', sans-serif";
+            Chart.defaults.font.size = 11;
 
             // 1. Registration Chart (Line)
             const regCtx = document.getElementById('registrationChart').getContext('2d');
@@ -282,8 +485,15 @@
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
                     scales: {
-                        y: { beginAtZero: true, grid: { display: false }, ticks: { stepSize: 1 } },
-                        x: { grid: { display: false } }
+                        y: { 
+                            beginAtZero: true, 
+                            grid: { color: gridColor, drawBorder: false }, 
+                            ticks: { color: textColor, padding: 10 } 
+                        },
+                        x: { 
+                            grid: { display: false }, 
+                            ticks: { color: textColor, padding: 10 } 
+                        }
                     }
                 }
             });
@@ -304,8 +514,18 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    cutout: '70%',
-                    plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10, weight: 'bold' } } } }
+                    cutout: '75%',
+                    plugins: { 
+                        legend: { 
+                            position: 'bottom', 
+                            labels: { 
+                                color: textColor,
+                                usePointStyle: true,
+                                padding: 20,
+                                font: { size: 11, weight: '600' } 
+                            } 
+                        } 
+                    }
                 }
             });
 
@@ -317,14 +537,24 @@
                     labels: {{ reclamationLabels|json_encode|raw }},
                     datasets: [{
                         data: {{ reclamationValues|json_encode|raw }},
-                        backgroundColor: [colors.rose, colors.mint, colors.secondary],
+                        backgroundColor: [colors.coral, colors.primary, colors.mint, colors.secondary],
                         borderWidth: 0
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10, weight: 'bold' } } } }
+                    plugins: { 
+                        legend: { 
+                            position: 'bottom', 
+                            labels: { 
+                                color: textColor,
+                                usePointStyle: true,
+                                padding: 20,
+                                font: { size: 11, weight: '600' } 
+                            } 
+                        } 
+                    }
                 }
             });
 
@@ -337,9 +567,9 @@
                     datasets: [{
                         label: 'Nombre de Cours',
                         data: {{ categoriesValues|json_encode|raw }},
-                        backgroundColor: 'rgba(245, 158, 11, 0.6)',
-                        borderRadius: 8,
-                        hoverBackgroundColor: colors.secondary
+                        backgroundColor: 'rgba(6, 182, 212, 0.6)',
+                        borderRadius: 12,
+                        hoverBackgroundColor: colors.accent
                     }]
                 },
                 options: {
@@ -347,10 +577,41 @@
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
                     scales: {
-                        y: { beginAtZero: true, grid: { borderDash: [2, 2] } },
-                        x: { grid: { display: false } }
+                        y: { 
+                            beginAtZero: true, 
+                            grid: { color: gridColor, borderDash: [5, 5], drawBorder: false },
+                            ticks: { color: textColor }
+                        },
+                        x: { 
+                            grid: { display: false },
+                            ticks: { color: textColor }
+                        }
                     }
                 }
+            });
+
+            // Handle Theme Change for Charts
+            window.addEventListener('themeChanged', () => {
+                const isDarkNow = document.documentElement.classList.contains('dark');
+                const newTextColor = isDarkNow ? '#94A3B8' : '#64748B';
+                const newGridColor = isDarkNow ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)';
+
+                Chart.helpers.each(Chart.instances, (instance) => {
+                    const { scales, plugins } = instance.options;
+                    if (scales) {
+                        if (scales.y) {
+                            if (scales.y.grid) scales.y.grid.color = newGridColor;
+                            if (scales.y.ticks) scales.y.ticks.color = newTextColor;
+                        }
+                        if (scales.x) {
+                            if (scales.x.ticks) scales.x.ticks.color = newTextColor;
+                        }
+                    }
+                    if (plugins && plugins.legend && plugins.legend.labels) {
+                        plugins.legend.labels.color = newTextColor;
+                    }
+                    instance.update();
+                });
             });
         });
     </script>
