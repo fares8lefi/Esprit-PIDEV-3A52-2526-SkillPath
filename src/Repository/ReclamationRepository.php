@@ -40,4 +40,23 @@ class ReclamationRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+    public function findBySearchAndSort(?string $search, ?string $sortOrder): array
+    {
+        $qb = $this->createQueryBuilder('r')
+            ->leftJoin('r.user', 'u')
+            ->addSelect('u');
+
+        if ($search) {
+            $qb->andWhere('u.email LIKE :search')
+               ->setParameter('search', '%' . $search . '%');
+        }
+
+        if ($sortOrder === 'desc') {
+            $qb->orderBy('u.email', 'DESC');
+        } else {
+            $qb->orderBy('u.email', 'ASC');
+        }
+
+        return $qb->getQuery()->getResult();
+    }
 }

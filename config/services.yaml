@@ -5,6 +5,7 @@ parameters:
   locations_upload_dir: '%kernel.project_dir%/public/uploads/locations'
   hf_token: '%env(HF_TOKEN)%'
   hf_model: '%env(HF_MODEL)%'
+  reclamations_directory: '%kernel.project_dir%/public/uploads/reclamations'
 
 services:
   _defaults:

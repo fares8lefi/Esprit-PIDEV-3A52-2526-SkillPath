@@ -19,10 +19,15 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class AdminReclamationController extends AbstractController
 {
     #[Route('/', name: 'app_admin_reclamation_index', methods: ['GET'])]
-    public function index(ReclamationRepository $reclamationRepository): Response
+    public function index(Request $request, ReclamationRepository $reclamationRepository): Response
     {
+        $search = $request->query->get('search');
+        $sort = $request->query->get('sort', 'asc');
+
         return $this->render('BackOffice/reclamation/index.html.twig', [
-            'reclamations' => $reclamationRepository->findAll(),
+            'reclamations' => $reclamationRepository->findBySearchAndSort($search, $sort),
+            'search' => $search,
+            'sort' => $sort,
         ]);
     }
 
