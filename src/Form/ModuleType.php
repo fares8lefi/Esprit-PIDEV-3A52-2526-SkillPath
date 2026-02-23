@@ -12,6 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 
 class ModuleType extends AbstractType
 {
@@ -77,6 +78,15 @@ class ModuleType extends AbstractType
                     'rows' => 3,
                     'placeholder' => 'Bref résumé...'
                 ],
+            ])
+            ->add('scheduledAt', DateTimeType::class, [
+                'label' => 'Date de programmation (Visibilité)',
+                'widget' => 'single_text',
+                'required' => true,
+                'attr' => [
+                    'class' => 'w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-skillpath-blue focus:border-transparent transition-all'
+                ],
+                'help' => 'Le module ne sera visible sur le front qu\'à partir de cette date.'
             ]);
     }
 

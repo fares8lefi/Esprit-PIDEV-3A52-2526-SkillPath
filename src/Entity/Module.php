@@ -54,9 +54,13 @@ class Module
     #[ORM\JoinColumn(nullable: false)]
     private ?Cours $cours = null;
 
+    #[ORM\Column(type: "datetime", nullable: true)]
+    private ?\DateTimeInterface $scheduledAt = null;
+
     public function __construct()
     {
         $this->dateCreation = new \DateTimeImmutable();
+        $this->scheduledAt = new \DateTime();
     }
 
     public function getId(): ?int
@@ -158,6 +162,17 @@ class Module
     public function setCours(?Cours $cours): self
     {
         $this->cours = $cours;
+        return $this;
+    }
+
+    public function getScheduledAt(): ?\DateTimeInterface
+    {
+        return $this->scheduledAt;
+    }
+
+    public function setScheduledAt(?\DateTimeInterface $scheduledAt): self
+    {
+        $this->scheduledAt = $scheduledAt;
         return $this;
     }
 }

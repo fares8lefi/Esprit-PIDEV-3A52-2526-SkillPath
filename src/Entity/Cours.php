@@ -43,6 +43,7 @@ class Cours
 
     // ✅ New Relation: Cours (One) has Many Modules
     #[ORM\OneToMany(mappedBy: 'cours', targetEntity: Module::class, cascade: ['persist', 'remove'])]
+    #[ORM\OrderBy(['scheduledAt' => 'ASC'])]
     private Collection $modules;
 
     // ❌ Fields moved to Module (kept as nullable/unused or removed? User said 'Corriger', implying move. We will remove them from here if they belong to child now, BUT for safety on existing data we might want to keep them for a second? No, user wants correct architecture. I will remove strict constraints on old fields if I keep them, but better to replace them.)
