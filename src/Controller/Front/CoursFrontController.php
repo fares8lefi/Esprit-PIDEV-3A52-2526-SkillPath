@@ -30,15 +30,16 @@ class CoursFrontController extends AbstractController
             'currentLevel' => $level,
             'currentCategory' => $category,
             'currentSort' => $sort,
+            'now' => new \DateTime(),
         ]);
     }
 
     #[Route('/{id}', name: 'show', methods: ['GET'])]
     public function show(Cours $course): Response
     {
-        // Renaming variable 'module' to 'course' for the template
         return $this->render('front/cours/show.html.twig', [
             'course' => $course,
+            'now' => new \DateTime(),
         ]);
     }
 
@@ -51,14 +52,23 @@ class CoursFrontController extends AbstractController
             throw $this->createNotFoundException('Cours non trouvé');
         }
 
-        $module = null;
-        $moduleIndex = 0;
-        $totalModules = $course->getModules()->count();
+        $now = new \DateTime();
+        $allModules = $course->getModules();
+        $visibleModules = $allModules->filter(function($module) use ($now) {
+            return $module->getScheduledAt() <= $now;
+        })->getValues();
 
-        foreach ($course->getModules() as $index => $m) {
+        $module = null;
+        $moduleIndex = -1;
+        
+        foreach ($allModules as $index => $m) {
             if ($m->getId() === $moduleId) {
+                // Security check
+                if ($m->getScheduledAt() > $now) {
+                    $this->addFlash('info', 'Ce module sera disponible le ' . $m->getScheduledAt()->format('d/m/Y'));
+                    return $this->redirectToRoute('front_courses_show', ['id' => $courseId]);
+                }
                 $module = $m;
-                $moduleIndex = $index;
                 break;
             }
         }
@@ -67,17 +77,26 @@ class CoursFrontController extends AbstractController
             throw $this->createNotFoundException('Module non trouvé');
         }
 
-        // Get previous and next modules
-        $previousModule = $moduleIndex > 0 ? $course->getModules()[$moduleIndex - 1] : null;
-        $nextModule = $moduleIndex < $totalModules - 1 ? $course->getModules()[$moduleIndex + 1] : null;
+        // We need visibleIndex for navigation
+        $visibleIndex = -1;
+        foreach ($visibleModules as $idx => $vm) {
+            if ($vm->getId() === $moduleId) {
+                $visibleIndex = $idx;
+                break;
+            }
+        }
+
+        $totalVisible = count($visibleModules);
+        $previousModule = $visibleIndex > 0 ? $visibleModules[$visibleIndex - 1] : null;
+        $nextModule = $visibleIndex < $totalVisible - 1 ? $visibleModules[$visibleIndex + 1] : null;
 
         return $this->render('front/cours/module.html.twig', [
             'course' => $course,
             'module' => $module,
             'previousModule' => $previousModule,
             'nextModule' => $nextModule,
-            'moduleNumber' => $moduleIndex + 1,
-            'totalModules' => $totalModules,
+            'moduleNumber' => $visibleIndex + 1,
+            'totalModules' => $totalVisible,
         ]);
     }
 }
