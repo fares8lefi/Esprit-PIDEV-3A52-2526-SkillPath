@@ -54,13 +54,18 @@ class MainController extends AbstractController
             $categoriesData[$cat] = ($categoriesData[$cat] ?? 0) + 1;
         }
 
-        // Reclamation Data
+        // Reclamation Data — statuses match ReclamationStatusType form values
         $reclamations = $reclamationRepository->findAll();
-        $reclamationStats = ['En attente' => 0, 'Traité' => 0, 'En cours' => 0];
+        $reclamationStats = ['Pending' => 0, 'In Progress' => 0, 'Resolved' => 0, 'Closed' => 0];
         foreach ($reclamations as $reclamation) {
-            $status = $reclamation->getStatut() ?: 'En attente';
+            $status = $reclamation->getStatut() ?: 'Pending';
             if (isset($reclamationStats[$status])) {
                 $reclamationStats[$status]++;
+            } else {
+                
+                $map = ['En attente' => 'Pending', 'En cours' => 'In Progress', 'Traité' => 'Resolved'];
+                $mapped = $map[$status] ?? 'Pending';
+                $reclamationStats[$mapped]++;
             }
         }
 
