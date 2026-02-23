@@ -40,22 +40,28 @@ class ReclamationRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
-    public function findBySearchAndSort(?string $search, ?string $sortOrder): array
+    public function findBySearchAndSort(?string $search, ?string $sort = 'id', ?string $direction = 'desc', ?\App\Entity\User $user = null): array
     {
         $qb = $this->createQueryBuilder('r')
             ->leftJoin('r.user', 'u')
             ->addSelect('u');
 
+        if ($user) {
+            $qb->andWhere('r.user = :user')
+               ->setParameter('user', $user);
+        }
+
         if ($search) {
-            $qb->andWhere('u.email LIKE :search')
+            $qb->andWhere('r.sujet LIKE :search OR u.email LIKE :search OR r.description LIKE :search')
                ->setParameter('search', '%' . $search . '%');
         }
 
-        if ($sortOrder === 'desc') {
-            $qb->orderBy('u.email', 'DESC');
-        } else {
-            $qb->orderBy('u.email', 'ASC');
-        }
+        // Validate allowed sort fields
+        $allowedSorts = ['id', 'statut', 'sujet'];
+        $sortField = in_array($sort, $allowedSorts) ? 'r.' . $sort : 'r.id';
+        $dir = (strtoupper($direction) === 'ASC') ? 'ASC' : 'DESC';
+
+        $qb->orderBy($sortField, $dir);
 
         return $qb->getQuery()->getResult();
     }

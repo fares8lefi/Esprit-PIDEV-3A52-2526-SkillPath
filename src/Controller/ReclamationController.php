@@ -23,10 +23,17 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 class ReclamationController extends AbstractController
 {
     #[Route('/', name: 'app_reclamation_index', methods: ['GET'])]
-    public function index(ReclamationRepository $reclamationRepository): Response
+    public function index(Request $request, ReclamationRepository $reclamationRepository): Response
     {
+        $search = $request->query->get('search');
+        $sort = $request->query->get('sort', 'id');
+        $direction = $request->query->get('direction', 'desc');
+
         return $this->render('FrontOffice/reclamation/index.html.twig', [
-            'reclamations' => $reclamationRepository->findAll(),
+            'reclamations' => $reclamationRepository->findBySearchAndSort($search, $sort, $direction, $this->getUser()),
+            'search' => $search,
+            'sort' => $sort,
+            'direction' => $direction
         ]);
     }
 

@@ -22,12 +22,14 @@ class AdminReclamationController extends AbstractController
     public function index(Request $request, ReclamationRepository $reclamationRepository): Response
     {
         $search = $request->query->get('search');
-        $sort = $request->query->get('sort', 'asc');
+        $sort = $request->query->get('sort', 'id');
+        $direction = $request->query->get('direction', 'desc');
 
         return $this->render('BackOffice/reclamation/index.html.twig', [
-            'reclamations' => $reclamationRepository->findBySearchAndSort($search, $sort),
+            'reclamations' => $reclamationRepository->findBySearchAndSort($search, $sort, $direction),
             'search' => $search,
             'sort' => $sort,
+            'direction' => $direction,
         ]);
     }
 

@@ -44,11 +44,41 @@
                 </a>
                 <h1 class="text-3xl font-black text-slate-900 dark:text-white tracking-tight">Mes <span class="gradient-text">Réclamations</span></h1>
             </div>
-            <a href="{{ path('app_reclamation_new') }}" class="btn-primary !py-3 !px-6 text-sm flex items-center gap-2 w-fit">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                Nouvelle réclamation
-            </a>
+            
+            <div class="flex flex-col sm:flex-row items-center gap-3">
+                <form method="get" class="flex items-center gap-3 bg-white/50 dark:bg-white/5 px-4 py-2.5 rounded-2xl border border-slate-200 dark:border-white/10 w-full sm:w-64 focus-within:ring-2 focus-within:ring-primary/20 transition-all group backdrop-blur-sm">
+                    <input type="text" name="search" value="{{ search }}" placeholder="Rechercher..." class="bg-transparent border-none focus:outline-none text-sm w-full text-slate-900 dark:text-white placeholder-slate-400 font-medium">
+                    <button type="submit" class="text-slate-400 hover:text-primary">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    </button>
+                </form>
+
+                <a href="{{ path('app_reclamation_new') }}" class="btn-primary !py-3 !px-6 text-sm flex items-center gap-2 w-full sm:w-fit justify-center">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    Nouvelle demande
+                </a>
+            </div>
         </div>
+
+        <!-- Sorting Info -->
+        {% if search or reclamations|length > 0 %}
+            <div class="flex items-center justify-between mb-6 animate-fade-up">
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">
+                    {{ search ? 'Résultats pour "' ~ search ~ '"' : 'Toutes vos demandes' }} 
+                    <span class="ml-2 text-primary">({{ reclamations|length }})</span>
+                </p>
+                <div class="flex gap-4">
+                    <a href="{{ path('app_reclamation_index', {sort: 'statut', direction: direction == 'desc' ? 'asc' : 'desc', search: search}) }}" class="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-primary transition-colors flex items-center gap-1">
+                        Statut
+                        {% if sort == 'statut' %}<svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ direction == 'desc' ? 'M19 9l-7 7-7-7' : 'M5 15l7-7 7 7' }}"/></svg>{% endif %}
+                    </a>
+                    <a href="{{ path('app_reclamation_index', {sort: 'id', direction: direction == 'desc' ? 'asc' : 'desc', search: search}) }}" class="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-primary transition-colors flex items-center gap-1">
+                        Date
+                        {% if sort == 'id' %}<svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ direction == 'desc' ? 'M19 9l-7 7-7-7' : 'M5 15l7-7 7 7' }}"/></svg>{% endif %}
+                    </a>
+                </div>
+            </div>
+        {% endif %}
 
         <!-- Reclamation Cards -->
         <div class="space-y-4">
@@ -57,12 +87,12 @@
                     <div class="flex-1">
                         <div class="flex items-center gap-3 mb-2">
                             <h3 class="text-base font-bold text-slate-900 dark:text-white group-hover:text-primary dark:group-hover:text-primary-light transition-colors">{{ reclamation.sujet }}</h3>
-                            {% if reclamation.statut == 'pending' or reclamation.statut == 'Pending' %}
+                            {% if reclamation.statut|lower == 'pending' or reclamation.statut|lower == 'en attente' %}
                                 <a href="{{ path('app_reclamation_edit', {'id': reclamation.id}) }}" 
                                    class="text-[10px] font-black uppercase tracking-widest text-primary hover:underline z-10" 
                                    onclick="event.stopPropagation();">Modifier</a>
                                 <span class="badge badge-amber">En attente</span>
-                            {% elseif reclamation.statut == 'resolved' or reclamation.statut == 'Resolved' %}
+                            {% elseif reclamation.statut|lower == 'resolved' or reclamation.statut|lower == 'résolu' %}
                                 <span class="badge badge-green">Résolu</span>
                             {% else %}
                                 <span class="badge badge-purple">{{ reclamation.statut }}</span>
@@ -99,14 +129,14 @@
     {# Floating Toggle Button #}
     <button id="chat-toggle-btn"
             onclick="document.getElementById('chat-panel').classList.toggle('hidden'); document.getElementById('chat-panel').classList.add('chat-open'); document.getElementById('chat-toggle-btn').classList.toggle('hidden');"
-            class="fixed bottom-6 right-6 z-50 w-16 h-16 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-full shadow-2xl flex items-center justify-center text-white text-2xl hover:scale-110 transition-transform duration-200 cursor-pointer">
+            class="fixed bottom-24 right-6 z-50 w-16 h-16 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-full shadow-2xl flex items-center justify-center text-white text-2xl hover:scale-110 transition-transform duration-200 cursor-pointer">
         <span class="chat-bubble-ring"></span>
         💬
     </button>
 
     {# Chat Panel #}
     <div id="chat-panel"
-         class="hidden fixed bottom-6 right-6 z-50 w-96 bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col"
+         class="hidden fixed bottom-24 right-6 z-50 w-96 bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col"
          style="height: 500px;">
         
         {# Header #}

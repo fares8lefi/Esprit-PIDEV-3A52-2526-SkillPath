@@ -41,6 +41,9 @@ class GeminiService
 
             $statusCode = $response->getStatusCode();
             if ($statusCode !== 200) {
+                if ($statusCode === 429) {
+                    return 'Le chatbot est actuellement surchargé (quota atteint). Veuillez réessayer dans une minute.';
+                }
                 return 'Error: Gemini API returned status ' . $statusCode;
             }
 

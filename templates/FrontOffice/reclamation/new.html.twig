@@ -3,6 +3,46 @@
 {% block title %}Nouvelle Réclamation{% endblock %}
 
 {% block body %}
+<style>
+    .form-input-file {
+        width: 100%;
+        padding: 0.875rem 1.25rem;
+        border-radius: 1rem;
+        border: 2px dashed rgba(124,58,237,0.2);
+        background: rgba(124,58,237,0.03);
+        transition: all 0.3s ease;
+        font-weight: 500;
+        color: #94A3B8;
+        cursor: pointer;
+    }
+    .dark .form-input-file {
+        background: rgba(124,58,237,0.05);
+        border-color: rgba(124,58,237,0.15);
+    }
+    .form-input-file:hover {
+        border-color: #7C3AED;
+        background: rgba(124,58,237,0.06);
+    }
+    .form-input-file::-webkit-file-upload-button {
+        background: #7C3AED;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 0.75rem;
+        font-weight: 700;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-right: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    .form-input-file::-webkit-file-upload-button:hover {
+        background: #6D28D9;
+        transform: translateY(-1px);
+    }
+</style>
+
 <div class="min-h-screen mesh-light dark:mesh-dark flex items-center justify-center p-6">
     <div class="max-w-2xl w-full">
         <!-- Back Link -->
@@ -20,7 +60,7 @@
                     <p class="text-slate-500 dark:text-slate-400 font-medium">Décrivez votre problème en détail pour que notre équipe puisse vous aider efficacement.</p>
                 </div>
 
-                {{ form_start(form, {'attr': {'class': 'space-y-8'}}) }}
+                {{ form_start(form, {'attr': {'class': 'space-y-8', 'enctype': 'multipart/form-data'}}) }}
                     <div class="space-y-3">
                         {{ form_label(form.sujet, 'Sujet ou Titre', {'label_attr': {'class': 'text-xs font-bold uppercase tracking-widest text-slate-400 ml-1'}}) }}
                         {{ form_widget(form.sujet, {'attr': {'class': 'form-input', 'placeholder': 'Ex: Problème d\'accès au cours...'}}) }}
@@ -32,13 +72,24 @@
                         {{ form_widget(form.description, {'attr': {'class': 'form-input min-h-[150px]', 'placeholder': 'Expliquez ce qui s\'est passé...'}}) }}
                         {{ form_errors(form.description, {'attr': {'class': 'text-red-500 text-sm font-bold mt-2 ml-1'}}) }}
                     </div>
+
+                    <div class="space-y-3">
+                        {{ form_label(form.pieceJointe, 'Pièce jointe (optionnel)', {'label_attr': {'class': 'text-xs font-bold uppercase tracking-widest text-slate-400 ml-1'}}) }}
+                        {{ form_widget(form.pieceJointe, {'attr': {'class': 'form-input-file'}}) }}
+                        {{ form_errors(form.pieceJointe, {'attr': {'class': 'text-red-500 text-sm font-bold mt-2 ml-1'}}) }}
+                        <p class="text-[11px] text-slate-400 font-medium ml-1">Formats acceptés : JPG, PNG, PDF — max 5 Mo</p>
+                    </div>
                     
                     <button type="submit" class="btn-primary w-full !py-5 !text-lg mt-6">
                         Envoyer ma demande
                     </button>
+                    <div class="text-center mt-4">
+                        <a href="{{ path('app_reclamation_index') }}" class="text-xs font-bold text-slate-400 hover:text-white transition-colors">Annuler</a>
+                    </div>
                 {{ form_end(form) }}
             </div>
         </div>
     </div>
 </div>
 {% endblock %}
+

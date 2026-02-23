@@ -9,6 +9,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use App\Repository\UserRepository;
 use App\Repository\CourseRepository;
 use App\Repository\ModuleRepository;
+use App\Repository\ReclamationRepository;
 
 class MainController extends AbstractController
 {
@@ -22,13 +23,25 @@ class MainController extends AbstractController
 
     #[Route('/admin', name: 'app_admin_dashboard')]
     #[IsGranted('ROLE_ADMIN')]
-    public function adminDashboard(UserRepository $userRepository, CourseRepository $courseRepository, ModuleRepository $moduleRepository): Response
-    {
+    public function adminDashboard(
+        UserRepository $userRepository,
+        CourseRepository $courseRepository,
+        ModuleRepository $moduleRepository,
+        ReclamationRepository $reclamationRepository
+    ): Response {
+        $reclamations = $reclamationRepository->findAll();
+        $pendingCount = count(array_filter($reclamations, fn($r) => in_array(strtolower($r->getStatut()), ['pending', 'en attente'])));
+        $resolvedCount = count(array_filter($reclamations, fn($r) => in_array(strtolower($r->getStatut()), ['resolved', 'résolu'])));
+
         return $this->render('BackOffice/main/dashboard.html.twig', [
-            'userCount' => $userRepository->count([]),
-            'courseCount' => $courseRepository->count([]),
-            'moduleCount' => $moduleRepository->count([]),
-            'recentUsers' => $userRepository->findBy([], ['id' => 'DESC'], 3),
+            'userCount'      => $userRepository->count([]),
+            'courseCount'    => $courseRepository->count([]),
+            'moduleCount'    => $moduleRepository->count([]),
+            'reclamationCount' => count($reclamations),
+            'pendingCount'   => $pendingCount,
+            'resolvedCount'  => $resolvedCount,
+            'recentUsers'    => $userRepository->findBy([], ['id' => 'DESC'], 5),
+            'recentReclamations' => $reclamationRepository->findBy([], ['id' => 'DESC'], 4),
         ]);
     }
 
