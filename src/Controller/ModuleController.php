@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use App\Service\NotificationService;
 
 #[Route('/admin/modules', name: 'admin_module_')]
 class ModuleController extends AbstractController
@@ -46,7 +47,8 @@ class ModuleController extends AbstractController
     #[Route('/new', name: 'new', methods: ['GET', 'POST'])]
     public function new(
         Request $request,
-        EntityManagerInterface $em
+        EntityManagerInterface $em,
+        NotificationService $notificationService
     ): Response {
         $module = new Module();
         $form = $this->createForm(ModuleType::class, $module);
@@ -57,6 +59,9 @@ class ModuleController extends AbstractController
             
             $em->persist($module);
             $em->flush();
+
+            // Notify students
+            $notificationService->notifyNewContent('module', $module->getName());
 
             $this->addFlash('success', 'Module ajouté avec succès.');
             return $this->redirectToRoute('admin_module_list');

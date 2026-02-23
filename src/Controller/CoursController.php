@@ -12,6 +12,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use App\Service\NotificationService;
 
 #[Route('/admin/cours', name: 'admin_cours_')]
 class CoursController extends AbstractController
@@ -55,7 +56,7 @@ class CoursController extends AbstractController
     }
 
     #[Route('/new', name: 'new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger, NotificationService $notificationService): Response
     {
         $cours = new Cours();
         $form = $this->createForm(CoursType::class, $cours);
@@ -81,6 +82,9 @@ class CoursController extends AbstractController
 
             $entityManager->persist($cours);
             $entityManager->flush();
+
+            // Notify students
+            $notificationService->notifyNewContent('cours', $cours->getTitre());
 
             $this->addFlash('success', 'Le contenu a été ajouté avec succès.');
 
