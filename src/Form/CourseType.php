@@ -50,6 +50,8 @@ class CourseType extends AbstractType
                     'Développement' => 'Développement',
                     'Design' => 'Design',
                     'Marketing' => 'Marketing',
+                    'Devops' => 'Devops',
+                    'businesses' => 'Businesses',
                 ],
                 'attr' => [
                     'class' => 'w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-skillpath-blue focus:border-transparent transition-all'
