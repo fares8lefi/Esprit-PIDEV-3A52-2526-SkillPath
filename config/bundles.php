@@ -15,4 +15,8 @@ return [
     Symfony\Bundle\MakerBundle\MakerBundle::class => ['dev' => true],
     Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle::class => ['all' => true],
     Knp\Bundle\PaginatorBundle\KnpPaginatorBundle::class => ['all' => true],
+<<<<<<< Updated upstream
+=======
+    // Endroid\QrCodeBundle\EndroidQrCodeBundle::class => ['all' => true], // Disabled: requires PHP 8.4+
+>>>>>>> Stashed changes
 ];

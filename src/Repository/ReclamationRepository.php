@@ -40,12 +40,29 @@ class ReclamationRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+<<<<<<< Updated upstream
     public function findBySearchAndSort(?string $search, ?string $sortOrder): array
+=======
+    public function findBySearchAndSort(?string $search, ?string $sort = 'id', ?string $direction = 'desc', ?\App\Entity\User $user = null, ?string $status = null): array
+>>>>>>> Stashed changes
     {
         $qb = $this->createQueryBuilder('r')
             ->leftJoin('r.user', 'u')
             ->addSelect('u');
 
+<<<<<<< Updated upstream
+=======
+        if ($user) {
+            $qb->andWhere('r.user = :user')
+               ->setParameter('user', $user);
+        }
+
+        if ($status && $status !== 'all') {
+            $qb->andWhere('r.statut = :status')
+               ->setParameter('status', $status);
+        }
+
+>>>>>>> Stashed changes
         if ($search) {
             $qb->andWhere('u.email LIKE :search')
                ->setParameter('search', '%' . $search . '%');

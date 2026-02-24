@@ -20,7 +20,15 @@
                     <p class="text-slate-500 dark:text-slate-400 font-medium">Décrivez votre problème en détail pour que notre équipe puisse vous aider efficacement.</p>
                 </div>
 
+<<<<<<< Updated upstream
                 {{ form_start(form, {'attr': {'class': 'space-y-8'}}) }}
+=======
+                {{ form_start(form, {'attr': {
+                    'class': 'space-y-8', 
+                    'enctype': 'multipart/form-data',
+                    'data-controller': 'voice-recognition'
+                }}) }}
+>>>>>>> Stashed changes
                     <div class="space-y-3">
                         {{ form_label(form.sujet, 'Sujet ou Titre', {'label_attr': {'class': 'text-xs font-bold uppercase tracking-widest text-slate-400 ml-1'}}) }}
                         {{ form_widget(form.sujet, {'attr': {'class': 'form-input', 'placeholder': 'Ex: Problème d\'accès au cours...'}}) }}
@@ -28,8 +36,33 @@
                     </div>
 
                     <div class="space-y-3">
-                        {{ form_label(form.description, 'Description détaillée', {'label_attr': {'class': 'text-xs font-bold uppercase tracking-widest text-slate-400 ml-1'}}) }}
-                        {{ form_widget(form.description, {'attr': {'class': 'form-input min-h-[150px]', 'placeholder': 'Expliquez ce qui s\'est passé...'}}) }}
+                        <div class="flex items-center justify-between">
+                            {{ form_label(form.description, 'Description détaillée', {'label_attr': {'class': 'text-xs font-bold uppercase tracking-widest text-slate-400 ml-1'}}) }}
+                            
+                            <!-- Language & Mic UI -->
+                            <div class="flex items-center gap-1.5 p-1 bg-slate-100 dark:bg-white/5 rounded-xl border border-slate-200 dark:border-white/10">
+                                <div class="flex items-center px-1 gap-1">
+                                    <button type="button" data-action="click->voice-recognition#setLanguage" data-lang="fr-FR" class="w-6 h-6 flex items-center justify-center text-[10px] font-bold rounded-lg transition-all bg-primary text-white">FR</button>
+                                    <button type="button" data-action="click->voice-recognition#setLanguage" data-lang="en-US" class="w-6 h-6 flex items-center justify-center text-[10px] font-bold rounded-lg transition-all text-slate-400 hover:text-primary">EN</button>
+                                    <button type="button" data-action="click->voice-recognition#setLanguage" data-lang="ar-SA" class="w-6 h-6 flex items-center justify-center text-[10px] font-bold rounded-lg transition-all text-slate-400 hover:text-primary">AR</button>
+                                </div>
+                                <div class="w-px h-4 bg-slate-200 dark:bg-white/10"></div>
+                                <button 
+                                    data-voice-recognition-target="trigger"
+                                    data-action="click->voice-recognition#toggle"
+                                    type="button" 
+                                    class="w-8 h-8 flex items-center justify-center rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-all"
+                                    title="Activer le micro"
+                                >
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
+                                </button>
+                            </div>
+                        </div>
+                        {{ form_widget(form.description, {'attr': {
+                            'class': 'form-input min-h-[150px]', 
+                            'placeholder': 'Expliquez ce qui s\'est passé...',
+                            'data-voice-recognition-target': 'input'
+                        }}) }}
                         {{ form_errors(form.description, {'attr': {'class': 'text-red-500 text-sm font-bold mt-2 ml-1'}}) }}
                     </div>
                     
@@ -42,3 +75,11 @@
     </div>
 </div>
 {% endblock %}
+<<<<<<< Updated upstream
+=======
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}
+
+>>>>>>> Stashed changes
