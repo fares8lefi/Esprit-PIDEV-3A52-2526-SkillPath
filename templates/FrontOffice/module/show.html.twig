@@ -129,16 +129,23 @@
                 {% endif %}
 
                 {# Title & Meta #}
-                <div class="mb-10">
-                    <span class="badge badge-purple glass !bg-primary/10 dark:!bg-primary/20 !text-primary dark:!text-white !backdrop-blur-md mb-4">{{ module.type }}</span>
-                    <h1 class="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-6 leading-tight">{{ module.title }}</h1>
-                    <div class="flex items-center gap-4 text-sm text-slate-500 dark:text-slate-400 font-medium">
-                        <div class="flex items-center gap-2">
-                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                             <span>15 min</span>
+                <div class="mb-10 flex flex-col md:flex-row md:items-center gap-8">
+                    {% if module.image %}
+                        <div class="w-24 h-24 md:w-32 md:h-32 rounded-3xl overflow-hidden glass border border-white/10 shadow-xl shrink-0">
+                            <img src="{{ asset('uploads/modules/' ~ module.image) }}" class="w-full h-full object-cover">
                         </div>
-                        <div class="w-1 h-1 rounded-full bg-slate-300 dark:bg-white/20"></div>
-                        <span>Ajouté le {{ module.createdAt|date('d M Y') }}</span>
+                    {% endif %}
+                    <div>
+                        <span class="badge badge-purple glass !bg-primary/10 dark:!bg-primary/20 !text-primary dark:!text-white !backdrop-blur-md mb-4">{{ module.type }}</span>
+                        <h1 class="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-6 leading-tight">{{ module.title }}</h1>
+                        <div class="flex items-center gap-4 text-sm text-slate-500 dark:text-slate-400 font-medium">
+                            <div class="flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                <span>15 min</span>
+                            </div>
+                            <div class="w-1 h-1 rounded-full bg-slate-300 dark:bg-white/20"></div>
+                            <span>Ajouté le {{ module.createdAt|date('d M Y') }}</span>
+                        </div>
                     </div>
                 </div>
 
@@ -153,7 +160,157 @@
                     <div class="text-slate-700 dark:text-slate-300">
                         {{ module.content|default('Contenu du module...')|nl2br }}
                     </div>
-                </div>
+
+                    {% if module.document %}
+                        {% set fileExt = module.document|split('.')|last|lower %}
+                        {% set docUrl  = asset('uploads/modules/' ~ module.document) %}
+                        {% set isPdf   = fileExt == 'pdf' %}
+                        {% set fileLabel = isPdf ? 'Fichier PDF' : 'Document Word' %}
+
+                        {# ──────────── PROFESSIONAL DOCUMENT READER ──────────── #}
+                        <div class="mt-16" id="doc-reader">
+
+                            {# Section pill divider #}
+                            <div class="flex items-center gap-4 mb-6">
+                                <div class="h-px flex-1 bg-gradient-to-r from-transparent via-slate-200 dark:via-white/10 to-transparent"></div>
+                                <span class="px-4 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-black uppercase tracking-widest">Ressource du module</span>
+                                <div class="h-px flex-1 bg-gradient-to-r from-slate-200 dark:from-white/10 to-transparent"></div>
+                            </div>
+
+                            {# Browser-style reader shell #}
+                            <div id="reader-shell" class="rounded-3xl overflow-hidden shadow-[0_32px_80px_rgba(0,0,0,0.22)] border border-slate-200 dark:border-white/5 bg-white dark:bg-[#0d111c] transition-all duration-500">
+
+                                {# ── Chrome toolbar ── #}
+                                <div class="flex items-center justify-between px-5 py-3 bg-slate-50 dark:bg-[#0B0F1A] border-b border-slate-200 dark:border-white/5 select-none">
+
+                                    <div class="flex items-center gap-4">
+                                        {# Traffic lights #}
+                                        <div class="flex items-center gap-1.5">
+                                            <div onclick="collapseReader()" title="Réduire" class="w-3 h-3 rounded-full bg-red-400/70 hover:bg-red-500 cursor-pointer transition-colors"></div>
+                                            <div class="w-3 h-3 rounded-full bg-amber-400/70 hover:bg-amber-400 cursor-pointer transition-colors"></div>
+                                            <div onclick="toggleReaderFullscreen()" title="Plein écran" class="w-3 h-3 rounded-full bg-green-400/70 hover:bg-green-400 cursor-pointer transition-colors"></div>
+                                        </div>
+
+                                        <div class="w-px h-5 bg-slate-200 dark:bg-white/10"></div>
+
+                                        {# File chip #}
+                                        <div class="flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/5">
+                                            <svg class="w-4 h-4 {{ isPdf ? 'text-red-400' : 'text-blue-400' }} shrink-0" viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                                            <span class="text-xs font-bold text-slate-600 dark:text-slate-300 max-w-[180px] truncate">{{ module.document }}</span>
+                                            <span class="text-[10px] font-black px-1.5 py-0.5 rounded-md {{ isPdf ? 'bg-red-100 dark:bg-red-500/20 text-red-500' : 'bg-blue-100 dark:bg-blue-500/20 text-blue-400' }} uppercase tracking-widest">{{ fileExt }}</span>
+                                        </div>
+                                    </div>
+
+                                    {# Action buttons #}
+                                    <div class="flex items-center gap-1">
+                                        <button onclick="resizeReader(-150)" title="Réduire hauteur" class="w-8 h-8 rounded-xl flex items-center justify-center text-slate-400 hover:text-primary hover:bg-primary/10 transition-all">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"/></svg>
+                                        </button>
+                                        <button onclick="resizeReader(150)" title="Agrandir hauteur" class="w-8 h-8 rounded-xl flex items-center justify-center text-slate-400 hover:text-primary hover:bg-primary/10 transition-all">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
+                                        </button>
+                                        <div class="w-px h-5 bg-slate-200 dark:bg-white/10 mx-1"></div>
+                                        <a href="{{ docUrl }}" download title="Télécharger" class="w-8 h-8 rounded-xl flex items-center justify-center text-slate-400 hover:text-primary hover:bg-primary/10 transition-all">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                                        </a>
+                                        <button onclick="toggleReaderFullscreen()" title="Plein écran" class="w-8 h-8 rounded-xl flex items-center justify-center text-slate-400 hover:text-primary hover:bg-primary/10 transition-all">
+                                            <svg id="icon-expand" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m4-4l-5 5m11-1v4m0 0h-4m-4-4l5 5"/></svg>
+                                            <svg id="icon-compress" class="w-4 h-4 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 9V4m0 0H4m5 0L3 10m12-1V4m0 0h-5m5 0l6 6M9 15v5m0 0H4m5 0l-6-6m17 6h-5m5 0l-6-6"/></svg>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {# Progress bar #}
+                                <div class="h-0.5 bg-slate-100 dark:bg-white/5">
+                                    <div id="reader-progress" class="h-full bg-gradient-to-r from-primary to-violet-400 transition-all duration-1000 ease-out" style="width:60%"></div>
+                                </div>
+
+                                {# Iframe area #}
+                                <div id="reader-frame-wrap" class="relative bg-white dark:bg-[#07090F] transition-all duration-500" style="height:75vh;">
+
+                                    {# Spinner #}
+                                    <div id="reader-loader" class="absolute inset-0 z-20 flex flex-col items-center justify-center gap-5 bg-white dark:bg-[#07090F]">
+                                        <div class="relative w-16 h-16">
+                                            <div class="absolute inset-0 rounded-full border-4 border-primary/20"></div>
+                                            <div class="absolute inset-0 rounded-full border-4 border-transparent border-t-primary animate-spin"></div>
+                                            <div class="absolute inset-2 rounded-full border-4 border-transparent border-b-violet-400 animate-spin" style="animation-direction:reverse;animation-duration:.8s"></div>
+                                        </div>
+                                        <div class="text-center">
+                                            <p class="text-sm font-bold text-slate-700 dark:text-white">Ouverture du document</p>
+                                            <p class="text-xs text-slate-400 mt-1">{{ fileLabel }} en cours de chargement…</p>
+                                        </div>
+                                    </div>
+
+                                    {% if isPdf %}
+                                        <iframe id="doc-frame"
+                                            src="{{ docUrl }}#navpanes=0&scrollbar=1&view=FitH&zoom=page-width"
+                                            class="w-full h-full border-none opacity-0 transition-opacity duration-700"
+                                            onload="onDocLoaded()" allow="fullscreen autoplay"></iframe>
+                                    {% else %}
+                                        <iframe id="doc-frame"
+                                            src="https://docs.google.com/viewer?url={{ absolute_url(docUrl)|url_encode }}&embedded=true"
+                                            class="w-full h-full border-none opacity-0 transition-opacity duration-700"
+                                            onload="onDocLoaded()"></iframe>
+                                    {% endif %}
+                                </div>
+
+                                {# Status bar #}
+                                <div class="flex items-center justify-between px-5 py-2 bg-slate-50 dark:bg-[#0B0F1A] border-t border-slate-200 dark:border-white/5 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                                    <span id="reader-status">Chargement…</span>
+                                    <span>{{ isPdf ? 'PDF Reader' : 'Google Docs Viewer' }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <script>
+                        (function(){
+                            var isFS  = false;
+                            var curH  = window.innerHeight * 0.75;
+
+                            window.onDocLoaded = function() {
+                                document.getElementById('reader-loader').style.display = 'none';
+                                var f = document.getElementById('doc-frame');
+                                f.style.opacity = '1';
+                                document.getElementById('reader-status').textContent = 'Document prêt ✓';
+                                var bar = document.getElementById('reader-progress');
+                                bar.style.width = '100%';
+                                setTimeout(function(){ bar.style.opacity='0'; }, 1500);
+                            };
+
+                            window.resizeReader = function(delta) {
+                                var wrap = document.getElementById('reader-frame-wrap');
+                                curH = Math.max(320, Math.min(curH + delta, window.innerHeight * 0.95));
+                                wrap.style.height = curH + 'px';
+                            };
+
+                            window.toggleReaderFullscreen = function() {
+                                var shell = document.getElementById('reader-shell');
+                                var wrap  = document.getElementById('reader-frame-wrap');
+                                isFS = !isFS;
+                                if (isFS) {
+                                    shell.classList.add('fixed','inset-0','z-[999]','!rounded-none');
+                                    wrap.style.height = 'calc(100vh - 68px)';
+                                } else {
+                                    shell.classList.remove('fixed','inset-0','z-[999]','!rounded-none');
+                                    wrap.style.height = curH + 'px';
+                                }
+                                document.getElementById('icon-expand').classList.toggle('hidden', isFS);
+                                document.getElementById('icon-compress').classList.toggle('hidden', !isFS);
+                            };
+
+                            window.collapseReader = function() {
+                                var wrap = document.getElementById('reader-frame-wrap');
+                                var collapsed = wrap.style.height === '0px';
+                                wrap.style.height = collapsed ? curH + 'px' : '0px';
+                            };
+
+                            document.addEventListener('keydown', function(e){
+                                if (e.key === 'Escape' && isFS) window.toggleReaderFullscreen();
+                            });
+                        })();
+                        </script>
+                    {% endif %}
+
 
                 {# Navigation Footer #}
                 <div class="flex justify-between items-center pt-10 border-t border-slate-200 dark:border-white/5">

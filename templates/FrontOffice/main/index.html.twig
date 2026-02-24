@@ -32,8 +32,10 @@
 
             <div class="hidden md:flex items-center gap-8">
                 <a href="{{ path('app_event_index') }}" class="text-sm font-semibold text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary-light transition-colors">Événements</a>
-                <a href="#catalogue" class="text-sm font-semibold text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary-light transition-colors">Catalogue</a>
-                <a href="#catalogue" class="text-sm font-semibold text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary-light transition-colors">Courses</a>
+                <a href="{{ path('front_course_index') }}" class="text-sm font-semibold text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary-light transition-colors">Catalogue</a>
+                {% if app.user %}
+                    <a href="{{ path('front_course_my_courses') }}" class="text-sm font-semibold text-primary font-bold">Mes Cours</a>
+                {% endif %}
                 <a href="#stats" class="text-sm font-semibold text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary-light transition-colors">About</a>
             </div>
 
@@ -220,91 +222,134 @@
                 <p class="text-slate-500 font-medium text-sm">Check back soon for fresh core architectural releases.</p>
             </div>
         {% else %}
-        <div class="space-y-20">
+        <div class="space-y-32">
             {% for course in courses %}
                 <div class="relative animate-fade-up" style="animation-delay: {{ loop.index * 100 }}ms">
-                        <!-- Module Header -->
-                        <div class="flex flex-col md:flex-row items-center gap-8 mb-10">
-                            <div class="w-24 h-24 rounded-2xl glass-card !hover:transform-none flex items-center justify-center p-4 group">
+                    {# Course Header - Premium Design #}
+                    <div class="flex flex-col md:flex-row items-center gap-12 mb-16 relative">
+                        {# Course Visual with Floating Stats #}
+                        <div class="relative group shrink-0">
+                            <div class="absolute inset-0 gradient-primary opacity-20 blur-3xl rounded-[2.5rem] group-hover:opacity-40 transition-all"></div>
+                            <div class="relative w-32 h-32 md:w-40 md:h-40 glass rounded-[2.5rem] p-8 border border-white/10 shadow-2xl overflow-hidden group-hover:scale-105 transition-transform duration-500">
                                 {% if course.image %}
                                     <img src="{{ asset('uploads/modules/' ~ course.image) }}" alt="{{ course.title }}" class="w-full h-full object-contain">
                                 {% else %}
-                                    <div class="w-full h-full rounded-xl gradient-primary flex items-center justify-center text-2xl font-black text-white">
+                                    <div class="w-full h-full gradient-primary rounded-2xl flex items-center justify-center text-3xl font-black text-white">
                                         {{ course.title|first }}
                                     </div>
                                 {% endif %}
                             </div>
-                            <div class="flex-1 text-center md:text-left">
-                                <span class="badge badge-purple mb-2">Level {{ course.level }}</span>
-                                <h3 class="text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">{{ course.title }}</h3>
-                                <p class="text-slate-500 dark:text-slate-400 font-medium max-w-2xl leading-relaxed text-sm">{{ course.description }}</p>
-                            </div>
-                            <div class="hidden lg:block">
-                                <span class="text-5xl font-black text-slate-100 dark:text-slate-800/50 tracking-tighter">{{ loop.index|format('%02d') }}</span>
-                            </div>
                         </div>
 
-                        <!-- Courses Bento Grid -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 ml-0 md:ml-8">
-                            {% for module in course.modules %}
-                                <a href="{{ path('app_front_office_module_show', {'id': module.id}) }}" class="block group">
-                                    <div class="glass-card p-7 rounded-2xl group relative overflow-hidden h-full hover:bg-white dark:hover:bg-white/5 transition-colors">
-                                        <!-- Type glow -->
-                                        <div class="absolute top-0 right-0 w-24 h-24 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500
-                                            {% if module.type == 'video' %}bg-primary/10{% elseif module.type == 'quiz' %}bg-accent/10{% else %}bg-mint/10{% endif %}">
-                                        </div>
+                        {# Course Info #}
+                        <div class="flex-1 text-center md:text-left">
+                            <div class="flex items-center justify-center md:justify-start gap-4 mb-4">
+                                <span class="badge badge-purple glass !bg-primary/20 !text-primary-light">{{ course.category|default('Masterclass') }}</span>
+                                <span class="text-xs font-black uppercase tracking-[0.2em] text-slate-500">{{ course.level }}</span>
+                            </div>
+                            <h3 class="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-4 tracking-tight leading-tight">
+                                <span class="gradient-text">{{ course.title }}</span>
+                            </h3>
+                            <p class="text-slate-500 dark:text-slate-400 font-medium max-w-2xl leading-relaxed">
+                                {{ course.description }}
+                            </p>
+                        </div>
 
-                                        <div class="relative z-10">
-                                            <div class="flex items-center justify-between mb-5">
-                                                {% set typeIcon = {
-                                                    'video': '<svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>',
-                                                    'quiz': '<svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>',
-                                                    'texte': '<svg class="w-5 h-5 text-mint" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>'
-                                                } %}
-                                                <div class="w-10 h-10 rounded-xl {% if module.type == 'video' %}bg-primary/8{% elseif module.type == 'quiz' %}bg-accent/8{% else %}bg-mint/8{% endif %} flex items-center justify-center">
-                                                    {{ typeIcon[module.type]|default('<svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>')|raw }}
-                                                </div>
-                                                <span class="badge {% if module.type == 'video' %}badge-purple{% elseif module.type == 'quiz' %}badge-cyan{% else %}badge-green{% endif %}">{{ module.type|default('Text')|capitalize }}</span>
-                                            </div>
-                                            <h4 class="text-lg font-bold text-slate-900 dark:text-white mb-2 group-hover:text-primary dark:group-hover:text-primary-light transition-colors">{{ module.title }}</h4>
+                        {# CTA Side #}
+                        <div class="shrink-0">
+                            {% set isEnrolled = false %}
+                            {% for userCourse in app.user.courses %}
+                                {% if userCourse.id == course.id %}
+                                    {% set isEnrolled = true %}
+                                {% endif %}
+                            {% endfor %}
 
-                                            <p class="text-slate-500 dark:text-slate-400 text-sm font-medium leading-relaxed mb-5 line-clamp-2">{{ module.description }}</p>
-                                            
-                                            <div class="pt-5 border-t border-slate-100/50 dark:border-white/5 flex items-center justify-between">
-                                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Duration: 45 min</span>
-                                                <div class="w-9 h-9 rounded-xl bg-primary/8 dark:bg-primary/15 flex items-center justify-center text-primary dark:text-primary-light hover:gradient-primary hover:text-white transition-all hover:shadow-lg hover:shadow-purple-500/20">
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                            {% if isEnrolled %}
+                                <a href="{{ path('front_course_show', {id: course.id}) }}"
+                                   class="btn-primary !px-8 !py-4 flex items-center gap-3 shadow-2xl shadow-primary/20 hover:scale-105 transition-all">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                    Continuer le Parcours
                                 </a>
                             {% else %}
-                                <div class="col-span-full py-12 text-center glass-card rounded-2xl border-2 border-dashed border-slate-200/50 dark:border-white/5">
-                                    <div class="w-12 h-12 rounded-xl bg-slate-100 dark:bg-white/5 flex items-center justify-center mx-auto mb-3">
-                                        <svg class="w-6 h-6 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
-                                    </div>
-                                    <p class="text-slate-400 font-semibold text-sm">No learning units found for this path.</p>
-                                </div>
-                            {% endfor %}
+                                <form action="{{ path('front_course_enroll', {id: course.id}) }}" method="POST">
+                                    <button type="submit" class="btn-primary !px-8 !py-4 flex items-center gap-3 shadow-2xl shadow-primary/20 hover:shadow-primary/40 hover:scale-105 transition-all">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                                        S'inscrire à ce Cours
+                                    </button>
+                                </form>
+                            {% endif %}
                         </div>
 
-                        <!-- Background glow -->
-                        {% if loop.index is odd %}
-                            <div class="absolute -right-20 top-20 w-64 h-64 bg-primary/5 rounded-full blur-[100px] -z-10"></div>
-                        {% else %}
-                            <div class="absolute -left-20 top-20 w-64 h-64 bg-accent/5 rounded-full blur-[100px] -z-10"></div>
-                        {% endif %}
-                    </div>
-                {% else %}
-                    <div class="py-20 text-center">
-                        <div class="w-16 h-16 bg-primary/8 rounded-2xl flex items-center justify-center mx-auto mb-5">
-                            <svg class="w-8 h-8 text-primary/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg>
+                        {# Number Decoration #}
+                        <div class="absolute -right-4 -top-8 hidden lg:block opacity-10">
+                            <span class="text-[12rem] font-black text-slate-400 dark:text-white leading-none tracking-tighter">{{ loop.index }}</span>
                         </div>
-                        <h3 class="text-xl font-black text-slate-900 dark:text-white mb-2">Curriculum Pending</h3>
-                        <p class="text-slate-500 font-medium text-sm">Check back soon for fresh core architectural releases.</p>
                     </div>
-                {% endfor %}
+
+                    {# Modules Creative Cards Grid #}
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 relative z-10">
+                        {% for module in course.modules %}
+                            {% if isEnrolled %}
+                                <a href="{{ path('app_front_office_module_show', {'id': module.id}) }}" class="group block relative">
+                            {% else %}
+                                <div class="group relative cursor-not-allowed">
+                            {% endif %}
+                                <div class="h-full glass border border-white/5 rounded-[2.5rem] p-8 flex flex-col justify-between overflow-hidden relative transition-all duration-700 hover:border-primary/40 hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/10 {{ not isEnrolled ? 'opacity-40 grayscale blur-[1px]' : '' }}">
+                                    {# Module Glow Background #}
+                                    <div class="absolute -bottom-20 -right-20 w-40 h-40 gradient-primary opacity-0 group-hover:opacity-20 blur-[60px] transition-opacity duration-700"></div>
+                                    
+                                    <div>
+                                        <div class="flex justify-between items-start mb-10">
+                                            <div class="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-white/5 flex items-center justify-center text-primary group-hover:gradient-primary group-hover:text-white transition-all shadow-xl group-hover:scale-110 duration-500">
+                                                {% if module.type == 'video' %}
+                                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path></svg>
+                                                {% elseif module.type == 'quiz' %}
+                                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                                                {% else %}
+                                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                                {% endif %}
+                                            </div>
+                                            <span class="text-4xl font-black text-slate-100 dark:text-white/5 select-none transition-colors group-hover:text-primary/10">{{ loop.index|format('%02d') }}</span>
+                                        </div>
+
+                                        <h3 class="text-xl font-bold mb-4 text-slate-900 dark:text-white group-hover:text-primary transition-all">{{ module.title }}</h3>
+                                        <p class="text-slate-500 text-sm leading-relaxed mb-8 line-clamp-3 font-medium">
+                                            {{ module.description }}
+                                        </p>
+                                    </div>
+
+                                    <div class="flex items-center justify-between mt-auto pt-8 border-t border-slate-100 dark:border-white/5">
+                                        <div class="flex items-center gap-2">
+                                            <span class="badge glass !bg-slate-100 dark:!bg-white/5 !text-slate-500 !border-none">{{ module.type|capitalize|default('Leçon') }}</span>
+                                        </div>
+                                        
+                                        {% if not isEnrolled %}
+                                            <div class="w-10 h-10 rounded-full glass flex items-center justify-center text-slate-400">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                                            </div>
+                                        {% else %}
+                                            <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:gradient-primary group-hover:text-white transition-all transform group-hover:translate-x-1 duration-300">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% if isEnrolled %}
+                                </a>
+                            {% else %}
+                                </div>
+                            {% endif %}
+                        {% else %}
+                            <div class="col-span-full py-16 text-center glass border border-dashed border-white/10 rounded-[2.5rem]">
+                                <p class="text-slate-500 font-bold uppercase tracking-widest text-xs">Aucun module disponible pour ce niveau.</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    {# Floating decoration #}
+                    <div class="absolute -bottom-20 -left-20 w-64 h-64 bg-primary/5 rounded-full blur-[100px] -z-10 animate-pulse"></div>
+                </div>
+            {% endfor %}
         </div>
         {% endif %}
     </section>
