@@ -12,11 +12,16 @@ class UserCourseViewService
 {
     private EntityManagerInterface $entityManager;
     private UserCourseViewRepository $repository;
+    private AIService $aiService;
 
-    public function __construct(EntityManagerInterface $entityManager, UserCourseViewRepository $repository)
-    {
+    public function __construct(
+        EntityManagerInterface $entityManager, 
+        UserCourseViewRepository $repository,
+        AIService $aiService
+    ) {
         $this->entityManager = $entityManager;
         $this->repository = $repository;
+        $this->aiService = $aiService;
     }
 
     public function recordView(User $user, Course $course): UserCourseView
@@ -66,19 +71,51 @@ class UserCourseViewService
     {
         $view = $this->recordView($user, $course);
         $view->setIsEnrolled(true);
+
+        // Synchroniser avec la relation ManyToMany si nécessaire
+        if (!$user->getCourses()->contains($course)) {
+            $user->addCourse($course);
+        }
+
         $this->entityManager->flush();
+    }
+
+    public function isUserEnrolled(User $user, Course $course): bool
+    {
+        $view = $this->repository->findByUserAndCourse($user->getId(), $course->getId());
+        return $view ? $view->isEnrolled() : false;
     }
 
     public function getRecommendations(User $user, int $topN = 5): array
     {
         $unseenCourses = $this->repository->findUnseenCoursesByUser($user->getId());
-        
-        // This is where the ML integration would happen.
-        // For now, let's sort by rating as a fallback mock recommendation.
-        usort($unseenCourses, function($a, $b) {
-            return $b->getRating() <=> $a->getRating();
+        $scoredCourses = [];
+
+        foreach ($unseenCourses as $course) {
+            $features = $this->repository->getMLFeaturesForUser($user->getId(), $course->getId());
+            
+            try {
+                // Appel au serveur Flask pour la probabilité d'inscription
+                $result = $this->aiService->getPrediction($features, 'Gradient_Boosting');
+                // On suppose que le serveur retourne une probabilité dans [probabilities][1] pour la classe "inscrit"
+                $score = $result['prediction']['probabilities'][1] ?? $course->getRating();
+            } catch (\Exception $e) {
+                // Fallback sur le rating en cas d'erreur serveur AI
+                $score = $course->getRating();
+            }
+
+            $scoredCourses[] = [
+                'course' => $course,
+                'score' => $score
+            ];
+        }
+
+        // Tri par score décroissant
+        usort($scoredCourses, function($a, $b) {
+            return $b['score'] <=> $a['score'];
         });
 
-        return array_slice($unseenCourses, 0, $topN);
+        // Retourne uniquement les objets Course
+        return array_map(fn($item) => $item['course'], array_slice($scoredCourses, 0, $topN));
     }
 }
