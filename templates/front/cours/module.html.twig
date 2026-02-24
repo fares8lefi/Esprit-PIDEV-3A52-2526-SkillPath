@@ -56,31 +56,49 @@
                 </div>
             </div>
 
-            {# Navigation Buttons #}
-            <div class="flex items-center justify-between gap-4">
-                {% if previousModule %}
-                    <a href="{{ path('front_courses_module_show', {courseId: course.id, moduleId: previousModule.id}) }}" 
-                       class="flex items-center gap-2 px-6 py-3 bg-white text-gray-700 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all hover:-translate-x-1">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                        <span>Précédent</span>
-                    </a>
-                {% else %}
-                    <div></div>
-                {% endif %}
+            {# Completion & Navigation #}
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6 pt-8 border-t border-gray-100">
+                <div>
+                    {% if app.user %}
+                        <form action="{{ path('front_courses_module_complete', {id: module.id}) }}" method="POST">
+                            {% if isCompleted %}
+                                <button type="button" disabled class="flex items-center gap-2 px-6 py-3 bg-brand-green/10 text-brand-green rounded-xl font-bold cursor-default">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                    Module terminé
+                                </button>
+                            {% else %}
+                                <button type="submit" class="flex items-center gap-2 px-6 py-3 bg-brand-blue text-white rounded-xl font-bold shadow-lg shadow-brand-blue/30 hover:shadow-xl transition-all hover:-translate-y-1">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    Marquer comme terminé
+                                </button>
+                            {% endif %}
+                        </form>
+                    {% endif %}
+                </div>
 
-                {% if nextModule %}
-                    <a href="{{ path('front_courses_module_show', {courseId: course.id, moduleId: nextModule.id}) }}" 
-                       class="flex items-center gap-2 px-6 py-3 bg-brand-blue text-white rounded-xl font-semibold shadow-lg shadow-brand-blue/30 hover:shadow-xl transition-all hover:translate-x-1">
-                        <span>Suivant</span>
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                    </a>
-                {% else %}
-                    <a href="{{ path('front_courses_show', {id: course.id}) }}" 
-                       class="flex items-center gap-2 px-6 py-3 bg-brand-green text-white rounded-xl font-semibold shadow-lg shadow-brand-green/30 hover:shadow-xl transition-all">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                        <span>Terminer</span>
-                    </a>
-                {% endif %}
+                <div class="flex items-center gap-4">
+                    {% if previousModule %}
+                        <a href="{{ path('front_courses_module_show', {courseId: course.id, moduleId: previousModule.id}) }}" 
+                           class="flex items-center gap-2 px-6 py-3 bg-white text-gray-700 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all hover:-translate-x-1">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                            <span>Précédent</span>
+                        </a>
+                    {% endif %}
+
+                    {% if nextModule %}
+                        <a href="{{ path('front_courses_module_show', {courseId: course.id, moduleId: nextModule.id}) }}" 
+                           class="flex items-center gap-2 px-6 py-3 bg-brand-blue/10 text-brand-blue rounded-xl font-semibold hover:bg-brand-blue hover:text-white transition-all">
+                            <span>Suivant</span>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </a>
+                    {% else %}
+                        <a href="{{ path('front_courses_show', {id: course.id}) }}" 
+                           class="flex items-center gap-2 px-6 py-3 bg-brand-green text-white rounded-xl font-semibold shadow-lg shadow-brand-green/30 hover:shadow-xl transition-all">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            <span>Retour au cours</span>
+                        </a>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>

@@ -69,30 +69,53 @@
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
                                 </div>
                                 Programme complet 
-                                <span class="text-brand-muted text-lg font-normal ml-2">({{ course.cours|length }} chapitres)</span>
+                                <span class="text-brand-muted text-lg font-normal ml-2">({{ course.modules|length }} chapitres)</span>
                             </h2>
                         </div>
                         
                         <div class="space-y-4">
                             {% for module in course.modules %}
-                                <a href="{{ path('front_courses_module_show', {courseId: course.id, moduleId: module.id}) }}" class="block">
-                                    <div class="bg-gray-50/50 p-5 rounded-2xl border border-gray-100 flex items-center justify-between hover:bg-white hover:shadow-lg hover:shadow-brand-blue/5 hover:border-brand-blue/30 transition-all group cursor-pointer">
-                                        <div class="flex items-center gap-5">
-                                            <div class="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-brand-blue font-bold text-lg group-hover:bg-brand-blue group-hover:text-white transition-all transform group-hover:rotate-6">
-                                                {{ loop.index }}
-                                            </div>
-                                            <div>
-                                                <h3 class="font-bold text-brand-dark group-hover:text-brand-blue transition-colors">{{ module.name }}</h3>
-                                                <div class="flex items-center gap-3 text-[10px] text-brand-muted mt-1 uppercase tracking-widest font-bold">
-                                                    <span class="bg-white border border-gray-100 px-2 py-0.5 rounded-lg">{{ module.type }}</span>
+                                {% set isFuture = module.scheduledAt > now %}
+                                <div class="relative">
+                                    {% if isFuture %}
+                                        <div class="bg-gray-50/50 p-5 rounded-2xl border border-dashed border-gray-200 flex items-center justify-between opacity-60">
+                                            <div class="flex items-center gap-5">
+                                                <div class="w-12 h-12 rounded-2xl bg-gray-200 flex items-center justify-center text-gray-400 font-bold text-lg">
+                                                    {{ loop.index }}
+                                                </div>
+                                                <div>
+                                                    <h3 class="font-bold text-gray-500">{{ module.name }}</h3>
+                                                    <div class="flex items-center gap-3 mt-1">
+                                                        <span class="px-2 py-0.5 bg-yellow-100 text-yellow-700 rounded text-[10px] font-bold uppercase">Prochainement</span>
+                                                        <span class="text-[10px] text-gray-400 font-medium">Disponible le {{ module.scheduledAt|date('d/m/Y') }}</span>
+                                                    </div>
                                                 </div>
                                             </div>
+                                            <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-300">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                                            </div>
                                         </div>
-                                        <button class="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center text-brand-blue opacity-0 group-hover:opacity-100 transition-all hover:scale-110">
-                                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
-                                        </button>
-                                    </div>
-                                </a>
+                                    {% else %}
+                                        <a href="{{ path('front_courses_module_show', {courseId: course.id, moduleId: module.id}) }}" class="block">
+                                            <div class="bg-gray-50/50 p-5 rounded-2xl border border-gray-100 flex items-center justify-between hover:bg-white hover:shadow-lg hover:shadow-brand-blue/5 hover:border-brand-blue/30 transition-all group cursor-pointer">
+                                                <div class="flex items-center gap-5">
+                                                    <div class="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-brand-blue font-bold text-lg group-hover:bg-brand-blue group-hover:text-white transition-all transform group-hover:rotate-6">
+                                                        {{ loop.index }}
+                                                    </div>
+                                                    <div>
+                                                        <h3 class="font-bold text-brand-dark group-hover:text-brand-blue transition-colors">{{ module.name }}</h3>
+                                                        <div class="flex items-center gap-3 text-[10px] text-brand-muted mt-1 uppercase tracking-widest font-bold">
+                                                            <span class="bg-white border border-gray-100 px-2 py-0.5 rounded-lg">{{ module.type }}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <button class="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center text-brand-blue opacity-0 group-hover:opacity-100 transition-all hover:scale-110">
+                                                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
+                                                </button>
+                                            </div>
+                                        </a>
+                                    {% endif %}
+                                </div>
                             {% else %}
                                 <div class="text-center py-12 text-brand-muted italic bg-white rounded-2xl border border-dashed border-gray-200">
                                     Aucun module disponible pour ce cours.
@@ -105,26 +128,40 @@
                 {# Right Side: Course Info #}
                 <div class="lg:col-span-1">
                     <div class="sticky top-8 space-y-6">
-                        <div class="bg-white rounded-3xl shadow-xl shadow-gray-200/50 p-8 border border-gray-100">
-                            <h3 class="font-bold text-brand-dark mb-6">Ce que vous allez apprendre</h3>
-                            <ul class="space-y-4">
-                                <li class="flex items-start gap-3 text-sm text-brand-dark/70">
-                                    <svg class="w-5 h-5 text-brand-green mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                    Accès illimité à vie
-                                </li>
-                                <li class="flex items-start gap-3 text-sm text-brand-dark/70">
-                                    <svg class="w-5 h-5 text-brand-green mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                    Support de l'IA Tutor 24/7
-                                </li>
-                                <li class="flex items-start gap-3 text-sm text-brand-dark/70">
+                                    <li class="flex items-start gap-3 text-sm text-brand-dark/70">
                                     <svg class="w-5 h-5 text-brand-green mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                                     Certificat de réussite
                                 </li>
                             </ul>
-                            
-                            <button class="w-full mt-8 py-4 px-6 bg-brand-blue text-white rounded-2xl font-bold shadow-lg shadow-brand-blue/30 hover:shadow-xl hover:shadow-brand-blue/40 transition-all hover:-translate-y-1">
-                                Commencer maintenant
-                            </button>
+
+                            {% if app.user %}
+                                <div class="mt-8 pt-8 border-t border-gray-100">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-sm font-bold text-brand-dark">Votre progression</span>
+                                        <span class="text-sm font-bold text-brand-blue">{{ progression|round }}%</span>
+                                    </div>
+                                    <div class="w-full h-3 bg-gray-100 rounded-full overflow-hidden mb-6">
+                                        <div class="h-full bg-brand-blue transition-all duration-1000" style="width: {{ progression }}%"></div>
+                                    </div>
+
+                                    {% if progression == 100 %}
+                                        <a href="{{ path('front_courses_certificate_download', {courseId: course.id}) }}" class="w-full flex items-center justify-center gap-2 py-4 px-6 bg-brand-green text-white rounded-2xl font-bold shadow-lg shadow-brand-green/30 hover:shadow-xl hover:shadow-brand-green/40 transition-all hover:-translate-y-1">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                            Télécharger mon certificat
+                                        </a>
+                                    {% else %}
+                                        <button class="w-full py-4 px-6 bg-brand-blue text-white rounded-2xl font-bold shadow-lg shadow-brand-blue/30 hover:shadow-xl hover:shadow-brand-blue/40 transition-all hover:-translate-y-1">
+                                            Continuer le cours
+                                        </button>
+                                    {% endif %}
+                                </div>
+                            {% else %}
+                                <div class="mt-8 pt-8 border-t border-gray-100">
+                                    <a href="{{ path('app_user_login') }}" class="w-full flex items-center justify-center gap-2 py-4 px-6 bg-brand-blue text-white rounded-2xl font-bold shadow-lg shadow-brand-blue/30 hover:shadow-xl hover:shadow-brand-blue/40 transition-all hover:-translate-y-1">
+                                        Se connecter pour commencer
+                                    </a>
+                                </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
