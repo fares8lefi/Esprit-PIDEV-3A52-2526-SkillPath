@@ -26,7 +26,7 @@
                 <div class="md:col-span-2">
                     <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Énoncé du Vecteur (Question)</label>
                     {{ form_widget(form.enonce) }}
-                    {{ form_errors(form.enonce) }}
+                    <div class="mt-1 text-red-500 text-[10px] font-bold">{{ form_errors(form.enonce) }}</div>
                 </div>
                 
                 <div>
@@ -37,6 +37,7 @@
                             <span class="text-slate-400 text-xs font-bold">PTS</span>
                         </div>
                     </div>
+                    <div class="mt-1 text-red-500 text-[10px] font-bold">{{ form_errors(form.points) }}</div>
                 </div>
 
                 <div class="md:col-span-2 space-y-4">
@@ -47,23 +48,32 @@
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="p-4 rounded-xl bg-slate-50 dark:bg-white/2 border border-slate-200/50 dark:border-white/5">
-                            <span class="text-[10px] font-black text-slate-400 mb-2 block">OPTION ALPHA</span>
-                            {{ form_widget(form.choix1) }}
+                            <span class="text-[10px] font-black text-slate-400 mb-2 block">OPTION A</span>
+                            {{ form_widget(form.choixA) }}
+                            <div class="mt-1 text-red-500 text-[10px] font-bold">{{ form_errors(form.choixA) }}</div>
                         </div>
                         <div class="p-4 rounded-xl bg-slate-50 dark:bg-white/2 border border-slate-200/50 dark:border-white/5">
-                            <span class="text-[10px] font-black text-slate-400 mb-2 block">OPTION BETA</span>
-                            {{ form_widget(form.choix2) }}
+                            <span class="text-[10px] font-black text-slate-400 mb-2 block">OPTION B</span>
+                            {{ form_widget(form.choixB) }}
+                            <div class="mt-1 text-red-500 text-[10px] font-bold">{{ form_errors(form.choixB) }}</div>
                         </div>
                         <div class="p-4 rounded-xl bg-slate-50 dark:bg-white/2 border border-slate-200/50 dark:border-white/5">
-                            <span class="text-[10px] font-black text-slate-400 mb-2 block">OPTION GAMMA</span>
-                            {{ form_widget(form.choix3) }}
+                            <span class="text-[10px] font-black text-slate-400 mb-2 block">OPTION C</span>
+                            {{ form_widget(form.choixC) }}
+                            <div class="mt-1 text-red-500 text-[10px] font-bold">{{ form_errors(form.choixC) }}</div>
                         </div>
-                        <div class="p-4 rounded-xl bg-slate-50 dark:bg-white/2 border border-slate-200/50 dark:border-white/5 border-l-4 !border-l-green-500">
+                        <div class="p-4 rounded-xl bg-slate-50 dark:bg-white/2 border border-slate-200/50 dark:border-white/5">
+                            <span class="text-[10px] font-black text-slate-400 mb-2 block">OPTION D</span>
+                            {{ form_widget(form.choixD) }}
+                            <div class="mt-1 text-red-500 text-[10px] font-bold">{{ form_errors(form.choixD) }}</div>
+                        </div>
+                        <div class="md:col-span-2 p-4 rounded-xl bg-slate-50 dark:bg-white/2 border border-slate-200/50 dark:border-white/5 border-l-4 !border-l-green-500">
                              <div class="flex justify-between items-center mb-2">
-                                <span class="text-[10px] font-black text-green-600 dark:text-green-400 block">SOLUTION CIBLE</span>
+                                <span class="text-[10px] font-black text-green-600 dark:text-green-400 block">SOLUTION CIBLE (BONNE RÉPONSE)</span>
                                 <svg class="w-3 h-3 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
                              </div>
-                            {{ form_widget(form.reponseCorrecte) }}
+                            {{ form_widget(form.bonneReponse) }}
+                            <div class="mt-1 text-red-500 text-[10px] font-bold">{{ form_errors(form.bonneReponse) }}</div>
                         </div>
                     </div>
                 </div>
