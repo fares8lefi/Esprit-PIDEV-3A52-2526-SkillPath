@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Certificat de Réussite</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        .container {
+            width: 100%;
+            height: 100vh;
+            border: 15px solid #2d3748;
+            padding: 40px;
+            box-sizing: border-box;
+            text-align: center;
+            background-color: white;
+            position: relative;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4a5568;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            font-size: 54px;
+            color: #2d3748;
+            margin-top: 50px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        .subtitle {
+            font-size: 20px;
+            color: #718096;
+            margin-bottom: 50px;
+        }
+        .student-name {
+            font-size: 42px;
+            font-weight: bold;
+            color: #4c51bf;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e2e8f0;
+            display: inline-block;
+            padding-bottom: 10px;
+        }
+        .description {
+            font-size: 22px;
+            color: #4a5568;
+            margin-bottom: 40px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.5;
+        }
+        .quiz-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 40px;
+        }
+        .score {
+            font-size: 24px;
+            color: #38a169;
+            font-weight: bold;
+            margin-bottom: 50px;
+        }
+        .footer {
+            position: absolute;
+            bottom: 50px;
+            width: 90%;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            left: 5%;
+        }
+        .date {
+            font-size: 18px;
+            color: #718096;
+            text-align: left;
+        }
+        .signature {
+            text-align: right;
+        }
+        .signature-line {
+            width: 200px;
+            border-top: 1px solid #cbd5e0;
+            margin-bottom: 10px;
+            margin-left: auto;
+        }
+        .signature-text {
+            font-size: 18px;
+            color: #718096;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">SkillPath Academy</div>
+        
+        <h1>Certificat de Réussite</h1>
+        <div class="subtitle">Ce certificat est fièrement décerné à</div>
+        
+        <div class="student-name">
+            {{ resultat.etudiant.nom|default('Étudiant') }} {{ resultat.etudiant.prenom|default('') }}
+        </div>
+        
+        <div class="description">
+            Pour avoir terminé avec succès et démontré une compréhension approfondie du programme d'évaluation :
+        </div>
+        
+        <div class="quiz-title">"{{ resultat.quiz.titre }}"</div>
+        
+        <div class="score">
+            Score obtenu : {{ resultat.score }} / {{ resultat.noteMax }} 
+            ({% if resultat.noteMax > 0 %}{{ (resultat.score / resultat.noteMax * 100)|round }}{% else %}0{% endif %}%)
+        </div>
+        
+        <div class="footer">
+            <div class="date">
+                Décerné le : {{ resultat.datePassage|date('d/m/Y') }}<br>
+                ID : #{{ resultat.id }}-{{ resultat.quiz.id }}
+            </div>
+            <div class="signature">
+                <div class="signature-line"></div>
+                <div class="signature-text">Direction SkillPath</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -11,19 +11,28 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Knp\Component\Pager\PaginatorInterface;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 
 #[Route('/quiz')]
 class QuizController extends AbstractController
 {
     #[Route('/', name: 'app_front_office_quiz_index', methods: ['GET'])]
-    public function index(Request $request, QuizRepository $quizRepository, HttpClientInterface $httpClient): Response
+    #[Route('/index', name: 'app_front_office_quiz_index_alias', methods: ['GET'])]
+    public function index(Request $request, QuizRepository $quizRepository, HttpClientInterface $httpClient, PaginatorInterface $paginator): Response
     {
         $search = $request->query->get('search');
         $sort = $request->query->get('sort');
 
-        $quizzes = $quizRepository->searchAndSort($search, $sort);
+        $queryBuilder = $quizRepository->searchAndSortQuery($search, $sort);
+
+        $quizzes = $paginator->paginate(
+            $queryBuilder,
+            $request->query->getInt('page', 1),
+            6 // 6 quizzes per page
+        );
 
         // API Integration: Fetch a random educational fact
         $fallbacks = [
@@ -57,21 +66,62 @@ class QuizController extends AbstractController
     }
 
     #[Route('/history', name: 'app_front_office_quiz_history', methods: ['GET'])]
-    public function history(ResultatRepository $resultatRepository): Response
+    public function history(Request $request, ResultatRepository $resultatRepository, PaginatorInterface $paginator): Response
     {
         $user = $this->getUser();
-        $resultats = [];
+        $queryBuilder = [];
 
         if ($user) {
-            $resultats = $resultatRepository->findBy(
-                ['etudiant' => $user],
-                ['datePassage' => 'DESC']
-            );
+            $queryBuilder = $resultatRepository->createQueryBuilder('r')
+                ->where('r.etudiant = :user')
+                ->setParameter('user', $user)
+                ->orderBy('r.datePassage', 'DESC');
         }
+
+        $resultats = $paginator->paginate(
+            $queryBuilder,
+            $request->query->getInt('page', 1),
+            5 // 5 results per page
+        );
 
         return $this->render('FrontOffice/quiz/history.html.twig', [
             'resultats' => $resultats,
         ]);
+    }
+
+    #[Route('/{id}/certificat', name: 'app_quiz_certificat')]
+    public function generateCertificat(Resultat $resultat): Response
+    {
+        // Require the student to have passed
+        $score = $resultat->getScore();
+        $total = $resultat->getNoteMax();
+        $percentage = $total > 0 ? ($score / $total) * 100 : 0;
+        
+        if ($percentage < 50) {
+            $this->addFlash('error', 'Vous devez réussir le quiz pour obtenir un certificat.');
+            return $this->redirectToRoute('app_front_office_quiz_history');
+        }
+
+        $pdfOptions = new Options();
+        $pdfOptions->set('defaultFont', 'Arial');
+        $dompdf = new Dompdf($pdfOptions);
+        
+        $html = $this->renderView('FrontOffice/quiz/certificat.html.twig', [
+            'resultat' => $resultat
+        ]);
+        
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'landscape');
+        $dompdf->render();
+        
+        return new Response(
+            $dompdf->output(),
+            Response::HTTP_OK,
+            [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'attachment; filename="certificat_quiz_' . $resultat->getQuiz()->getTitre() . '.pdf"'
+            ]
+        );
     }
 
     #[Route('/{id}/take', name: 'app_front_office_quiz_take', methods: ['GET', 'POST'])]
@@ -117,7 +167,8 @@ class QuizController extends AbstractController
             return $this->redirectToRoute('app_front_office_quiz_result', [
                 'id' => $quiz->getId(),
                 'score' => $score,
-                'totalPoints' => $quiz->getNoteMax() ?? 0
+                'totalPoints' => $quiz->getNoteMax() ?? 0,
+                'resultatId' => isset($resultat) ? $resultat->getId() : null,
             ]);
         }
 
@@ -131,6 +182,7 @@ class QuizController extends AbstractController
     {
         $score = $request->query->get('score', 0);
         $totalPoints = $request->query->get('totalPoints', 0);
+        $resultatId = $request->query->get('resultatId', null);
 
         // Retrieve user answers from session for review
         $userAnswers = $request->getSession()->get('quiz_answers_' . $quiz->getId(), []);
@@ -162,6 +214,7 @@ class QuizController extends AbstractController
             'quiz' => $quiz,
             'score' => $score,
             'totalPoints' => $totalPoints,
+            'resultatId' => $resultatId,
             'userAnswers' => $userAnswers,
             'funFact' => $funFact,
         ]);

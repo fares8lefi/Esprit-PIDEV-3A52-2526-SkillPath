@@ -114,6 +114,11 @@
                 </div>
             {% endfor %}
         </div>
+
+        <!-- Pagination -->
+        <div class="mt-12 flex justify-center">
+            {{ knp_pagination_render(quizzes, '@KnpPaginator/Pagination/tailwindcss_pagination.html.twig') }}
+        </div>
     </div>
 </div>
 {% endblock %}

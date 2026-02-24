@@ -15,10 +15,7 @@ class QuizRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Quiz::class);
     }
-    /**
-     * @return Quiz[] Returns an array of Quiz objects
-     */
-    public function searchAndSort(?string $search, ?string $sort): array
+    public function searchAndSortQuery(?string $search, ?string $sort)
     {
         $qb = $this->createQueryBuilder('q');
 
@@ -50,7 +47,12 @@ class QuizRepository extends ServiceEntityRepository
                 $qb->orderBy('q.titre', 'ASC'); // Default sort
         }
 
-        return $qb->getQuery()->getResult();
+        return $qb;
+    }
+
+    public function searchAndSort(?string $search, ?string $sort): array
+    {
+        return $this->searchAndSortQuery($search, $sort)->getQuery()->getResult();
     }
 
     public function findAllWithRelations(): array
