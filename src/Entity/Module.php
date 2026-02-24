@@ -42,6 +42,9 @@ class Module
     #[ORM\Column(type: "text", nullable: true)]
     private ?string $content = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $document = null;
+
     #[ORM\ManyToOne(targetEntity: Course::class, inversedBy: 'modules')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Course $course = null;
@@ -152,6 +155,17 @@ class Module
     public function setCourse(?Course $course): static
     {
         $this->course = $course;
+        return $this;
+    }
+
+    public function getDocument(): ?string
+    {
+        return $this->document;
+    }
+
+    public function setDocument(?string $document): static
+    {
+        $this->document = $document;
         return $this;
     }
 

@@ -77,6 +77,41 @@ class ModuleType extends AbstractType
                     'rows' => 3,
                     'placeholder' => 'Bref résumé...'
                 ],
+            ])
+            ->add('documentFile', \Symfony\Component\Form\Extension\Core\Type\FileType::class, [
+                'label' => 'Fichier de cours (PDF, DOC)',
+                'mapped' => false,
+                'required' => false,
+                'attr' => [
+                    'class' => 'form-input'
+                ],
+                'constraints' => [
+                    new \Symfony\Component\Validator\Constraints\File([
+                        'maxSize' => '10M',
+                        'mimeTypes' => [
+                            'application/pdf',
+                            'application/x-pdf',
+                            'application/msword',
+                            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                        ],
+                        'mimeTypesMessage' => 'Veuillez uploader un document valide (PDF ou Word)',
+                    ])
+                ],
+            ])
+            ->add('imageFile', \Symfony\Component\Form\Extension\Core\Type\FileType::class, [
+                'label' => 'Logo/Image du module',
+                'mapped' => false,
+                'required' => false,
+                'attr' => [
+                    'class' => 'form-input'
+                ],
+                'constraints' => [
+                    new \Symfony\Component\Validator\Constraints\File([
+                        'maxSize' => '2M',
+                        'mimeTypes' => ['image/jpeg', 'image/png', 'image/webp'],
+                        'mimeTypesMessage' => 'Formats acceptés: JPG, PNG, WEBP (max 2Mo)',
+                    ])
+                ],
             ]);
     }
 
