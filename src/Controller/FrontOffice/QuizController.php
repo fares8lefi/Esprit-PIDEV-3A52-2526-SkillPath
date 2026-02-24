@@ -124,6 +124,59 @@ class QuizController extends AbstractController
         );
     }
 
+    #[Route('/{id}/adaptive', name: 'app_front_office_quiz_adaptive', methods: ['GET', 'POST'])]
+    public function adaptive(Request $request, Quiz $quiz, EntityManagerInterface $entityManager): Response
+    {
+        if ($request->isMethod('POST')) {
+            $score = 0;
+            $questions = $quiz->getQuestions();
+            $data = $request->request->all();
+            $userAnswers = [];
+
+            foreach ($questions as $question) {
+                $fieldName = 'question_' . $question->getId();
+                $userAnswer = $data[$fieldName] ?? null;
+                $userAnswers[$question->getId()] = $userAnswer;
+
+                if ($userAnswer && $userAnswer === $question->getBonneReponse()) {
+                    $score += $question->getPoints();
+                }
+            }
+
+            $user = $this->getUser();
+
+            if ($user && method_exists($user, 'getId')) {
+                $resultat = new Resultat();
+                $resultat->setQuiz($quiz);
+                $resultat->setEtudiant($user);
+                $resultat->setScore($score);
+                $resultat->setNoteMax($quiz->getNoteMax() ?? 0);
+                $resultat->setDatePassage(new \DateTime());
+
+                try {
+                    $entityManager->persist($resultat);
+                    $entityManager->flush();
+                } catch (\Exception $e) {
+                    // Log error but continue
+                }
+            }
+
+            // Store answers in session for review
+            $request->getSession()->set('quiz_answers_' . $quiz->getId(), $userAnswers);
+
+            return $this->redirectToRoute('app_front_office_quiz_result', [
+                'id' => $quiz->getId(),
+                'score' => $score,
+                'totalPoints' => $quiz->getNoteMax() ?? 0,
+                'resultatId' => isset($resultat) && $resultat->getId() ? $resultat->getId() : null
+            ]);
+        }
+
+        return $this->render('FrontOffice/quiz/take_adaptive.html.twig', [
+            'quiz' => $quiz,
+        ]);
+    }
+
     #[Route('/{id}/take', name: 'app_front_office_quiz_take', methods: ['GET', 'POST'])]
     public function take(Request $request, Quiz $quiz, EntityManagerInterface $entityManager): Response
     {
@@ -168,7 +221,7 @@ class QuizController extends AbstractController
                 'id' => $quiz->getId(),
                 'score' => $score,
                 'totalPoints' => $quiz->getNoteMax() ?? 0,
-                'resultatId' => isset($resultat) ? $resultat->getId() : null,
+                'resultatId' => isset($resultat) && $resultat->getId() ? $resultat->getId() : null
             ]);
         }
 

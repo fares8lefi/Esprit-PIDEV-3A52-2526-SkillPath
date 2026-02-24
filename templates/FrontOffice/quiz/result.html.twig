@@ -5,7 +5,7 @@
 {% block body %}
 <div class="min-h-screen mesh-light dark:mesh-dark py-10 px-4">
     <div class="max-w-3xl mx-auto">
-        <!-- Score Card -->
+                <!-- Score Card -->
         <div class="glass-card rounded-3xl overflow-hidden mb-8 animate-scale-in">
             {% set percentage = totalPoints > 0 ? (score / totalPoints * 100)|round : 0 %}
             {% set passed = percentage >= 50 %}
@@ -50,6 +50,35 @@
                     </div>
                     <p class="text-lg font-bold text-slate-900 dark:text-white mt-2">{{ score }} <span class="text-slate-400">/ {{ totalPoints }}</span></p>
                     <p class="text-xs text-slate-400 mt-1">{{ quiz.titre }}</p>
+                </div>
+
+                <!-- AI Advice Section -->
+                <div class="mt-4 mb-8">
+                    <div class="glass border {% if percentage >= 80 %}border-purple-500/30 bg-purple-500/5{% elseif percentage >= 50 %}border-blue-500/30 bg-blue-500/5{% else %}border-orange-500/30 bg-orange-500/5{% endif %} rounded-2xl p-6 relative overflow-hidden">
+                        <div class="flex items-start gap-4 relative z-10">
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 {% if percentage >= 80 %}bg-purple-500/20 text-purple-600 dark:text-purple-400{% elseif percentage >= 50 %}bg-blue-500/20 text-blue-600 dark:text-blue-400{% else %}bg-orange-500/20 text-orange-600 dark:text-orange-400{% endif %}">
+                                <svg class="w-5 h-5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-black {% if percentage >= 80 %}text-purple-900 dark:text-purple-300{% elseif percentage >= 50 %}text-blue-900 dark:text-blue-300{% else %}text-orange-900 dark:text-orange-300{% endif %} mb-1 flex items-center gap-2">Analyse IA du Niveau <span class="badge bg-white/50 dark:bg-black/20 px-2 py-0.5 !text-[10px]">Généré Automatiquement</span></h3>
+                                <p class="text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-medium">
+                                    {% if percentage == 100 %}
+                                        "Excellente maîtrise ! Vous avez atteint la perfection sur ce module. Votre niveau d'expertise est solide, vous êtes prêt pour des concepts beaucoup plus avancés."
+                                    {% elseif percentage >= 80 %}
+                                        "Très bon niveau global ! Vous avez assimilé la grande majorité des concepts. Une petite révision sur vos quelques erreurs suffira à consolider votre expertise."
+                                    {% elseif percentage >= 60 %}
+                                        "Niveau intermédiaire atteint. Vous comprenez les bases, mais il reste des zones d'ombre. Consacrez du temps à relire les documents de cours avant de passer à l'étape suivante."
+                                    {% elseif percentage >= 40 %}
+                                        "Niveau de base en cours d'acquisition. Vous avez saisi quelques points, mais les fondations sont encore fragiles. Une révision complète du cours est fortement conseillée."
+                                    {% elseif percentage >= 20 %}
+                                        "Difficultés détectées. L'IA note des lacunes profondes sur ce sujet. Nous vous suggérons de reprendre le module depuis le début et de pratiquer davantage."
+                                    {% else %}
+                                        "Niveau critique. Il semblerait que vous n'ayez pu valider aucun pré-requis. L'IA vous recommande de demander de l'aide à un mentor ou de revoir l'entièreté de la base théorique."
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Action Buttons -->
