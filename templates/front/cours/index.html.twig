@@ -117,6 +117,39 @@
                                                     <svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                                     <span>{{ course.modules|length }} modules</span>
                                                 </div>
+                                                
+                                                {# Calendar Schedule Icon #}
+                                                {% set futureModules = [] %}
+                                                {% for m in course.modules %}
+                                                    {% if m.scheduledAt > now %}
+                                                        {% set futureModules = futureModules|merge([m]) %}
+                                                    {% endif %}
+                                                {% endfor %}
+
+                                                {% if futureModules|length > 0 %}
+                                                    <div class="flex items-center gap-1 relative group/tooltip cursor-help">
+                                                        <svg class="w-4 h-4 text-brand-blue animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                                        <span class="text-brand-blue font-bold">Agenda</span>
+                                                        
+                                                        {# Tooltip content #}
+                                                        <div class="absolute bottom-full left-0 mb-2 hidden group-hover/tooltip:block bg-gray-900 text-white text-[10px] p-3 rounded-xl shadow-2xl z-50 w-64 border border-gray-700 backdrop-blur-sm bg-opacity-95">
+                                                            <p class="font-bold border-b border-gray-700 pb-1 mb-2 text-brand-blue tracking-wider uppercase">Prochainement :</p>
+                                                            <ul class="space-y-1.5">
+                                                                {% for fm in futureModules|slice(0, 3) %}
+                                                                    <li class="flex justify-between items-center gap-2">
+                                                                        <span class="truncate">{{ fm.name }}</span>
+                                                                        <span class="text-brand-yellow font-medium shrink-0">{{ fm.scheduledAt|date('d/m/Y') }}</span>
+                                                                    </li>
+                                                                {% endfor %}
+                                                                {% if futureModules|length > 3 %}
+                                                                    <li class="text-gray-400 italic pt-1 text-center">+ {{ futureModules|length - 3 }} autres chapitres</li>
+                                                                {% endif %}
+                                                            </ul>
+                                                            <div class="absolute top-full left-4 border-8 border-transparent border-t-gray-900"></div>
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+
                                                 <div class="flex items-center gap-1">
                                                     <svg class="w-4 h-4 text-brand-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
                                                     <span>{{ course.level }}</span>
