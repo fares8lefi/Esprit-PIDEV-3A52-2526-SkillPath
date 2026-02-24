@@ -102,10 +102,20 @@ class QuestionController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($question);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_back_office_quiz_show', ['id' => $quiz->getId()], Response::HTTP_SEE_OTHER);
+            // Check total points
+            $currentTotal = 0;
+            foreach ($quiz->getQuestions() as $q) {
+                $currentTotal += $q->getPoints();
+            }
+            
+            if (($currentTotal + $question->getPoints()) > $quiz->getNoteMax()) {
+                $this->addFlash('error', "Impossible d'ajouter cette question : le total des points (" . ($currentTotal + $question->getPoints()) . ") dépasserait la note maximale autorisée pour ce quiz (" . $quiz->getNoteMax() . " pts).");
+            } else {
+                $entityManager->persist($question);
+                $entityManager->flush();
+                $this->addFlash('success', "Le vecteur d'évaluation a été injecté avec succès.");
+                return $this->redirectToRoute('app_back_office_quiz_show', ['id' => $quiz->getId()], Response::HTTP_SEE_OTHER);
+            }
         }
 
         return $this->render('BackOffice/question/new.html.twig', [
@@ -123,9 +133,22 @@ class QuestionController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_back_office_quiz_show', ['id' => $question->getQuiz()->getId()], Response::HTTP_SEE_OTHER);
+            // Check total points
+            $currentTotal = 0;
+            $quiz = $question->getQuiz();
+            foreach ($quiz->getQuestions() as $q) {
+                if ($q->getId() !== $question->getId()) {
+                    $currentTotal += $q->getPoints();
+                }
+            }
+            
+            if (($currentTotal + $question->getPoints()) > $quiz->getNoteMax()) {
+                $this->addFlash('error', "Impossible de modifier cette question : le total des points (" . ($currentTotal + $question->getPoints()) . ") dépasserait la note maximale autorisée pour ce quiz (" . $quiz->getNoteMax() . " pts).");
+            } else {
+                $entityManager->flush();
+                $this->addFlash('success', "Le vecteur d'évaluation a été recalibré avec succès.");
+                return $this->redirectToRoute('app_back_office_quiz_show', ['id' => $quiz->getId()], Response::HTTP_SEE_OTHER);
+            }
         }
 
         return $this->render('BackOffice/question/edit.html.twig', [
