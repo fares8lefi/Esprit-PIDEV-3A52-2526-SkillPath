@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Rapport de Performance - {{ quiz.titre }}</title>
+    <style>
+        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #333; margin: 0; padding: 20px; }
+        .header { text-align: center; margin-bottom: 40px; border-bottom: 2px solid #7C3AED; padding-bottom: 20px; }
+        .logo { font-size: 24px; font-weight: bold; color: #7C3AED; }
+        h1 { color: #1e293b; font-size: 20px; margin-top: 10px; }
+        .stats { margin-bottom: 30px; font-size: 14px; background: #f8fafc; padding: 15px; border-radius: 8px; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th, td { border: 1px solid #e2e8f0; padding: 12px; text-align: left; }
+        th { background-color: #f1f5f9; color: #475569; font-weight: bold; text-transform: uppercase; font-size: 11px; }
+        tr:nth-child(even) { background-color: #f8fafc; }
+        .success { color: #10B981; font-weight: bold; }
+        .danger { color: #EF4444; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">SkillPath</div>
+        <h1>Rapport de Performance d'Évaluation</h1>
+    </div>
+
+    <div class="stats">
+        <p><strong>Actif d'Évaluation :</strong> {{ quiz.titre }}</p>
+        <p><strong>Description :</strong> {{ quiz.description }}</p>
+        <p><strong>Généré le :</strong> {{ 'now'|date('d/m/Y à H:i') }}</p>
+        <p><strong>Total des occurrences :</strong> {{ resultats|length }}</p>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Membre</th>
+                <th>Score de Rendement</th>
+                <th>Statut</th>
+                <th>Date d'Occurrence</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for resultat in resultats %}
+                {% set pct = resultat.noteMax > 0 ? (resultat.score / resultat.noteMax * 100)|round : 0 %}
+                <tr>
+                    <td>{{ resultat.etudiant ? resultat.etudiant.username : 'Non Spécifié' }}</td>
+                    <td>{{ resultat.score }} / {{ resultat.noteMax }} ({{ pct }}%)</td>
+                    <td>
+                        {% if pct >= 50 %}
+                            <span class="success">Validé</span>
+                        {% else %}
+                            <span class="danger">Échoué</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ resultat.datePassage ? resultat.datePassage|date('d/m/Y H:i') : 'N/A' }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

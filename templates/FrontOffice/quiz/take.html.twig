@@ -49,15 +49,29 @@
             </div>
         </div>
 
-        <!-- Progress Bar -->
-        <div class="glass-card rounded-2xl px-6 py-4 mb-8 animate-fade-up delay-100">
-            <div class="flex items-center justify-between mb-2">
-                <span class="text-xs font-black uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500">Progression</span>
-                <span class="text-xs font-bold text-primary dark:text-primary-light" id="progressText">0 / {{ quiz.questions|length }}</span>
+        <!-- Progress Bar & Timer Container -->
+        <div class="grid grid-cols-1 {% if quiz.duree > 0 %}md:grid-cols-3{% endif %} gap-6 mb-8">
+            <div class="{% if quiz.duree > 0 %}md:col-span-2{% endif %} glass-card rounded-2xl px-6 py-4 animate-fade-up delay-100">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-black uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500">Progression</span>
+                    <span class="text-xs font-bold text-primary dark:text-primary-light" id="progressText">0 / {{ quiz.questions|length }}</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-bar-fill" id="progressBar" style="width: 0%"></div>
+                </div>
             </div>
-            <div class="progress-bar">
-                <div class="progress-bar-fill" id="progressBar" style="width: 0%"></div>
+            
+            {% if quiz.duree > 0 %}
+            <!-- Advanced Feature: Real-time Anti-Cheat Timer -->
+            <div class="glass-card rounded-2xl px-6 py-4 animate-fade-up delay-200 flex flex-col justify-center items-center relative overflow-hidden group border-2 border-transparent transition-colors" id="timerBox">
+                <div class="absolute inset-0 bg-primary/5 dark:bg-primary/10 transition-colors group-hover:bg-primary/10" id="timerBg"></div>
+                <span class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 mb-1 z-10" id="timerLabel">Temps Restant</span>
+                <div class="flex items-center gap-3 z-10" id="timerContainer">
+                    <svg id="timerIcon" class="w-6 h-6 text-primary animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <span class="text-3xl font-black text-slate-900 dark:text-white tracking-widest font-mono" id="countdownTimer">--:--</span>
+                </div>
             </div>
+            {% endif %}
         </div>
 
         <!-- Quiz Form -->
@@ -84,7 +98,7 @@
                             <label class="flex items-center gap-3 p-3.5 rounded-xl cursor-pointer border-2 border-transparent hover:border-primary/20 hover:bg-primary/[0.03] dark:hover:bg-primary/[0.05] transition-all group quiz-option" data-question="{{ question.id }}">
                                 <input type="radio" name="question_{{ question.id }}" value="{{ choice.letter }}" class="hidden quiz-radio" required>
                                 <span class="w-8 h-8 rounded-lg border-2 border-slate-200 dark:border-slate-600 flex items-center justify-center text-xs font-black text-slate-400 dark:text-slate-500 group-hover:border-primary group-hover:text-primary transition-all option-letter">{{ choice.letter }}</span>
-                                <span class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white transition-colors option-text">{{ choice.text }}</span>
+                                <span class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">{{ choice.text }}</span>
                             </label>
                             {% endif %}
                         {% endfor %}
@@ -125,18 +139,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 sib.classList.add('border-transparent');
                 
                 // Reset text color
-                const textSpan = sib.querySelector('.option-text');
-                if (textSpan) {
-                    textSpan.classList.remove('text-white');
-                    textSpan.classList.add('text-slate-700', 'dark:text-slate-300');
-                }
+                const textSpan = sib.querySelector('span:last-child');
+                textSpan.classList.remove('text-white');
+                textSpan.classList.add('text-slate-700', 'dark:text-slate-300');
                 
                 // Reset letter box
                 const letter = sib.querySelector('.option-letter');
-                if (letter) {
-                    letter.classList.remove('bg-white', 'text-purple-600', 'border-white');
-                    letter.classList.add('border-slate-200', 'dark:border-slate-600', 'text-slate-400');
-                }
+                letter.classList.remove('bg-white', 'text-purple-600', 'border-white');
+                letter.classList.add('border-slate-200', 'dark:border-slate-600', 'text-slate-400');
             });
 
             // Set selected state (Solid Purple)
@@ -144,26 +154,92 @@ document.addEventListener('DOMContentLoaded', function() {
             this.classList.add('bg-purple-600', 'border-purple-600', 'shadow-md', 'scale-[1.01]');
             
             // Set text to white
-            const textSpan = this.querySelector('.option-text');
-            if (textSpan) {
-                textSpan.classList.remove('text-slate-700', 'dark:text-slate-300');
-                textSpan.classList.add('text-white');
-            }
+            const textSpan = this.querySelector('span:last-child');
+            textSpan.classList.remove('text-slate-700', 'dark:text-slate-300');
+            textSpan.classList.add('text-white');
 
             // Invert letter box (White bg, purple text)
             const letter = this.querySelector('.option-letter');
-            if (letter) {
-                letter.classList.remove('border-slate-200', 'dark:border-slate-600', 'text-slate-400');
-                letter.classList.add('bg-white', 'text-purple-600', 'border-white');
-            }
+            letter.classList.remove('border-slate-200', 'dark:border-slate-600', 'text-slate-400');
+            letter.classList.add('bg-white', 'text-purple-600', 'border-white');
         
             // Update progress
             answered.add(questionId);
             const percent = (answered.size / totalQuestions) * 100;
-            if (progressBar) progressBar.style.width = percent + '%';
-            if (progressText) progressText.textContent = answered.size + ' / ' + totalQuestions;
+            progressBar.style.width = percent + '%';
+            progressText.textContent = answered.size + ' / ' + totalQuestions;
         });
     });
+    // --- Advanced Features: Anti-Cheat Timer Logic ---
+    {% if quiz.duree > 0 %}
+    (function() {
+        try {
+            const quizFormElement = document.getElementById('quizForm');
+            if (!quizFormElement) return;
+
+            const storageKey = 'quiz_timer_{{ quiz.id }}';
+            const durationSec = {{ quiz.duree }} * 60;
+            
+            let endTimeStr = localStorage.getItem(storageKey);
+            let endTime = parseInt(endTimeStr, 10);
+            
+            const now = Date.now();
+            if (!endTime || isNaN(endTime) || endTime < (now - 3600000)) { 
+                endTime = now + (durationSec * 1000);
+                localStorage.setItem(storageKey, endTime);
+            }
+            
+            const timerDisplay = document.getElementById('countdownTimer');
+            const timerIcon = document.getElementById('timerIcon');
+            const timerBox = document.getElementById('timerBox');
+            
+            if (!timerDisplay) return;
+
+            let timerInterval;
+
+            function updateTimer() {
+                const currentNow = Date.now();
+                let timeLeft = Math.floor((endTime - currentNow) / 1000);
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    timerDisplay.textContent = "00:00";
+                    localStorage.removeItem(storageKey);
+                    
+                    alert("⏰ Le temps imparti est écoulé ! Vos réponses vont être soumises automatiquement.");
+                    quizFormElement.submit();
+                    return;
+                }
+                
+                const m = Math.floor(timeLeft / 60);
+                const s = timeLeft % 60;
+                timerDisplay.textContent = m.toString().padStart(2, '0') + ':' + s.toString().padStart(2, '0');
+                
+                // Final minute urgency styling
+                if (timeLeft <= 60 && timerBox) { 
+                    timerDisplay.classList.remove('text-slate-900', 'dark:text-white');
+                    timerDisplay.classList.add('text-red-500');
+                    if(timerIcon) {
+                        timerIcon.classList.remove('text-primary');
+                        timerIcon.classList.add('text-red-500', 'animate-bounce');
+                    }
+                    timerBox.classList.add('border-red-500/50');
+                }
+            }
+
+            updateTimer(); 
+            timerInterval = setInterval(updateTimer, 1000);
+            
+            quizFormElement.addEventListener('submit', function() {
+                localStorage.removeItem(storageKey);
+            });
+        } catch(err) {
+            console.error("Erreur avec le chrono:", err);
+            const tg = document.getElementById('countdownTimer');
+            if(tg) tg.textContent = "--:--";
+        }
+    })();
+    {% endif %}
 });
 </script>
 {% endblock %}

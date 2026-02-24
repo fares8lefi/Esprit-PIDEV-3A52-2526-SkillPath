@@ -10,6 +10,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 
 #[Route('/admin/quiz')]
 class QuizController extends AbstractController
@@ -67,6 +69,34 @@ class QuizController extends AbstractController
             'quiz' => $quiz,
             'form' => $form,
         ]);
+    }
+
+    #[Route('/{id}/export/pdf', name: 'app_back_office_quiz_export_pdf', methods: ['GET'])]
+    public function exportPdf(Quiz $quiz): Response
+    {
+        $resultats = $quiz->getResultats();
+        
+        $html = $this->renderView('BackOffice/quiz/pdf_export.html.twig', [
+            'quiz' => $quiz,
+            'resultats' => $resultats
+        ]);
+
+        $pdfOptions = new Options();
+        $pdfOptions->set('defaultFont', 'Arial');
+        $dompdf = new Dompdf($pdfOptions);
+        
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+        
+        return new Response(
+            $dompdf->output(),
+            Response::HTTP_OK,
+            [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'attachment; filename="export_resultats_' . $quiz->getTitre() . '.pdf"'
+            ]
+        );
     }
 
     #[Route('/{id}', name: 'app_back_office_quiz_delete', methods: ['POST'])]
