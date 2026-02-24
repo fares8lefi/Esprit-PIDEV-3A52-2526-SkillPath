@@ -35,12 +35,16 @@ class CourseController extends AbstractController
     public function show(Course $course, \App\Service\UserCourseViewService $viewService): Response
     {
         $user = $this->getUser();
+        $isEnrolled = false;
+        
         if ($user instanceof \App\Entity\User) {
             $viewService->recordView($user, $course);
+            $isEnrolled = $viewService->isUserEnrolled($user, $course);
         }
 
         return $this->render('FrontOffice/course/show.html.twig', [
             'course' => $course,
+            'isEnrolled' => $isEnrolled,
         ]);
     }
 
@@ -57,5 +61,18 @@ class CourseController extends AbstractController
         $this->addFlash('success', 'Félicitations ! Vous êtes maintenant inscrit au cours : ' . $course->getTitle());
 
         return $this->redirectToRoute('front_course_show', ['id' => $course->getId()]);
+    }
+
+    #[Route('/my-courses', name: 'my_courses', methods: ['GET'])]
+    public function myCourses(): Response
+    {
+        $user = $this->getUser();
+        if (!$user instanceof \App\Entity\User) {
+            return $this->redirectToRoute('app_user_login');
+        }
+
+        return $this->render('FrontOffice/course/my_courses.html.twig', [
+            'courses' => $user->getCourses(),
+        ]);
     }
 }
