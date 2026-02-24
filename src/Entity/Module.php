@@ -9,6 +9,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use App\Entity\Cours;
+use App\Entity\User;
 
 #[ORM\Entity(repositoryClass: ModuleRepository::class)]
 class Module
@@ -57,10 +58,17 @@ class Module
     #[ORM\Column(type: "datetime", nullable: true)]
     private ?\DateTimeInterface $scheduledAt = null;
 
+    /**
+     * @var Collection<int, User>
+     */
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'completedModules')]
+    private Collection $completedBy;
+
     public function __construct()
     {
         $this->dateCreation = new \DateTimeImmutable();
         $this->scheduledAt = new \DateTime();
+        $this->completedBy = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -173,6 +181,33 @@ class Module
     public function setScheduledAt(?\DateTimeInterface $scheduledAt): self
     {
         $this->scheduledAt = $scheduledAt;
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getCompletedBy(): Collection
+    {
+        return $this->completedBy;
+    }
+
+    public function addCompletedBy(User $user): static
+    {
+        if (!$this->completedBy->contains($user)) {
+            $this->completedBy->add($user);
+            $user->addCompletedModule($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCompletedBy(User $user): static
+    {
+        if ($this->completedBy->removeElement($user)) {
+            $user->removeCompletedModule($this);
+        }
+
         return $this;
     }
 }

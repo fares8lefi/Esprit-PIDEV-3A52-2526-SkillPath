@@ -39,6 +39,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $cours;
 
     /**
+     * @var Collection<int, Module>
+     */
+    #[ORM\ManyToMany(targetEntity: Module::class, inversedBy: 'completedBy')]
+    #[ORM\JoinTable(name: 'user_completed_modules')]
+    private Collection $completedModules;
+
+    /**
      * @var Collection<int, Notification>
      */
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Notification::class, orphanRemoval: true)]
@@ -48,6 +55,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->cours = new ArrayCollection();
         $this->notifications = new ArrayCollection();
+        $this->favoriteCourses = new ArrayCollection();
+        $this->completedModules = new ArrayCollection();
     }
 
     /**
@@ -165,6 +174,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeCour(Cours $cour): static
     {
         $this->cours->removeElement($cour);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Module>
+     */
+    public function getCompletedModules(): Collection
+    {
+        return $this->completedModules;
+    }
+
+    public function addCompletedModule(Module $module): static
+    {
+        if (!$this->completedModules->contains($module)) {
+            $this->completedModules->add($module);
+        }
+
+        return $this;
+    }
+
+    public function removeCompletedModule(Module $module): static
+    {
+        $this->completedModules->removeElement($module);
 
         return $this;
     }

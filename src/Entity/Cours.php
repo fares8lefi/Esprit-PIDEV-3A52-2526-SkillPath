@@ -46,6 +46,9 @@ class Cours
     #[ORM\OrderBy(['scheduledAt' => 'ASC'])]
     private Collection $modules;
 
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'cours')]
+    private Collection $users;
+
     // ❌ Fields moved to Module (kept as nullable/unused or removed? User said 'Corriger', implying move. We will remove them from here if they belong to child now, BUT for safety on existing data we might want to keep them for a second? No, user wants correct architecture. I will remove strict constraints on old fields if I keep them, but better to replace them.)
     // Wait, I can't easily iterate schema if I delete columns. I will Add new columns.
     // I will REMOVE 'type' and 'contenu' from here as they belong to Module?
@@ -63,6 +66,7 @@ class Cours
     {
         $this->createdAt = new \DateTime();
         $this->modules = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
     
     // ... Getters/Setters ...
@@ -188,6 +192,33 @@ class Cours
     public function setUpdatedAt(?\DateTimeInterface $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): static
+    {
+        if (!$this->users->contains($user)) {
+            $this->users->add($user);
+            $user->addCour($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): static
+    {
+        if ($this->users->removeElement($user)) {
+            $user->removeCour($this);
+        }
+
         return $this;
     }
 }
