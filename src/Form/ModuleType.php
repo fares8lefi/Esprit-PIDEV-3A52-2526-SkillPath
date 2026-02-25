@@ -57,6 +57,19 @@ class ModuleType extends AbstractType
                     new NotBlank(['message' => 'Le type est obligatoire'])
                 ]
             ])
+            ->add('level', ChoiceType::class, [
+                'label' => 'Niveau de difficulté',
+                'choices' => [
+                    'Débutant' => 'Débutant',
+                    'Intermédiaire' => 'Intermédiaire',
+                    'Avancé' => 'Avancé',
+                ],
+                'placeholder' => '-- Sélectionner un niveau --',
+                'attr' => [
+                    'class' => 'form-input'
+                ],
+                'required' => false
+            ])
             ->add('content', TextareaType::class, [
                 'label' => 'Contenu',
                 'attr' => [
