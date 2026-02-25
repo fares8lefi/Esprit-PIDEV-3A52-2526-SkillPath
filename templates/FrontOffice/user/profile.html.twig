@@ -115,6 +115,40 @@
                                    placeholder="8 caractères minimum — Laissez vide pour ne pas changer">
                         </div>
 
+                        <!-- ML Features Section -->
+                        <div class="pt-6 border-t border-slate-100 dark:border-white/5">
+                            <h4 class="text-xs font-black uppercase tracking-[0.2em] text-primary mb-6 ml-1">Préférences d'Apprentissage (IA)</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                <div class="space-y-2">
+                                    <label class="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">Domaine d'intérêt</label>
+                                    <input type="text" name="domaine" value="{{ user.domaine }}"
+                                           class="form-input"
+                                           placeholder="ex: Développement Web, Design...">
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">Style d'apprentissage</label>
+                                    <select name="style_dapprentisage" class="form-input">
+                                        <option value="">Sélectionner un style</option>
+                                        <option value="visuel" {{ user.styleDapprentissage == 'visuel' ? 'selected' : '' }}>Visuel (Vidéos, Schémas)</option>
+                                        <option value="auditif" {{ user.styleDapprentissage == 'auditif' ? 'selected' : '' }}>Auditif (Audio, Podcasts)</option>
+                                        <option value="kinesthesique" {{ user.styleDapprentissage == 'kinesthesique' ? 'selected' : '' }}>Kinesthésique (Pratique, Code)</option>
+                                        <option value="lecture" {{ user.styleDapprentissage == 'lecture' ? 'selected' : '' }}>Lecture / Écriture</option>
+                                    </select>
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">Niveau Actuel</label>
+                                    <select name="niveau" class="form-input">
+                                        <option value="">Sélectionner un niveau</option>
+                                        <option value="Débutant" {{ user.niveau == 'Débutant' ? 'selected' : '' }}>Débutant</option>
+                                        <option value="Intermédiaire" {{ user.niveau == 'Intermédiaire' ? 'selected' : '' }}>Intermédiaire</option>
+                                        <option value="Avancé" {{ user.niveau == 'Avancé' ? 'selected' : '' }}>Avancé</option>
+                                        <option value="Expert" {{ user.niveau == 'Expert' ? 'selected' : '' }}>Expert</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-4 ml-1">💡 Ces informations permettent à notre IA de personnaliser vos recommandations.</p>
+                        </div>
+
                         <div class="bg-slate-900 dark:bg-slate-950 rounded-2xl p-8 relative overflow-hidden group">
                             <div class="absolute inset-0 gradient-primary opacity-0 group-hover:opacity-5 transition-opacity"></div>
                             <div class="relative z-10">
@@ -141,7 +175,7 @@
                             <span class="text-xs font-black uppercase tracking-[0.2em] text-slate-400 block mb-1">Mon Apprentissage</span>
                             <h2 class="text-3xl font-black text-slate-900 dark:text-white">Mes Formations <span class="text-primary">Inscrites</span></h2>
                         </div>
-                        <a href="{{ path('front_course_index') }}" class="text-sm font-bold text-primary hover:underline flex items-center gap-2 transition-all">
+                        <a href="{{ path('app_home') }}#catalogue" class="text-sm font-bold text-primary hover:underline flex items-center gap-2 transition-all">
                             Voir le Catalogue
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                         </a>
@@ -182,7 +216,7 @@
                                 <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
                             </div>
                             <p class="text-slate-500 font-bold mb-6">Vous n'êtes inscrit à aucun cours pour le moment.</p>
-                            <a href="{{ path('front_course_index') }}" class="btn-primary !py-3 !px-6 mx-auto">Découvrir le Catalogue</a>
+                            <a href="{{ path('app_home') }}#catalogue" class="btn-primary !py-3 !px-6 mx-auto">Découvrir le Catalogue</a>
                         </div>
                         {% endfor %}
                     </div>

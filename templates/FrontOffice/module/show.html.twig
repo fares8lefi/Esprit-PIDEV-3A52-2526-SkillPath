@@ -140,8 +140,7 @@
                         <h1 class="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-6 leading-tight">{{ module.title }}</h1>
                         <div class="flex items-center gap-4 text-sm text-slate-500 dark:text-slate-400 font-medium">
                             <div class="flex items-center gap-2">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                <span>15 min</span>
+                                <span>{{ module.level|default('Standard') }}</span>
                             </div>
                             <div class="w-1 h-1 rounded-full bg-slate-300 dark:bg-white/20"></div>
                             <span>Ajouté le {{ module.createdAt|date('d M Y') }}</span>
@@ -442,6 +441,31 @@
             modal.classList.add('hidden');
         }, 300);
     }
+
+    // Heartbeat for Time Tracking
+    (function() {
+        const heartbeatInterval = 60000; // 1 minute
+        const heartbeatUrl = "{{ path('app_front_office_module_heartbeat', {id: module.id}) }}";
+
+        function sendHeartbeat() {
+            fetch(heartbeatUrl, {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    console.log('Engagement tracked: ' + data.time + ' mins');
+                }
+            })
+            .catch(error => console.error('Heartbeat error:', error));
+        }
+
+        // Send first heartbeat after 1 minute
+        setInterval(sendHeartbeat, heartbeatInterval);
+    })();
 </script>
 
 <style>

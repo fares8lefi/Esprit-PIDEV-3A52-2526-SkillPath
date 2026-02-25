@@ -13,7 +13,7 @@
     {# Top Navigation #}
     <nav class="h-20 flex items-center justify-between px-8 md:px-12 glass border-b border-white/5 sticky top-0 z-[100]">
         <div class="flex items-center gap-6">
-            <a href="{{ path('front_course_index') }}" class="w-10 h-10 rounded-xl glass border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:scale-110 transition-all group">
+            <a href="{{ path('app_home') }}#catalogue" class="w-10 h-10 rounded-xl glass border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:scale-110 transition-all group">
                 <svg class="w-5 h-5 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
             </a>
             <div class="flex flex-col">
@@ -95,8 +95,17 @@
                              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         </div>
                         <div>
-                            <p class="text-sm font-bold">~12 Heures</p>
+                            <p class="text-sm font-bold">~{{ course.duration|default('120') }} Min</p>
                             <p class="text-[10px] uppercase text-slate-500 font-bold">Auto-formation</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-primary">
+                             <span class="text-xl font-black">DT</span>
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold">{{ course.price|default('0.00') }}</p>
+                            <p class="text-[10px] uppercase text-slate-500 font-bold">Investissement</p>
                         </div>
                     </div>
                 </div>
@@ -151,7 +160,7 @@
                             <div class="flex items-center justify-between relative z-10 pt-8 border-t border-white/5">
                                 <div class="flex items-center gap-3">
                                     <span class="badge glass !bg-white/5 !text-slate-400 !border-white/5">{{ module.type|capitalize|default('Text') }}</span>
-                                    <span class="text-[10px] font-black text-slate-600 uppercase tracking-widest">45 Min</span>
+                                    <span class="text-[10px] font-black text-slate-600 uppercase tracking-widest">{{ module.level|default('MIXED') }}</span>
                                 </div>
                                 
                                 {% if not isEnrolled %}
@@ -193,7 +202,7 @@
 
     {# Footer Metadata #}
     <footer class="py-12 border-t border-white/5 text-center px-8">
-        <a href="{{ path('front_course_index') }}" class="text-xs font-bold text-slate-500 hover:text-white transition-colors flex items-center justify-center gap-2">
+        <a href="{{ path('app_home') }}#catalogue" class="text-xs font-bold text-slate-500 hover:text-white transition-colors flex items-center justify-center gap-2">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z"></path></svg>
             Retour au Catalogue SkillPath
         </a>

@@ -35,7 +35,7 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Learning Level</label>
+                    <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Architectural Level</label>
                     {{ form_widget(form.level) }}
                     {{ form_errors(form.level) }}
                 </div>
@@ -44,6 +44,18 @@
                     <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Comprehensive Description</label>
                     {{ form_widget(form.description) }}
                     {{ form_errors(form.description) }}
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Estimated Duration (Min)</label>
+                    {{ form_widget(form.duration) }}
+                    {{ form_errors(form.duration) }}
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Course Investment (DT)</label>
+                    {{ form_widget(form.price) }}
+                    {{ form_errors(form.price) }}
                 </div>
 
                 <div class="md:col-span-2">
