@@ -81,9 +81,10 @@ class UserCourseViewRepository extends ServiceEntityRepository
     public function getMLFeaturesForUser(int $userId, int $courseId): array
     {
         $view = $this->findByUserAndCourse($userId, $courseId);
+        $user = $this->getEntityManager()->getRepository(\App\Entity\User::class)->find($userId);
         $course = $this->getEntityManager()->getRepository(\App\Entity\Course::class)->find($courseId);
 
-        if (!$course) return [];
+        if (!$course || !$user) return [];
 
         return [
             'time_spent' => $view ? $view->getTimeSpent() : 0,
@@ -91,7 +92,13 @@ class UserCourseViewRepository extends ServiceEntityRepository
             'engagement_level' => $view ? $view->getEngagementLevel() : 'none',
             'course_duration' => $course->getDuration(),
             'course_price' => $course->getPrice(),
-            'course_rating' => $course->getRating()
+            'course_rating' => $course->getRating(),
+            'course_category' => $course->getCategory(),
+            'course_level' => $course->getLevel(),
+            'user_domaine' => $user->getDomaine(),
+            'user_learning_style' => $user->getStyleDapprentissage(),
+            'user_skill_level' => $user->getNiveau(),
+            'user_role' => $user->getRole()
         ];
     }
 }
