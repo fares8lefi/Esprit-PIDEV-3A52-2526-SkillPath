@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Repository\NotificationRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -10,9 +11,18 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class MainController extends AbstractController
 {
     #[Route('/', name: 'app_home')]
-    public function index(): Response
+    public function index(NotificationRepository $notificationRepository): Response
     {
-        return $this->render('FrontOffice/main/index.html.twig');
+        $user = $this->getUser();
+        $unreadCount = 0;
+
+        if ($user) {
+            $unreadCount = $notificationRepository->countUnreadByUser($user);
+        }
+
+        return $this->render('FrontOffice/main/index.html.twig', [
+            'unreadCount' => $unreadCount,
+        ]);
     }
 
     #[Route('/admin', name: 'app_admin_dashboard')]

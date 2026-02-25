@@ -55,7 +55,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->cours = new ArrayCollection();
         $this->notifications = new ArrayCollection();
-        $this->favoriteCourses = new ArrayCollection();
+        $this->favoriteCours = new ArrayCollection();
         $this->completedModules = new ArrayCollection();
     }
 

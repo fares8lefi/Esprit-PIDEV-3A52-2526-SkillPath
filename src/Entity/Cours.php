@@ -82,7 +82,7 @@ class Cours
         return $this;
     }
 
-    // ✅ TWIG ALIAS: course.name -> titre
+    // ✅ TWIG ALIAS: cours.name -> titre
     public function getName(): ?string
     {
         return $this->titre;
@@ -160,13 +160,13 @@ class Cours
         return $this;
     }
 
-    // ✅ TWIG ALIAS: course.cours -> modules
+    // ✅ TWIG ALIAS: cours.cours -> modules
     public function getCours(): Collection
     {
         return $this->modules;
     }
 
-    // ✅ TWIG ALIAS: course.dateCreation -> createdAt
+    // ✅ TWIG ALIAS: cours.dateCreation -> createdAt
     public function getDateCreation(): ?\DateTimeInterface
     {
         return $this->createdAt;

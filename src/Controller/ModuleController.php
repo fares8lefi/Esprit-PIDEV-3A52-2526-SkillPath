@@ -28,7 +28,7 @@ class ModuleController extends AbstractController
         $search = $request->query->get('search', '');
         $coursId = $request->query->get('cours');
 
-        $courses = $coursRepository->findBy([], ['titre' => 'ASC']);
+        $cours = $coursRepository->findBy([], ['titre' => 'ASC']);
 
         $qb = $moduleRepository->qbSearch($search, $coursId ? (int) $coursId : null);
 
@@ -40,7 +40,7 @@ class ModuleController extends AbstractController
 
         return $this->render('BackOffice/module/list.html.twig', [
             'modules' => $modules,
-            'courses' => $courses,
+            'cours' => $cours,
         ]);
     }
 

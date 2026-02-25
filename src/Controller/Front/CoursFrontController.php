@@ -7,6 +7,7 @@ use App\Entity\Cours;
 use App\Entity\Module;
 use App\Repository\CertificateRepository;
 use App\Repository\CoursRepository;
+use App\Repository\NotificationRepository;
 use App\Repository\ModuleRepository;
 use Dompdf\Dompdf;
 use Dompdf\Options;
@@ -16,68 +17,80 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/front/cours', name: 'front_courses_')]
+#[Route('/front/cours', name: 'front_cours_')]
 class CoursFrontController extends AbstractController
 {
     #[Route('/', name: 'index', methods: ['GET'])]
-    public function index(Request $request, CoursRepository $coursRepository): Response
+    public function index(Request $request, CoursRepository $coursRepository, NotificationRepository $notificationRepository): Response
     {
         $search = $request->query->get('search');
         $level = $request->query->get('level');
         $category = $request->query->get('category');
         $sort = $request->query->get('sort', 'date_desc');
 
-        $courses = $coursRepository->findByFilters($search, $level, $category, $sort);
+        $cours = $coursRepository->findByFilters($search, $level, $category, $sort);
+        $unreadCount = 0;
+
+        if ($this->getUser()) {
+            $unreadCount = $notificationRepository->countUnreadByUser($this->getUser());
+        }
         $categoriesCount = $coursRepository->countByCategories();
 
         return $this->render('front/cours/index.html.twig', [
-            'courses' => $courses,
+            'cours' => $cours,
             'categoriesCount' => $categoriesCount,
             'currentSearch' => $search,
             'currentLevel' => $level,
             'currentCategory' => $category,
             'currentSort' => $sort,
             'now' => new \DateTime(),
+            'unreadCount' => $unreadCount,
         ]);
     }
 
     #[Route('/{id}', name: 'show', methods: ['GET'])]
-    public function show(Cours $course): Response
+    public function show(Cours $cours, NotificationRepository $notificationRepository): Response
     {
         $user = $this->getUser();
         $progression = 0;
         
         if ($user) {
-            $totalModules = count($course->getModules());
+            $totalModules = count($cours->getModules());
             if ($totalModules > 0) {
-                $completedInCourse = 0;
-                foreach ($course->getModules() as $module) {
+                $completedInCours = 0;
+                foreach ($cours->getModules() as $module) {
                     if ($user->getCompletedModules()->contains($module)) {
-                        $completedInCourse++;
+                        $completedInCours++;
                     }
                 }
-                $progression = ($completedInCourse / $totalModules) * 100;
+                $progression = ($completedInCours / $totalModules) * 100;
             }
         }
 
+        $unreadCount = 0;
+        if ($user) {
+            $unreadCount = $notificationRepository->countUnreadByUser($user);
+        }
+
         return $this->render('front/cours/show.html.twig', [
-            'course' => $course,
+            'cours' => $cours,
             'progression' => $progression,
             'now' => new \DateTime(),
+            'unreadCount' => $unreadCount,
         ]);
     }
 
-    #[Route('/{courseId}/module/{moduleId}', name: 'module_show', methods: ['GET'])]
-    public function showModule(int $courseId, int $moduleId, CoursRepository $coursRepository): Response
+    #[Route('/{coursId}/module/{moduleId}', name: 'module_show', methods: ['GET'])]
+    public function showModule(int $coursId, int $moduleId, CoursRepository $coursRepository, NotificationRepository $notificationRepository): Response
     {
-        $course = $coursRepository->find($courseId);
+        $cours = $coursRepository->find($coursId);
         
-        if (!$course) {
+        if (!$cours) {
             throw $this->createNotFoundException('Cours non trouvé');
         }
 
         $now = new \DateTime();
-        $allModules = $course->getModules();
+        $allModules = $cours->getModules();
         $visibleModules = $allModules->filter(function($module) use ($now) {
             return $module->getScheduledAt() <= $now;
         })->getValues();
@@ -90,7 +103,7 @@ class CoursFrontController extends AbstractController
                 // Security check
                 if ($m->getScheduledAt() > $now) {
                     $this->addFlash('info', 'Ce module sera disponible le ' . $m->getScheduledAt()->format('d/m/Y'));
-                    return $this->redirectToRoute('front_courses_show', ['id' => $courseId]);
+                    return $this->redirectToRoute('front_cours_show', ['id' => $coursId]);
                 }
                 $module = $m;
                 break;
@@ -114,14 +127,20 @@ class CoursFrontController extends AbstractController
         $previousModule = $visibleIndex > 0 ? $visibleModules[$visibleIndex - 1] : null;
         $nextModule = $visibleIndex < $totalVisible - 1 ? $visibleModules[$visibleIndex + 1] : null;
 
+        $unreadCount = 0;
+        if ($this->getUser()) {
+            $unreadCount = $notificationRepository->countUnreadByUser($this->getUser());
+        }
+
         return $this->render('front/cours/module.html.twig', [
-            'course' => $course,
+            'cours' => $cours,
             'module' => $module,
             'previousModule' => $previousModule,
             'nextModule' => $nextModule,
             'moduleNumber' => $visibleIndex + 1,
             'totalModules' => $totalVisible,
             'isCompleted' => $this->getUser() ? $this->getUser()->getCompletedModules()->contains($module) : false,
+            'unreadCount' => $unreadCount,
         ]);
     }
 
@@ -138,29 +157,29 @@ class CoursFrontController extends AbstractController
             $em->flush();
         }
 
-        return $this->redirectToRoute('front_courses_module_show', [
-            'courseId' => $module->getCours()->getId(),
+        return $this->redirectToRoute('front_cours_module_show', [
+            'coursId' => $module->getCours()->getId(),
             'moduleId' => $module->getId()
         ]);
     }
 
-    #[Route('/{courseId}/certificate/download', name: 'certificate_download', methods: ['GET'])]
-    public function downloadCertificate(int $courseId, CoursRepository $coursRepository, EntityManagerInterface $em, CertificateRepository $certRepo): Response
+    #[Route('/{coursId}/certificate/download', name: 'certificate_download', methods: ['GET'])]
+    public function downloadCertificate(int $coursId, CoursRepository $coursRepository, EntityManagerInterface $em, CertificateRepository $certRepo): Response
     {
         $user = $this->getUser();
         if (!$user) {
             throw $this->createAccessDeniedException('Vous devez être connecté.');
         }
 
-        $course = $coursRepository->find($courseId);
-        if (!$course) {
+        $cours = $coursRepository->find($coursId);
+        if (!$cours) {
             throw $this->createNotFoundException('Cours non trouvé.');
         }
 
         // Verification: 100% completion
-        $totalModules = count($course->getModules());
+        $totalModules = count($cours->getModules());
         $completedCount = 0;
-        foreach ($course->getModules() as $module) {
+        foreach ($cours->getModules() as $module) {
             if ($user->getCompletedModules()->contains($module)) {
                 $completedCount++;
             }
@@ -168,15 +187,15 @@ class CoursFrontController extends AbstractController
 
         if ($completedCount < $totalModules || $totalModules === 0) {
             $this->addFlash('error', 'Vous devez terminer tous les modules pour obtenir le certificat.');
-            return $this->redirectToRoute('front_courses_show', ['id' => $courseId]);
+            return $this->redirectToRoute('front_cours_show', ['id' => $coursId]);
         }
 
         // Find or Create Certificate
-        $certificate = $certRepo->findOneBy(['user' => $user, 'course' => $course]);
+        $certificate = $certRepo->findOneBy(['user' => $user, 'cours' => $cours]);
         if (!$certificate) {
             $certificate = new Certificate();
             $certificate->setUser($user);
-            $certificate->setCourse($course);
+            $certificate->setCours($cours);
             $certificate->setCertificateNumber('SKP-' . strtoupper(uniqid()));
             $em->persist($certificate);
             $em->flush();
@@ -189,7 +208,7 @@ class CoursFrontController extends AbstractController
 
         $html = $this->renderView('front/certificate/pdf.html.twig', [
             'studentName' => method_exists($user, 'getFirstName') && $user->getFirstName() ? $user->getFirstName() . ' ' . $user->getLastName() : ($user->getUserIdentifier() ?: $user->getEmail()),
-            'courseName' => $course->getName(),
+            'coursName' => $cours->getName(),
             'completionDate' => $certificate->getCreatedAt(),
             'certificateNumber' => $certificate->getCertificateNumber(),
             'sealPath' => $this->getParameter('kernel.project_dir') . '/public/images/academy_seal.png',
@@ -200,7 +219,7 @@ class CoursFrontController extends AbstractController
         $dompdf->render();
 
         $output = $dompdf->output();
-        $filename = 'certificat-' . strtolower(str_replace(' ', '-', $course->getName())) . '.pdf';
+        $filename = 'certificat-' . strtolower(str_replace(' ', '-', $cours->getName())) . '.pdf';
 
         return new Response($output, 200, [
             'Content-Type' => 'application/pdf',
