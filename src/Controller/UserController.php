@@ -320,6 +320,9 @@ class UserController extends AbstractController
             // 2. Mettre à jour les informations de base
             $user->setUsername($newUsername);
             $user->setEmail($newEmail);
+            $user->setDomaine($request->request->get('domaine'));
+            $user->setStyleDapprentissage($request->request->get('style_dapprentisage'));
+            $user->setNiveau($request->request->get('niveau'));
 
             // 3. Mettre à jour le mot de passe si fourni
             if (!empty($newPassword)) {

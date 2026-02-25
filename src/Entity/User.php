@@ -51,6 +51,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Gedmo\Timestampable(on: 'create')]
     private ?\DateTimeInterface $createdAt = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $domaine = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $styleDapprentissage = null;
+
+    #[ORM\Column(length: 100, nullable: true)]
+    private ?string $niveau = null;
+
     /**
      * @var Collection<int, Course>
      */
@@ -272,6 +281,39 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->favoriteEvents->removeElement($event);
 
+        return $this;
+    }
+
+    public function getDomaine(): ?string
+    {
+        return $this->domaine;
+    }
+
+    public function setDomaine(?string $domaine): static
+    {
+        $this->domaine = $domaine;
+        return $this;
+    }
+
+    public function getStyleDapprentissage(): ?string
+    {
+        return $this->styleDapprentissage;
+    }
+
+    public function setStyleDapprentissage(?string $styleDapprentissage): static
+    {
+        $this->styleDapprentissage = $styleDapprentissage;
+        return $this;
+    }
+
+    public function getNiveau(): ?string
+    {
+        return $this->niveau;
+    }
+
+    public function setNiveau(?string $niveau): static
+    {
+        $this->niveau = $niveau;
         return $this;
     }
 }
