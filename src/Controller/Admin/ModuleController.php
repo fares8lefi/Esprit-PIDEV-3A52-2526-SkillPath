@@ -46,6 +46,34 @@ class ModuleController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $documentFile = $form->get('documentFile')->getData();
+            if ($documentFile) {
+                $newFilename = uniqid() . '-' . $documentFile->getClientOriginalName();
+                try {
+                    $documentFile->move(
+                        $this->getParameter('modules_upload_dir'),
+                        $newFilename
+                    );
+                    $module->setDocument($newFilename);
+                } catch (\Exception $e) {
+                    $this->addFlash('error', 'Erreur lors de l\'upload du document.');
+                }
+            }
+
+            $imageFile = $form->get('imageFile')->getData();
+            if ($imageFile) {
+                $newImageName = uniqid() . '-' . $imageFile->getClientOriginalName();
+                try {
+                    $imageFile->move(
+                        $this->getParameter('modules_upload_dir'),
+                        $newImageName
+                    );
+                    $module->setImage($newImageName);
+                } catch (\Exception $e) {
+                    $this->addFlash('error', 'Erreur lors de l\'upload de l\'image.');
+                }
+            }
+
             $em->persist($module);
             $em->flush();
 
@@ -77,6 +105,37 @@ class ModuleController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $documentFile = $form->get('documentFile')->getData();
+            if ($documentFile) {
+                $newFilename = uniqid() . '-' . $documentFile->getClientOriginalName();
+                try {
+                    $documentFile->move(
+                        $this->getParameter('modules_upload_dir'),
+                        $newFilename
+                    );
+                    
+                    // Optionnel : Supprimer l'ancien fichier ici
+                    
+                    $module->setDocument($newFilename);
+                } catch (\Exception $e) {
+                    $this->addFlash('error', 'Erreur lors de l\'upload du document.');
+                }
+            }
+
+            $imageFile = $form->get('imageFile')->getData();
+            if ($imageFile) {
+                $newImageName = uniqid() . '-' . $imageFile->getClientOriginalName();
+                try {
+                    $imageFile->move(
+                        $this->getParameter('modules_upload_dir'),
+                        $newImageName
+                    );
+                    $module->setImage($newImageName);
+                } catch (\Exception $e) {
+                    $this->addFlash('error', 'Erreur lors de l\'upload de l\'image.');
+                }
+            }
+
             $em->flush();
 
             $this->addFlash('success', 'Module updated successfully.');

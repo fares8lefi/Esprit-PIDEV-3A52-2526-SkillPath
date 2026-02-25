@@ -39,6 +39,15 @@ class Course
     #[ORM\Column(type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $updatedAt = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $duration = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?float $price = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?float $rating = null;
+
     /**
      * @var Collection<int, Module>
      */
@@ -229,5 +238,38 @@ class Course
     public function __toString(): string
     {
         return $this->title ?? '';
+    }
+
+    public function getDuration(): ?int
+    {
+        return $this->duration;
+    }
+
+    public function setDuration(?int $duration): static
+    {
+        $this->duration = $duration;
+        return $this;
+    }
+
+    public function getPrice(): ?float
+    {
+        return $this->price;
+    }
+
+    public function setPrice(?float $price): static
+    {
+        $this->price = $price;
+        return $this;
+    }
+
+    public function getRating(): ?float
+    {
+        return $this->rating;
+    }
+
+    public function setRating(?float $rating): static
+    {
+        $this->rating = $rating;
+        return $this;
     }
 }

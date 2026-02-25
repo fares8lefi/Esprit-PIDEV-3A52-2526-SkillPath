@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}SkillPath - Apprendre autrement{% endblock %}</title>
 
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
+    <link rel="icon" href="{{ asset('images/logo.png') }}">
 
     <!-- Fonts: Inter & Outfit -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -34,6 +34,8 @@
                 html.classList.add('dark');
                 localStorage.setItem('theme', 'dark');
             }
+            // Dispatch event for components that need to react (like charts)
+            window.dispatchEvent(new Event('themeChanged'));
         }
     </script>
 
@@ -154,10 +156,11 @@
             .glass-card:hover {
                 transform: translateY(-6px);
                 box-shadow: 0 24px 48px -12px rgba(124,58,237,0.12);
+                border-color: rgba(124,58,237,0.3);
             }
             .dark .glass-card:hover {
                 box-shadow: 0 24px 48px -12px rgba(124,58,237,0.2);
-                border-color: rgba(124,58,237,0.2);
+                border-color: rgba(124,58,237,0.4);
             }
 
             /* -- Gradients -- */
@@ -327,13 +330,19 @@
                 color: #475569;
             }
 
-            /* -- Scrollbar (Dark Mode 2.0) -- */
-            ::-webkit-scrollbar { width: 6px; height: 6px; }
-            ::-webkit-scrollbar-track { background: transparent; }
-            ::-webkit-scrollbar-thumb { background: rgba(124,58,237,0.2); border-radius: 3px; }
-            ::-webkit-scrollbar-thumb:hover { background: rgba(124,58,237,0.4); }
-            .dark ::-webkit-scrollbar-thumb { background: rgba(167,139,250,0.2); }
-            .dark ::-webkit-scrollbar-thumb:hover { background: rgba(167,139,250,0.4); }
+            /* -- Scrollbar (Premium Minimal) -- */
+            .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
+            .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+            .custom-scrollbar::-webkit-scrollbar-thumb { 
+                background: rgba(124, 58, 237, 0.1); 
+                border-radius: 20px;
+                transition: background 0.3s;
+            }
+            .custom-scrollbar:hover::-webkit-scrollbar-thumb {
+                background: rgba(124, 58, 237, 0.3);
+            }
+            .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(167, 139, 250, 0.1); }
+            .dark .custom-scrollbar:hover::-webkit-scrollbar-thumb { background: rgba(167, 139, 250, 0.2); }
 
             /* -- Chat bubbles -- */
             .chat-user {

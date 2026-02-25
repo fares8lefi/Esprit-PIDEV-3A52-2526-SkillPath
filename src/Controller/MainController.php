@@ -4,46 +4,127 @@ namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use App\Repository\UserRepository;
 use App\Repository\CourseRepository;
 use App\Repository\ModuleRepository;
 use App\Repository\ReclamationRepository;
+use App\Repository\EventRepository;
+use App\Repository\ResultatRepository;
+
 
 class MainController extends AbstractController
 {
     #[Route('/', name: 'app_home')]
-    public function index(CourseRepository $courseRepository): Response
-    {
+    public function index(
+        Request $request, 
+        CourseRepository $courseRepository,
+        \App\Service\UserCourseViewService $viewService
+    ): Response {
+        $search = $request->query->get('search');
+        $level = $request->query->get('level');
+        $category = $request->query->get('category');
+
+        $courses = $courseRepository->findByFilters($search, $level, $category);
+        $categoriesCount = $courseRepository->countByCategories();
+
+        $recommendations = [];
+        $user = $this->getUser();
+        if ($user instanceof \App\Entity\User) {
+            $recommendations = $viewService->getRecommendations($user);
+        }
+
         return $this->render('FrontOffice/main/index.html.twig', [
-            'courses' => $courseRepository->findAll(),
+            'courses' => $courses,
+            'categoriesCount' => $categoriesCount,
+            'currentSearch' => $search,
+            'currentLevel' => $level,
+            'currentCategory' => $category,
+            'recommendedCourses' => $recommendations,
         ]);
     }
 
     #[Route('/admin', name: 'app_admin_dashboard')]
     #[IsGranted('ROLE_ADMIN')]
     public function adminDashboard(
-        UserRepository $userRepository,
-        CourseRepository $courseRepository,
+        UserRepository $userRepository, 
+        CourseRepository $courseRepository, 
         ModuleRepository $moduleRepository,
-        ReclamationRepository $reclamationRepository
+        ReclamationRepository $reclamationRepository,
+        EventRepository $eventRepository,
+        ResultatRepository $resultatRepository
     ): Response {
+        $users = $userRepository->findAll();
+        
+        // Roles Data
+        $rolesData = ['admin' => 0, 'user' => 0];
+        foreach ($users as $user) {
+            $role = strtolower($user->getRole() ?? 'user');
+            if (isset($rolesData[$role])) {
+                $rolesData[$role]++;
+            } else {
+                $rolesData['user']++;
+            }
+        }
+
+        // Categories Data
+        $courses = $courseRepository->findAll();
+        $categoriesData = [];
+        foreach ($courses as $course) {
+            $cat = $course->getCategory() ?: 'Non classé';
+            $categoriesData[$cat] = ($categoriesData[$cat] ?? 0) + 1;
+        }
+
+        // Reclamation Data
         $reclamations = $reclamationRepository->findAll();
-        $pendingCount = count(array_filter($reclamations, fn($r) => in_array(strtolower($r->getStatut()), ['pending', 'en attente'])));
-        $resolvedCount = count(array_filter($reclamations, fn($r) => in_array(strtolower($r->getStatut()), ['resolved', 'résolu'])));
+        $reclamationStats = ['Pending' => 0, 'In Progress' => 0, 'Resolved' => 0, 'Closed' => 0];
+        foreach ($reclamations as $reclamation) {
+            $status = $reclamation->getStatut() ?: 'Pending';
+            if (isset($reclamationStats[$status])) {
+                $reclamationStats[$status]++;
+            } else {
+                $map = ['En attente' => 'Pending', 'En cours' => 'In Progress', 'Traité' => 'Resolved'];
+                $mapped = $map[$status] ?? 'Pending';
+                $reclamationStats[$mapped]++;
+            }
+        }
+
+        // Registration Data (Last 7 days)
+        $registrationData = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $date = (new \DateTime())->modify("-$i days")->format('Y-m-d');
+            $registrationData[$date] = 0;
+        }
+        foreach ($users as $user) {
+            if ($user->getCreatedAt()) {
+                $date = $user->getCreatedAt()->format('Y-m-d');
+                if (isset($registrationData[$date])) {
+                    $registrationData[$date]++;
+                }
+            }
+        }
 
         return $this->render('BackOffice/main/dashboard.html.twig', [
-            'userCount'      => $userRepository->count([]),
-            'courseCount'    => $courseRepository->count([]),
-            'moduleCount'    => $moduleRepository->count([]),
+            'userCount' => count($users),
+            'courseCount' => count($courses),
+            'moduleCount' => $moduleRepository->count([]),
             'reclamationCount' => count($reclamations),
-            'pendingCount'   => $pendingCount,
-            'resolvedCount'  => $resolvedCount,
-            'recentUsers'    => $userRepository->findBy([], ['id' => 'DESC'], 5),
-            'recentReclamations' => $reclamationRepository->findBy([], ['id' => 'DESC'], 4),
+            'eventCount' => $eventRepository->count([]),
+            'resultatCount' => $resultatRepository->count([]),
+            'recentUsers' => $userRepository->findBy([], ['id' => 'DESC'], 5),
+            'rolesLabels' => array_keys($rolesData),
+            'rolesValues' => array_values($rolesData),
+            'categoriesLabels' => array_keys($categoriesData),
+            'categoriesValues' => array_values($categoriesData),
+            'reclamationLabels' => array_keys($reclamationStats),
+            'reclamationValues' => array_values($reclamationStats),
+            'registrationLabels' => array_keys($registrationData),
+            'registrationValues' => array_values($registrationData),
         ]);
     }
+
 
     #[Route('/redirect-home', name: 'app_home_redirect')]
     public function redirectHome(): Response

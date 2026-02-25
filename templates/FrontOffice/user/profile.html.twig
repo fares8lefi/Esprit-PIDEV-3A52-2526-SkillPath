@@ -61,36 +61,27 @@
 
                         <div class="grid grid-cols-2 gap-4">
                             <div class="bg-primary/5 dark:bg-primary/10 p-4 rounded-2xl border border-primary/10 dark:border-primary/20">
-                                <p class="text-[10px] font-black uppercase tracking-widest text-primary dark:text-primary-light mb-1">Rangement</p>
-                                <p class="text-xl font-black text-slate-900 dark:text-white">#42</p>
+                                <p class="text-[10px] font-black uppercase tracking-widest text-primary dark:text-primary-light mb-1">Modules</p>
+                                <p class="text-xl font-black text-slate-900 dark:text-white">{{ user.courses|length }}</p>
                             </div>
                             <div class="bg-mint/5 dark:bg-mint/10 p-4 rounded-2xl border border-mint/10 dark:border-mint/20">
                                 <p class="text-[10px] font-black uppercase tracking-widest text-mint mb-1">Badge</p>
-                                <p class="text-xl font-black text-slate-900 dark:text-white">Starter</p>
+                                <p class="text-xl font-black text-slate-900 dark:text-white">Student</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="glass-card p-8 rounded-3xl">
-                    <h4 class="text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-6 px-2">Statistiques de formation</h4>
+                    <h4 class="text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-6 px-2">Récapitulatif Rapide</h4>
                     <div class="space-y-6">
-                        <div class="space-y-2">
-                            <div class="flex justify-between text-xs font-black text-slate-600 dark:text-slate-400 uppercase">
-                                <span>Progression globale</span>
-                                <span>65%</span>
+                        <div class="flex items-center gap-4 p-4 rounded-2xl bg-white/5 border border-white/5">
+                            <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                             </div>
-                            <div class="progress-bar">
-                                <div class="progress-bar-fill" style="width: 65%"></div>
-                            </div>
-                        </div>
-                        <div class="space-y-2">
-                            <div class="flex justify-between text-xs font-black text-slate-600 dark:text-slate-400 uppercase">
-                                <span>Modules complétés</span>
-                                <span>4/12</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-bar-fill" style="width: 33%"></div>
+                            <div>
+                                <p class="text-xl font-black text-slate-900 dark:text-white">{{ user.courses|length }}</p>
+                                <p class="text-[10px] font-bold text-slate-500 uppercase">Cours Inscrits</p>
                             </div>
                         </div>
                     </div>
@@ -99,7 +90,8 @@
 
             <!-- Settings Form -->
             <div class="lg:col-span-2 animate-fade-up delay-200">
-                <div class="glass-card p-10 lg:p-14 rounded-3xl shadow-2xl relative overflow-hidden">
+                <div class="glass-card p-10 lg:p-14 rounded-3xl shadow-2xl relative overflow-hidden mb-12">
+                    <h4 class="text-xs font-black uppercase tracking-[0.2em] text-primary mb-8 ml-1">Paramètres du Compte</h4>
                     <form action="{{ path('app_user_profile') }}" method="POST" class="space-y-10">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                             <div class="space-y-2">
@@ -123,16 +115,50 @@
                                    placeholder="8 caractères minimum — Laissez vide pour ne pas changer">
                         </div>
 
+                        <!-- ML Features Section -->
+                        <div class="pt-6 border-t border-slate-100 dark:border-white/5">
+                            <h4 class="text-xs font-black uppercase tracking-[0.2em] text-primary mb-6 ml-1">Préférences d'Apprentissage (IA)</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                <div class="space-y-2">
+                                    <label class="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">Domaine d'intérêt</label>
+                                    <input type="text" name="domaine" value="{{ user.domaine }}"
+                                           class="form-input"
+                                           placeholder="ex: Développement Web, Design...">
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">Style d'apprentissage</label>
+                                    <select name="style_dapprentisage" class="form-input">
+                                        <option value="">Sélectionner un style</option>
+                                        <option value="visuel" {{ user.styleDapprentissage == 'visuel' ? 'selected' : '' }}>Visuel (Vidéos, Schémas)</option>
+                                        <option value="auditif" {{ user.styleDapprentissage == 'auditif' ? 'selected' : '' }}>Auditif (Audio, Podcasts)</option>
+                                        <option value="kinesthesique" {{ user.styleDapprentissage == 'kinesthesique' ? 'selected' : '' }}>Kinesthésique (Pratique, Code)</option>
+                                        <option value="lecture" {{ user.styleDapprentissage == 'lecture' ? 'selected' : '' }}>Lecture / Écriture</option>
+                                    </select>
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">Niveau Actuel</label>
+                                    <select name="niveau" class="form-input">
+                                        <option value="">Sélectionner un niveau</option>
+                                        <option value="Débutant" {{ user.niveau == 'Débutant' ? 'selected' : '' }}>Débutant</option>
+                                        <option value="Intermédiaire" {{ user.niveau == 'Intermédiaire' ? 'selected' : '' }}>Intermédiaire</option>
+                                        <option value="Avancé" {{ user.niveau == 'Avancé' ? 'selected' : '' }}>Avancé</option>
+                                        <option value="Expert" {{ user.niveau == 'Expert' ? 'selected' : '' }}>Expert</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-4 ml-1">💡 Ces informations permettent à notre IA de personnaliser vos recommandations.</p>
+                        </div>
+
                         <div class="bg-slate-900 dark:bg-slate-950 rounded-2xl p-8 relative overflow-hidden group">
                             <div class="absolute inset-0 gradient-primary opacity-0 group-hover:opacity-5 transition-opacity"></div>
                             <div class="relative z-10">
-                                <label class="flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-primary-light mb-4">
+                                <label class="flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-primary-light mb-4 text-white">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                                     Vérification de sécurité
                                 </label>
                                 <input type="password" name="current_password" required
                                        class="w-full bg-white/10 border border-white/10 rounded-2xl py-4 px-6 focus:bg-white/20 focus:outline-none focus:border-primary/40 focus:ring-4 focus:ring-primary/10 transition-all outline-none text-white placeholder-slate-500"
-                                       placeholder="Saisissez votre mot de passe actuel pour valider les changements">
+                                       placeholder="Saisissez votre mot de passe actuel pour valider">
                             </div>
                         </div>
 
@@ -140,6 +166,60 @@
                             Enregistrer les modifications
                         </button>
                     </form>
+                </div>
+
+                <!-- My Courses Section -->
+                <div class="animate-fade-up delay-300">
+                    <div class="flex items-center justify-between mb-8 px-2">
+                        <div>
+                            <span class="text-xs font-black uppercase tracking-[0.2em] text-slate-400 block mb-1">Mon Apprentissage</span>
+                            <h2 class="text-3xl font-black text-slate-900 dark:text-white">Mes Formations <span class="text-primary">Inscrites</span></h2>
+                        </div>
+                        <a href="{{ path('app_home') }}#catalogue" class="text-sm font-bold text-primary hover:underline flex items-center gap-2 transition-all">
+                            Voir le Catalogue
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                        </a>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {% for course in user.courses %}
+                        <div class="glass-card group p-6 rounded-[2rem] border border-white/5 hover:border-primary/30 transition-all duration-500 flex flex-col">
+                            <div class="flex items-start gap-5 mb-6">
+                                <div class="w-16 h-16 rounded-2xl overflow-hidden glass shrink-0 border border-white/10">
+                                    {% if course.image %}
+                                        <img src="{{ asset('uploads/modules/' ~ course.image) }}" class="w-full h-full object-cover">
+                                    {% else %}
+                                        <div class="w-full h-full gradient-primary flex items-center justify-center text-xl font-black text-white">
+                                            {{ course.title|first }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="min-w-0">
+                                    <h4 class="text-lg font-bold text-slate-900 dark:text-white truncate group-hover:text-primary transition-colors">{{ course.title }}</h4>
+                                    <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mt-1">{{ course.level }}</p>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-auto pt-6 border-t border-slate-100 dark:border-white/5 flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
+                                    <span class="text-xs font-bold text-slate-500">En cours</span>
+                                </div>
+                                <a href="{{ path('front_course_show', {id: course.id}) }}" class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="col-span-full py-20 text-center glass rounded-[2.5rem] border-2 border-dashed border-slate-200/50 dark:border-white/10">
+                            <div class="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-4 text-slate-400">
+                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                            </div>
+                            <p class="text-slate-500 font-bold mb-6">Vous n'êtes inscrit à aucun cours pour le moment.</p>
+                            <a href="{{ path('app_home') }}#catalogue" class="btn-primary !py-3 !px-6 mx-auto">Découvrir le Catalogue</a>
+                        </div>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
         </div>

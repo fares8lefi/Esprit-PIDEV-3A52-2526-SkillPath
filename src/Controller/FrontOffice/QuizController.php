@@ -208,6 +208,19 @@ class QuizController extends AbstractController
 
                 try {
                     $entityManager->persist($resultat);
+                    
+                    // Synchronisation avec UserCourseView pour l'IA
+                    $course = $quiz->getCourse();
+                    if ($course) {
+                        $viewRepository = $entityManager->getRepository(\App\Entity\UserCourseView::class);
+                        $view = $viewRepository->findByUserAndCourse($user->getId(), $course->getId());
+                        
+                        if ($view) {
+                            $view->setQuizScore($score);
+                            $entityManager->persist($view);
+                        }
+                    }
+
                     $entityManager->flush();
                 } catch (\Exception $e) {
                     // Log error but continue

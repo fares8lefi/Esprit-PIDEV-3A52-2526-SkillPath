@@ -189,10 +189,19 @@ class UserController extends AbstractController
     }
 
     #[Route('/', name: 'app_user_index', methods: ['GET'])]
-    public function index(UserRepository $userRepository): Response
+    public function index(Request $request, UserRepository $userRepository): Response
     {
+        $query = $request->query->get('q');
+        $role = $request->query->get('role');
+        $status = $request->query->get('status');
+
+        $users = $userRepository->findByAdvancedSearch($query, $role, $status);
+
         return $this->render('BackOffice/user/index.html.twig', [
-            'users' => $userRepository->findAll(),
+            'users' => $users,
+            'currentQuery' => $query,
+            'currentRole' => $role,
+            'currentStatus' => $status,
         ]);
     }
 
@@ -311,6 +320,9 @@ class UserController extends AbstractController
             // 2. Mettre à jour les informations de base
             $user->setUsername($newUsername);
             $user->setEmail($newEmail);
+            $user->setDomaine($request->request->get('domaine'));
+            $user->setStyleDapprentissage($request->request->get('style_dapprentisage'));
+            $user->setNiveau($request->request->get('niveau'));
 
             // 3. Mettre à jour le mot de passe si fourni
             if (!empty($newPassword)) {

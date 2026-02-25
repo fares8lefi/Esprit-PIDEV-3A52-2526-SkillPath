@@ -11,10 +11,36 @@ use Symfony\Component\Routing\Annotation\Route;
 class ModuleController extends AbstractController
 {
     #[Route('/{id}', name: 'app_front_office_module_show', methods: ['GET'])]
-    public function show(Module $module): Response
+    public function show(Module $module, \App\Service\UserCourseViewService $viewService): Response
     {
+        $user = $this->getUser();
+        if (!$user instanceof \App\Entity\User) {
+            $this->addFlash('error', 'Vous devez être connecté pour accéder au contenu.');
+            return $this->redirectToRoute('app_user_login');
+        }
+
+        if (!$viewService->isUserEnrolled($user, $module->getCourse())) {
+            $this->addFlash('warning', 'Vous devez vous inscrire à ce cours pour accéder à ses modules.');
+            return $this->redirectToRoute('front_course_show', ['id' => $module->getCourse()->getId()]);
+        }
+
+        // Enregistrer la vue du module (crée l'entrée si inexistante)
+        $viewService->recordView($user, $module->getCourse());
+
         return $this->render('FrontOffice/module/show.html.twig', [
             'module' => $module,
         ]);
+    }
+
+    #[Route('/{id}/heartbeat', name: 'app_front_office_module_heartbeat', methods: ['POST'])]
+    public function heartbeat(Module $module, \App\Service\UserCourseViewService $viewService): \Symfony\Component\HttpFoundation\JsonResponse
+    {
+        $user = $this->getUser();
+        if ($user instanceof \App\Entity\User) {
+            $view = $viewService->recordView($user, $module->getCourse());
+            $viewService->updateTimeSpent($view, 1); // Incrémente de 1 minute
+            return new \Symfony\Component\HttpFoundation\JsonResponse(['status' => 'success', 'time' => $view->getTimeSpent()]);
+        }
+        return new \Symfony\Component\HttpFoundation\JsonResponse(['status' => 'error'], 403);
     }
 }
