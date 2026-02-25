@@ -61,20 +61,14 @@
                             </div>
                             <div>
                                 <h3 class="text-sm font-black {% if percentage >= 80 %}text-purple-900 dark:text-purple-300{% elseif percentage >= 50 %}text-blue-900 dark:text-blue-300{% else %}text-orange-900 dark:text-orange-300{% endif %} mb-1 flex items-center gap-2">Analyse IA du Niveau <span class="badge bg-white/50 dark:bg-black/20 px-2 py-0.5 !text-[10px]">Généré Automatiquement</span></h3>
-                                <p class="text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-medium">
-                                    {% if percentage == 100 %}
-                                        "Excellente maîtrise ! Vous avez atteint la perfection sur ce module. Votre niveau d'expertise est solide, vous êtes prêt pour des concepts beaucoup plus avancés."
-                                    {% elseif percentage >= 80 %}
-                                        "Très bon niveau global ! Vous avez assimilé la grande majorité des concepts. Une petite révision sur vos quelques erreurs suffira à consolider votre expertise."
-                                    {% elseif percentage >= 60 %}
-                                        "Niveau intermédiaire atteint. Vous comprenez les bases, mais il reste des zones d'ombre. Consacrez du temps à relire les documents de cours avant de passer à l'étape suivante."
-                                    {% elseif percentage >= 40 %}
-                                        "Niveau de base en cours d'acquisition. Vous avez saisi quelques points, mais les fondations sont encore fragiles. Une révision complète du cours est fortement conseillée."
-                                    {% elseif percentage >= 20 %}
-                                        "Difficultés détectées. L'IA note des lacunes profondes sur ce sujet. Nous vous suggérons de reprendre le module depuis le début et de pratiquer davantage."
-                                    {% else %}
-                                        "Niveau critique. Il semblerait que vous n'ayez pu valider aucun pré-requis. L'IA vous recommande de demander de l'aide à un mentor ou de revoir l'entièreté de la base théorique."
-                                    {% endif %}
+                                <p id="ai-feedback-text" class="text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-medium">
+                                    <span class="inline-flex flex-col gap-2">
+                                        <span class="inline-flex items-center gap-2">
+                                            <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                            L'IA génère votre feedback personnalisé...
+                                        </span>
+                                        <span class="text-xs text-slate-500 italic">Cela peut prendre jusqu'à une minute selon la puissance de votre ordinateur. Merci de patienter !</span>
+                                    </span>
                                 </p>
                             </div>
                         </div>
@@ -193,6 +187,25 @@
             content.classList.remove('scale-90');
             content.classList.add('scale-100');
         }, 800);
+
+        // Fetch AI Feedback
+        const feedbackEl = document.getElementById('ai-feedback-text');
+        if (feedbackEl) {
+            const prompt = `Agis comme un professeur. Donne-moi un court message de feedback (2-3 phrases maximum) pour un étudiant qui vient de terminer un quiz sur le thème "{{ quiz.titre|escape('js') }}". Son score final est de {{ score }} sur {{ totalPoints }}. Parle-lui directement avec un ton encourageant.`;
+            
+            fetch("{{ path('api_tutor') }}", {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ question: prompt, mode: 'feedback' })
+            })
+            .then(res => res.json())
+            .then(data => {
+                feedbackEl.innerHTML = `"${data.answer.replace(/\n/g, '<br>')}"`;
+            })
+            .catch(err => {
+                feedbackEl.innerText = "L'analyse IA n'est pas disponible pour le moment.";
+            });
+        }
     });
 
     function closeFunFact() {

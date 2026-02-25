@@ -6,6 +6,8 @@ parameters:
   hf_token: '%env(HF_TOKEN)%'
   hf_model: '%env(HF_MODEL)%'
   reclamations_directory: '%kernel.project_dir%/public/uploads/reclamations'
+  ollama_url: '%env(OLLAMA_URL)%'
+  ollama_model: '%env(OLLAMA_MODEL)%'
 
 services:
   _defaults:
@@ -19,10 +21,10 @@ services:
       - '../src/Entity/'
       - '../src/Kernel.php'
 
-  App\Service\HuggingFaceTutorService:
+  App\Service\OllamaTutorService:
     arguments:
-      $hfToken: '%hf_token%'
-      $hfModel: '%hf_model%'
+      $ollamaUrl: '%ollama_url%'
+      $ollamaModel: '%ollama_model%'
 
   App\Service\AIService:
     arguments:

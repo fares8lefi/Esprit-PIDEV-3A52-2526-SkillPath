@@ -4,16 +4,16 @@ namespace App\Service;
 
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class HuggingFaceTutorService
+class OllamaTutorService
 {
-    private string $hfToken;
-    private string $hfModel;
+    private string $ollamaUrl;
+    private string $ollamaModel;
     private HttpClientInterface $http;
 
-    public function __construct(string $hfToken, string $hfModel, HttpClientInterface $http)
+    public function __construct(string $ollamaUrl, string $ollamaModel, HttpClientInterface $http)
     {
-        $this->hfToken = trim($hfToken);
-        $this->hfModel = trim($hfModel);
+        $this->ollamaUrl = rtrim(trim($ollamaUrl), '/');
+        $this->ollamaModel = trim($ollamaModel);
         $this->http = $http;
     }
 
@@ -23,8 +23,8 @@ class HuggingFaceTutorService
             return "Écris une question 🙂";
         }
 
-        if ($this->hfToken === '' || $this->hfModel === '') {
-            return "Config manquante : vérifie HF_TOKEN et HF_MODEL dans .env.local";
+        if ($this->ollamaUrl === '' || $this->ollamaModel === '') {
+            return "Config manquante : vérifie OLLAMA_URL et OLLAMA_MODEL dans .env.local";
         }
 
         // Instruction système (rôle tuteur)
@@ -36,44 +36,47 @@ class HuggingFaceTutorService
         $user = "Question: {$question}\n\n"
               . "Contexte (cours/texte):\n{$context}";
 
-        // ✅ Endpoint Router correct (sans /hf-inference/)
-        $url = "https://router.huggingface.co/v1/chat/completions";
+        // Endpoint Ollama
+        $url = "{$this->ollamaUrl}/api/chat";
 
         try {
             $response = $this->http->request('POST', $url, [
                 'headers' => [
-                    'Authorization' => 'Bearer ' . $this->hfToken,
                     'Content-Type'  => 'application/json',
                 ],
                 'json' => [
-                    'model' => $this->hfModel,
+                    'model' => $this->ollamaModel,
                     'messages' => [
                         ['role' => 'system', 'content' => $system],
                         ['role' => 'user', 'content' => $user],
                     ],
-                    'temperature' => 0.4,
-                    'max_tokens' => 400,
+                    'stream' => false,
+                    'options' => [
+                        'temperature' => 0.4,
+                        'num_predict' => 80 // Reduced for much faster local generation
+                    ]
                 ],
+                'timeout' => 120 // 2 minutes just in case the PC is slow
             ]);
 
             $status = $response->getStatusCode();
-            $data = $response->toArray(false); // false = ne plante pas si JSON erreur
+            $data = $response->toArray(false); // false = don't throw exception on bad status
 
             if ($status >= 400) {
-                // message d'erreur HF lisible
-                $msg = $data['error']['message'] ?? $data['message'] ?? json_encode($data);
+                // message d'erreur Lisible de l'API Ollama
+                $msg = $data['error'] ?? $data['message'] ?? json_encode($data);
                 return "Erreur IA: " . $msg;
             }
 
-            $content = $data['choices'][0]['message']['content'] ?? null;
+            $content = $data['message']['content'] ?? null;
             if (!$content) {
-                return "Erreur IA: réponse vide (vérifie HF_MODEL et les providers).";
+                return "Erreur IA: réponse vide (vérifie si le modèle `{$this->ollamaModel}` est bien téléchargé).";
             }
 
             return $content;
 
         } catch (\Throwable $e) {
-            return "Erreur IA: " . $e->getMessage();
+            return "Erreur IA: Impossible de se connecter à Ollama (" . $e->getMessage() . "). Assure-toi que l'application Ollama est lancée.";
         }
     }
 }
