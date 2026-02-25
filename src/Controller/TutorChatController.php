@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Service\HuggingFaceTutorService;
+use App\Service\OllamaTutorService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -11,7 +11,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class TutorChatController extends AbstractController
 {
     #[Route('/api/tutor', name: 'api_tutor', methods: ['POST'])]
-    public function tutor(Request $request, HuggingFaceTutorService $tutor): JsonResponse
+    public function tutor(Request $request, OllamaTutorService $tutor): JsonResponse
     {
         $payload = json_decode($request->getContent(), true);
         if (!is_array($payload)) {

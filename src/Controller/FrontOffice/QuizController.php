@@ -24,7 +24,7 @@ class QuizController extends AbstractController
     public function index(Request $request, QuizRepository $quizRepository, HttpClientInterface $httpClient, PaginatorInterface $paginator): Response
     {
         $search = $request->query->get('search');
-        $sort = $request->query->get('sort');
+        $sort = $request->query->get('tri');
 
         $queryBuilder = $quizRepository->searchAndSortQuery($search, $sort);
 
@@ -69,14 +69,16 @@ class QuizController extends AbstractController
     public function history(Request $request, ResultatRepository $resultatRepository, PaginatorInterface $paginator): Response
     {
         $user = $this->getUser();
-        $queryBuilder = [];
+        
+        if (!$user) {
+            $this->addFlash('warning', 'Vous devez être connecté pour voir votre historique.');
+            return $this->redirectToRoute('app_user_login');
+        }
 
-        if ($user) {
-            $queryBuilder = $resultatRepository->createQueryBuilder('r')
+        $queryBuilder = $resultatRepository->createQueryBuilder('r')
                 ->where('r.etudiant = :user')
                 ->setParameter('user', $user)
                 ->orderBy('r.datePassage', 'DESC');
-        }
 
         $resultats = $paginator->paginate(
             $queryBuilder,
@@ -127,6 +129,12 @@ class QuizController extends AbstractController
     #[Route('/{id}/adaptive', name: 'app_front_office_quiz_adaptive', methods: ['GET', 'POST'])]
     public function adaptive(Request $request, Quiz $quiz, EntityManagerInterface $entityManager): Response
     {
+        $user = $this->getUser();
+        if (!$user) {
+            $this->addFlash('warning', 'Vous devez être connecté pour passer un quiz.');
+            return $this->redirectToRoute('app_user_login');
+        }
+
         if ($request->isMethod('POST')) {
             $score = 0;
             $questions = $quiz->getQuestions();
@@ -157,7 +165,7 @@ class QuizController extends AbstractController
                     $entityManager->persist($resultat);
                     $entityManager->flush();
                 } catch (\Exception $e) {
-                    // Log error but continue
+                    $this->addFlash('error', 'Erreur lors de la sauvegarde de votre résultat : ' . $e->getMessage());
                 }
             }
 
@@ -180,6 +188,12 @@ class QuizController extends AbstractController
     #[Route('/{id}/take', name: 'app_front_office_quiz_take', methods: ['GET', 'POST'])]
     public function take(Request $request, Quiz $quiz, EntityManagerInterface $entityManager): Response
     {
+        $user = $this->getUser();
+        if (!$user) {
+            $this->addFlash('warning', 'Vous devez être connecté pour passer un quiz.');
+            return $this->redirectToRoute('app_user_login');
+        }
+
         if ($request->isMethod('POST')) {
             $score = 0;
             $questions = $quiz->getQuestions();
@@ -210,7 +224,7 @@ class QuizController extends AbstractController
                     $entityManager->persist($resultat);
                     $entityManager->flush();
                 } catch (\Exception $e) {
-                    // Log error but continue
+                    $this->addFlash('error', 'Erreur lors de la sauvegarde de votre résultat : ' . $e->getMessage());
                 }
             }
 

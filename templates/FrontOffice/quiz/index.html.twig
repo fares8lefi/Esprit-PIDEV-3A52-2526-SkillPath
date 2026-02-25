@@ -57,7 +57,7 @@
                         <input type="text" name="search" value="{{ current_search }}" placeholder="Rechercher un quiz..." class="bg-transparent border-none focus:outline-none text-sm w-full text-slate-900 dark:text-white placeholder-slate-400 font-medium">
                     </div>
                 </div>
-                <select name="sort" onchange="this.form.submit()" class="form-input !w-auto !py-3 min-w-[180px] cursor-pointer text-sm">
+                <select name="tri" onchange="this.form.submit()" class="form-input !w-auto !py-3 min-w-[180px] cursor-pointer text-sm">
                     <option value="" disabled {% if not current_sort %}selected{% endif %}>Trier par...</option>
                     <option value="duree_asc" {% if current_sort == 'duree_asc' %}selected{% endif %}>Durée ↑ (Courte)</option>
                     <option value="duree_desc" {% if current_sort == 'duree_desc' %}selected{% endif %}>Durée ↓ (Longue)</option>
