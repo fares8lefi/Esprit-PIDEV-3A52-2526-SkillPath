@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use App\Repository\UserRepository;
@@ -16,10 +17,31 @@ use App\Repository\ResultatRepository;
 class MainController extends AbstractController
 {
     #[Route('/', name: 'app_home')]
-    public function index(CourseRepository $courseRepository): Response
-    {
+    public function index(
+        Request $request, 
+        CourseRepository $courseRepository,
+        \App\Service\UserCourseViewService $viewService
+    ): Response {
+        $search = $request->query->get('search');
+        $level = $request->query->get('level');
+        $category = $request->query->get('category');
+
+        $courses = $courseRepository->findByFilters($search, $level, $category);
+        $categoriesCount = $courseRepository->countByCategories();
+
+        $recommendations = [];
+        $user = $this->getUser();
+        if ($user instanceof \App\Entity\User) {
+            $recommendations = $viewService->getRecommendations($user);
+        }
+
         return $this->render('FrontOffice/main/index.html.twig', [
-            'courses' => $courseRepository->findAll(),
+            'courses' => $courses,
+            'categoriesCount' => $categoriesCount,
+            'currentSearch' => $search,
+            'currentLevel' => $level,
+            'currentCategory' => $category,
+            'recommendedCourses' => $recommendations,
         ]);
     }
 
