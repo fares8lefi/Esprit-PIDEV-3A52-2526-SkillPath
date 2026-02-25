@@ -19,9 +19,13 @@ final class Version20260211105622 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        // Adjustments for legacy content/cours/module/user have already been
-        // applied by later migrations or manual changes.
-        // This migration is treated as a no-op to avoid errors on missing tables/columns.
+        // this up() migration is auto-generated, please modify it to your needs
+        $this->addSql('ALTER TABLE content DROP FOREIGN KEY `FK_FEC530A9AFC2B591`');
+        $this->addSql('DROP TABLE content');
+        $this->addSql('ALTER TABLE cours CHANGE contenu contenu LONGTEXT NOT NULL, CHANGE type type VARCHAR(50) NOT NULL, CHANGE module_id module_id INT NOT NULL, CHANGE created_at created_at DATETIME NOT NULL, CHANGE updated_at updated_at DATETIME DEFAULT NULL');
+        $this->addSql('ALTER TABLE cours ADD CONSTRAINT FK_FDCA8C9CAFC2B591 FOREIGN KEY (module_id) REFERENCES module (id)');
+        $this->addSql('ALTER TABLE module CHANGE name name VARCHAR(120) NOT NULL, CHANGE description description LONGTEXT DEFAULT NULL, CHANGE date_creation date_creation DATETIME NOT NULL, CHANGE level level VARCHAR(30) NOT NULL, CHANGE image image VARCHAR(255) DEFAULT NULL');
+        $this->addSql('ALTER TABLE user ADD password VARCHAR(255) NOT NULL');
     }
 
     public function down(Schema $schema): void

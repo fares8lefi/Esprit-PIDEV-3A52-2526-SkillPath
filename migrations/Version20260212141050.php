@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20260211132726 extends AbstractMigration
+final class Version20260212141050 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -19,8 +19,8 @@ final class Version20260211132726 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        // Legacy cours/user transition migration kept as no-op. The table
-        // structure it expects is not present on a clean install at this point.
+        // Duplicate transitional migration from an inconsistent schema snapshot.
+        // Keep no-op to avoid conflicts in the canonical migration chain.
     }
 
     public function down(Schema $schema): void
