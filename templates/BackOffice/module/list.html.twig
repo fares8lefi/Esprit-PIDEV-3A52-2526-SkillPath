@@ -139,7 +139,7 @@
                             <select name="cours" onchange="this.closest('form').submit()"
                                     class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-blue focus:border-transparent">
                                 <option value="">Toutes les formations</option>
-                                {% for cour in courses %}
+                                {% for cour in cours %}
                                     <option value="{{ cour.id }}" {{ app.request.get('cours') == cour.id ? 'selected' : '' }}>
                                         {{ cour.titre }}
                                     </option>

@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ course.name }} - SkillPathOff{% endblock %}
+{% block title %}{{ cours.name }} - SkillPathOff{% endblock %}
 
 {% block body %}
     <div class="bg-gray-50 min-h-screen font-sans pb-20">
@@ -11,25 +11,39 @@
              <div class="absolute inset-0 bg-gradient-to-br from-brand-blue/20 to-transparent"></div>
              
              <div class="container mx-auto max-w-5xl relative z-10">
-                <a href="{{ path('front_courses_index') }}" class="inline-flex items-center text-white/70 hover:text-white transition-colors font-medium text-sm mb-8 group">
-                    <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center mr-3 group-hover:bg-white/20 transition-colors">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                    </div>
-                    Retour à la liste des cours
-                </a>
+                <div class="flex items-center justify-between mb-8">
+                    <a href="{{ path('front_cours_index') }}" class="inline-flex items-center text-white/70 hover:text-white transition-colors font-medium text-sm group">
+                        <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center mr-3 group-hover:bg-white/20 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                        </div>
+                        Retour à la liste des cours
+                    </a>
+                    {% if app.user %}
+                        <a href="{{ path('front_notifications_index') }}" class="relative inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/10 border border-white/20 text-white hover:bg-white hover:text-brand-dark transition">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                            </svg>
+                            {% if unreadCount is defined and unreadCount > 0 %}
+                                <span class="absolute -top-1 -right-1 inline-flex items-center justify-center px-1.5 py-0.5 rounded-full bg-red-500 text-white text-[10px] font-bold">
+                                    {{ unreadCount > 9 ? '9+' : unreadCount }}
+                                </span>
+                            {% endif %}
+                        </a>
+                    {% endif %}
+                </div>
 
                 <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
                     <div class="max-w-3xl">
                         <div class="flex items-center gap-3 mb-4">
                             <span class="px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-white bg-brand-blue rounded-lg shadow-lg shadow-brand-blue/30">
-                                {{ course.level }}
+                                {{ cours.level }}
                             </span>
                             <span class="text-white/60 text-sm flex items-center gap-2">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                Mis à jour le {{ course.createdAt|date('d M Y') }}
+                                Mis à jour le {{ cours.createdAt|date('d M Y') }}
                             </span>
                         </div>
-                        <h1 class="text-4xl md:text-5xl font-extrabold text-white leading-tight mb-2">{{ course.name }}</h1>
+                        <h1 class="text-4xl md:text-5xl font-extrabold text-white leading-tight mb-2">{{ cours.name }}</h1>
                     </div>
                 </div>
              </div>
@@ -43,8 +57,8 @@
                     {# Image & Content Card #}
                     <div class="bg-white rounded-3xl shadow-xl shadow-gray-200/50 overflow-hidden border border-gray-100">
                         <div class="h-80 w-full relative">
-                             {% if course.image %}
-                                <img src="{{ asset('uploads/modules/' ~ course.image) }}" alt="{{ course.name }}" class="w-full h-full object-cover">
+                             {% if cours.image %}
+                                <img src="{{ asset('uploads/modules/' ~ cours.image) }}" alt="{{ cours.name }}" class="w-full h-full object-cover">
                                 <div class="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-white to-transparent"></div>
                             {% else %}
                                 <div class="w-full h-full bg-brand-gray flex items-center justify-center text-gray-300">
@@ -56,7 +70,7 @@
                         <div class="px-8 pb-12">
                             <h2 class="text-2xl font-bold text-brand-dark mb-6">À propos de ce cours</h2>
                             <div class="prose prose-lg prose-slate max-w-none text-brand-dark/70 font-normal leading-relaxed">
-                                <p>{{ course.description|nl2br }}</p>
+                                <p>{{ cours.description|nl2br }}</p>
                             </div>
                         </div>
                     </div>
@@ -69,12 +83,12 @@
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
                                 </div>
                                 Programme complet 
-                                <span class="text-brand-muted text-lg font-normal ml-2">({{ course.modules|length }} chapitres)</span>
+                                <span class="text-brand-muted text-lg font-normal ml-2">({{ cours.modules|length }} chapitres)</span>
                             </h2>
                         </div>
                         
                         <div class="space-y-4">
-                            {% for module in course.modules %}
+                            {% for module in cours.modules %}
                                 {% set isFuture = module.scheduledAt > now %}
                                 <div class="relative">
                                     {% if isFuture %}
@@ -96,7 +110,7 @@
                                             </div>
                                         </div>
                                     {% else %}
-                                        <a href="{{ path('front_courses_module_show', {courseId: course.id, moduleId: module.id}) }}" class="block">
+                                        <a href="{{ path('front_cours_module_show', {coursId: cours.id, moduleId: module.id}) }}" class="block">
                                             <div class="bg-gray-50/50 p-5 rounded-2xl border border-gray-100 flex items-center justify-between hover:bg-white hover:shadow-lg hover:shadow-brand-blue/5 hover:border-brand-blue/30 transition-all group cursor-pointer">
                                                 <div class="flex items-center gap-5">
                                                     <div class="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-brand-blue font-bold text-lg group-hover:bg-brand-blue group-hover:text-white transition-all transform group-hover:rotate-6">
@@ -125,7 +139,7 @@
                     </div>
                 </div>
 
-                {# Right Side: Course Info #}
+                {# Right Side: Cours Info #}
                 <div class="lg:col-span-1">
                     <div class="sticky top-8 space-y-6">
                                     <li class="flex items-start gap-3 text-sm text-brand-dark/70">
@@ -145,7 +159,7 @@
                                     </div>
 
                                     {% if progression == 100 %}
-                                        <a href="{{ path('front_courses_certificate_download', {courseId: course.id}) }}" class="w-full flex items-center justify-center gap-2 py-4 px-6 bg-brand-green text-white rounded-2xl font-bold shadow-lg shadow-brand-green/30 hover:shadow-xl hover:shadow-brand-green/40 transition-all hover:-translate-y-1">
+                                        <a href="{{ path('front_cours_certificate_download', {coursId: cours.id}) }}" class="w-full flex items-center justify-center gap-2 py-4 px-6 bg-brand-green text-white rounded-2xl font-bold shadow-lg shadow-brand-green/30 hover:shadow-xl hover:shadow-brand-green/40 transition-all hover:-translate-y-1">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                                             Télécharger mon certificat
                                         </a>
@@ -210,7 +224,7 @@
                         </div>
                         
                         <select id="mode" class="hidden"><option value="expliquer" selected>expliquer</option></select>
-                        <textarea id="context" class="hidden">{{ course.description }}</textarea>
+                        <textarea id="context" class="hidden">{{ cours.description }}</textarea>
 
                         <div class="relative flex items-center">
                             <input type="text" id="question" class="w-full bg-gray-50 border-gray-100 rounded-2xl py-3.5 pl-4 pr-12 text-sm text-brand-dark focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue/30 focus:bg-white transition-all placeholder-gray-400" placeholder="Une question ?" autocomplete="off">

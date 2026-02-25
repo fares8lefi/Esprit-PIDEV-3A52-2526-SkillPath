@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ module.name }} - {{ course.name }} - SkillPath{% endblock %}
+{% block title %}{{ module.name }} - {{ cours.name }} - SkillPath{% endblock %}
 
 {% block body %}
     <div class="bg-gray-50 min-h-screen font-sans">
@@ -8,10 +8,24 @@
         {# Header #}
         <div class="bg-brand-blue-dark pt-16 pb-12 px-4">
             <div class="container mx-auto max-w-4xl">
-                <a href="{{ path('front_courses_show', {id: course.id}) }}" class="inline-flex items-center text-white/70 hover:text-white transition-colors font-medium text-sm mb-6 group">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                    Retour au cours
-                </a>
+                <div class="flex items-center justify-between mb-6">
+                    <a href="{{ path('front_cours_show', {id: cours.id}) }}" class="inline-flex items-center text-white/70 hover:text-white transition-colors font-medium text-sm group">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                        Retour au cours
+                    </a>
+                    {% if app.user %}
+                        <a href="{{ path('front_notifications_index') }}" class="relative inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/10 border border-white/20 text-white hover:bg-white hover:text-brand-dark transition">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                            </svg>
+                            {% if unreadCount is defined and unreadCount > 0 %}
+                                <span class="absolute -top-1 -right-1 inline-flex items-center justify-center px-1.5 py-0.5 rounded-full bg-red-500 text-white text-[10px] font-bold">
+                                    {{ unreadCount > 9 ? '9+' : unreadCount }}
+                                </span>
+                            {% endif %}
+                        </a>
+                    {% endif %}
+                </div>
                 
                 <div class="flex items-center gap-3 mb-3">
                     <span class="px-3 py-1 text-xs font-bold uppercase text-white bg-brand-blue rounded-lg">
@@ -23,7 +37,7 @@
                 </div>
                 
                 <h1 class="text-3xl md:text-4xl font-bold text-white mb-2">{{ module.name }}</h1>
-                <p class="text-white/70 text-sm">{{ course.name }}</p>
+                <p class="text-white/70 text-sm">{{ cours.name }}</p>
             </div>
         </div>
 
@@ -60,7 +74,7 @@
             <div class="flex flex-col md:flex-row items-center justify-between gap-6 pt-8 border-t border-gray-100">
                 <div>
                     {% if app.user %}
-                        <form action="{{ path('front_courses_module_complete', {id: module.id}) }}" method="POST">
+                        <form action="{{ path('front_cours_module_complete', {id: module.id}) }}" method="POST">
                             {% if isCompleted %}
                                 <button type="button" disabled class="flex items-center gap-2 px-6 py-3 bg-brand-green/10 text-brand-green rounded-xl font-bold cursor-default">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
@@ -78,7 +92,7 @@
 
                 <div class="flex items-center gap-4">
                     {% if previousModule %}
-                        <a href="{{ path('front_courses_module_show', {courseId: course.id, moduleId: previousModule.id}) }}" 
+                        <a href="{{ path('front_cours_module_show', {coursId: cours.id, moduleId: previousModule.id}) }}" 
                            class="flex items-center gap-2 px-6 py-3 bg-white text-gray-700 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all hover:-translate-x-1">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
                             <span>Précédent</span>
@@ -86,13 +100,13 @@
                     {% endif %}
 
                     {% if nextModule %}
-                        <a href="{{ path('front_courses_module_show', {courseId: course.id, moduleId: nextModule.id}) }}" 
+                        <a href="{{ path('front_cours_module_show', {coursId: cours.id, moduleId: nextModule.id}) }}" 
                            class="flex items-center gap-2 px-6 py-3 bg-brand-blue/10 text-brand-blue rounded-xl font-semibold hover:bg-brand-blue hover:text-white transition-all">
                             <span>Suivant</span>
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                         </a>
                     {% else %}
-                        <a href="{{ path('front_courses_show', {id: course.id}) }}" 
+                        <a href="{{ path('front_cours_show', {id: cours.id}) }}" 
                            class="flex items-center gap-2 px-6 py-3 bg-brand-green text-white rounded-xl font-semibold shadow-lg shadow-brand-green/30 hover:shadow-xl transition-all">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                             <span>Retour au cours</span>
