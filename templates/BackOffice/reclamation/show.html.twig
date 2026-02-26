@@ -20,7 +20,12 @@
                     {{ reclamation.user.username|first|upper }}
                 </div>
                 <div>
-                    <h2 class="text-lg font-bold text-slate-900 dark:text-white">{{ reclamation.user.username }}</h2>
+                    <div class="flex items-center gap-2">
+                        <h2 class="text-lg font-bold text-slate-900 dark:text-white">{{ reclamation.user.username }}</h2>
+                        {% if reclamation.statut == 'Urgent' %}
+                            <span class="badge badge-red animate-pulse">Urgent ⚡</span>
+                        {% endif %}
+                    </div>
                     <p class="text-xs font-medium text-slate-400">{{ reclamation.user.email }}</p>
                 </div>
             </div>
@@ -131,6 +136,7 @@
             </div>
         </div>
     </div>
-
 </div>
+
+{{ include('_chatbot.html.twig') }}
 {% endblock %}

@@ -80,8 +80,12 @@ class MainController extends AbstractController
         // Reclamation Data
         $reclamations = $reclamationRepository->findAll();
         $reclamationStats = ['Pending' => 0, 'In Progress' => 0, 'Resolved' => 0, 'Closed' => 0];
+        $urgentCount = 0;
         foreach ($reclamations as $reclamation) {
             $status = $reclamation->getStatut() ?: 'Pending';
+            if ($status === 'Urgent') {
+                $urgentCount++;
+            }
             if (isset($reclamationStats[$status])) {
                 $reclamationStats[$status]++;
             } else {
@@ -111,6 +115,7 @@ class MainController extends AbstractController
             'courseCount' => count($courses),
             'moduleCount' => $moduleRepository->count([]),
             'reclamationCount' => count($reclamations),
+            'urgentCount' => $urgentCount,
             'eventCount' => $eventRepository->count([]),
             'resultatCount' => $resultatRepository->count([]),
             'recentUsers' => $userRepository->findBy([], ['id' => 'DESC'], 5),

@@ -46,6 +46,10 @@
                 <p class="text-slate-500 dark:text-slate-400 mt-1 font-medium text-sm">Bon retour, {{ app.user.username }}. Voici l'aperçu analytique de SkillPath.</p>
             </div>
             <div class="flex gap-3" data-html2canvas-ignore>
+                <a href="{{ path('app_admin_reclamation_index') }}" class="btn-secondary !py-2.5 !px-5 text-sm flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+                    Réclamations
+                </a>
                 <button onclick="exportToPDF(event)" class="btn-secondary !py-2.5 !px-5 text-sm flex items-center gap-2 group">
                     <svg class="w-4 h-4 text-coral" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
                     PDF
@@ -72,6 +76,23 @@
                 </div>
                 <p class="text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-widest">Utilisateurs</p>
                 <h3 class="text-2xl font-black text-slate-900 dark:text-white mt-1">{{ userCount }}</h3>
+            </div>
+
+            <!-- Urgent Reclamations -->
+            <div class="glass-card p-5 rounded-2xl border-b-4 border-red-500 hover-lift group relative overflow-hidden">
+                {% if urgentCount > 0 %}
+                <div class="absolute inset-0 bg-red-500/5 animate-pulse"></div>
+                {% endif %}
+                <div class="flex justify-between items-start mb-3 relative z-10">
+                    <div class="w-10 h-10 bg-red-100 dark:bg-red-500/15 text-red-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                    </div>
+                    {% if urgentCount > 0 %}
+                        <span class="badge badge-red animate-bounce">Alerte</span>
+                    {% endif %}
+                </div>
+                <p class="text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-widest relative z-10">Urgences IA</p>
+                <h3 class="text-2xl font-black text-slate-900 dark:text-white mt-1 relative z-10">{{ urgentCount }}</h3>
             </div>
 
             <!-- Courses -->
@@ -107,18 +128,7 @@
                 <h3 class="text-2xl font-black text-slate-900 dark:text-white mt-1">{{ reclamationCount }}</h3>
             </div>
 
-            <!-- Events -->
-            <div class="glass-card p-5 rounded-2xl border-b-4 border-lavender hover-lift group">
-                <div class="flex justify-between items-start mb-3">
-                    <div class="w-10 h-10 bg-lavender/10 text-lavender rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                    </div>
-                </div>
-                <p class="text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-widest">Événements</p>
-                <h3 class="text-2xl font-black text-slate-900 dark:text-white mt-1">{{ eventCount }}</h3>
-            </div>
-
-            <!-- Quizzes/Results -->
+            <!-- Results -->
             <div class="glass-card p-5 rounded-2xl border-b-4 border-mint hover-lift group">
                 <div class="flex justify-between items-start mb-3">
                     <div class="w-10 h-10 bg-mint/10 text-mint rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -191,8 +201,8 @@
                             </div>
                             <div class="flex items-center gap-3 sm:text-right">
                                 <div class="hidden xs:block">
-                                    <span class="badge {{ user.role == 'admin' ? 'badge-purple' : 'badge-cyan' }}">
-                                        {{ user.role|upper }}
+                                    <span class="badge {{ user.roles[0] == 'ROLE_ADMIN' ? 'badge-purple' : 'badge-cyan' }}">
+                                        {{ user.roles[0]|replace({'ROLE_': ''})|upper }}
                                     </span>
                                 </div>
                                 <p class="text-[0.7rem] text-slate-400 font-semibold tabular-nums">
@@ -225,11 +235,11 @@
                 <div class="glass-card rounded-2xl p-7">
                     <h3 class="text-base font-bold text-slate-900 dark:text-white mb-5">Raccourcis</h3>
                     <div class="grid grid-cols-2 gap-3">
-                        <a href="{{ path('app_reclamation_index') }}" class="p-3 bg-slate-50 dark:bg-white/5 rounded-xl text-center group">
+                        <a href="{{ path('app_admin_reclamation_index') }}" class="p-3 bg-slate-50 dark:bg-white/5 rounded-xl text-center group">
                             <p class="text-[10px] font-bold text-slate-500 group-hover:text-primary">Soutien</p>
                         </a>
-                        <a href="{{ path('app_event_index') }}" class="p-3 bg-slate-50 dark:bg-white/5 rounded-xl text-center group">
-                            <p class="text-[10px] font-bold text-slate-500 group-hover:text-secondary">Événements</p>
+                        <a href="{{ path('app_reclamation_index') }}" class="p-3 bg-slate-50 dark:bg-white/5 rounded-xl text-center group">
+                            <p class="text-[10px] font-bold text-slate-500 group-hover:text-secondary">Ma Vue</p>
                         </a>
                     </div>
                 </div>
@@ -243,11 +253,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script>
-        // PDF Export Function — builds PDF from data + chart images
+        // PDF Export Function
         function exportToPDF(event) {
             const btn = event.currentTarget;
             const originalHTML = btn.innerHTML;
-            btn.innerHTML = '<svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path></svg> Génération...';
+            btn.innerHTML = '<svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path></svg>';
             btn.disabled = true;
 
             setTimeout(function() {
@@ -259,25 +269,13 @@
                     var margin = 15;
                     var y = margin;
 
-                    // ─── Header ───
                     doc.setFillColor(124, 58, 237);
                     doc.rect(0, 0, pageW, 28, 'F');
                     doc.setTextColor(255, 255, 255);
                     doc.setFontSize(20);
                     doc.setFont('helvetica', 'bold');
-                    doc.text('SkillPath — Rapport du Tableau de Bord', margin, 18);
-                    doc.setFontSize(9);
-                    doc.setFont('helvetica', 'normal');
-                    var now = new Date();
-                    doc.text('Généré le ' + now.toLocaleDateString('fr-FR') + ' à ' + now.toLocaleTimeString('fr-FR'), pageW - margin, 18, { align: 'right' });
+                    doc.text('SkillPath — Rapport Dashboard', margin, 18);
                     y = 36;
-
-                    // ─── Stats Table ───
-                    doc.setTextColor(60, 60, 60);
-                    doc.setFontSize(13);
-                    doc.setFont('helvetica', 'bold');
-                    doc.text('Indicateurs Clés', margin, y);
-                    y += 4;
 
                     doc.autoTable({
                         startY: y,
@@ -285,114 +283,21 @@
                         head: [['Indicateur', 'Valeur']],
                         body: [
                             ['Utilisateurs', '{{ userCount }}'],
+                            ['Urgences IA', '{{ urgentCount }}'],
                             ['Cours', '{{ courseCount }}'],
                             ['Modules', '{{ moduleCount }}'],
                             ['Réclamations', '{{ reclamationCount }}'],
-                            ['Événements', '{{ eventCount }}'],
                             ['Résultats', '{{ resultatCount }}']
                         ],
-                        headStyles: { fillColor: [124, 58, 237], textColor: 255, fontStyle: 'bold', fontSize: 10 },
-                        bodyStyles: { fontSize: 10 },
-                        alternateRowStyles: { fillColor: [245, 243, 255] },
-                        columnStyles: { 0: { cellWidth: 80 }, 1: { cellWidth: 40, halign: 'center', fontStyle: 'bold' } },
-                        tableWidth: 130,
-                        theme: 'grid'
-                    });
-                    y = doc.lastAutoTable.finalY + 10;
-
-                    // ─── Charts (capture canvas elements as images) ───
-                    var chartIds = ['registrationChart', 'rolesChart', 'reclamationChart', 'categoryChart'];
-                    var chartTitles = ['Croissance des Utilisateurs', 'Répartition des Rôles', 'Réclamations', 'Cours par Catégorie'];
-                    var chartW = (pageW - margin * 3) / 2;
-                    var chartH = 55;
-                    var col = 0;
-                    var startX = margin;
-
-                    doc.setFontSize(13);
-                    doc.setFont('helvetica', 'bold');
-                    doc.text('Graphiques', margin, y);
-                    y += 6;
-                    var rowY = y;
-
-                    for (var i = 0; i < chartIds.length; i++) {
-                        var canvas = document.getElementById(chartIds[i]);
-                        if (canvas) {
-                            var imgData = canvas.toDataURL('image/png', 1.0);
-                            var x = startX + col * (chartW + margin);
-
-                            // Title
-                            doc.setFontSize(9);
-                            doc.setFont('helvetica', 'bold');
-                            doc.setTextColor(100, 100, 100);
-                            doc.text(chartTitles[i], x + 2, rowY);
-
-                            // Border box
-                            doc.setDrawColor(220, 220, 220);
-                            doc.roundedRect(x, rowY + 2, chartW, chartH, 3, 3, 'S');
-
-                            // Image
-                            doc.addImage(imgData, 'PNG', x + 2, rowY + 4, chartW - 4, chartH - 6);
-
-                            col++;
-                            if (col >= 2) {
-                                col = 0;
-                                rowY += chartH + 12;
-
-                                // New page if not enough space
-                                if (rowY + chartH + 12 > pageH - margin) {
-                                    doc.addPage();
-                                    rowY = margin;
-                                }
-                            }
-                        }
-                    }
-                    y = rowY + (col > 0 ? chartH + 12 : 0);
-
-                    // ─── Recent Users Table ───
-                    if (y + 40 > pageH - margin) {
-                        doc.addPage();
-                        y = margin;
-                    }
-                    doc.setTextColor(60, 60, 60);
-                    doc.setFontSize(13);
-                    doc.setFont('helvetica', 'bold');
-                    doc.text('Derniers Utilisateurs Inscrits', margin, y);
-                    y += 4;
-
-                    doc.autoTable({
-                        startY: y,
-                        margin: { left: margin, right: margin },
-                        head: [['Nom', 'Email', 'Rôle', 'Date d\'inscription']],
-                        body: [
-                            {% for user in recentUsers %}
-                            ['{{ user.username }}', '{{ user.email }}', '{{ user.role|upper }}', '{{ user.createdAt ? user.createdAt|date("d/m/Y") : "N/A" }}'],
-                            {% endfor %}
-                        ],
-                        headStyles: { fillColor: [124, 58, 237], textColor: 255, fontStyle: 'bold', fontSize: 10 },
-                        bodyStyles: { fontSize: 9 },
-                        alternateRowStyles: { fillColor: [245, 243, 255] },
                         theme: 'grid'
                     });
 
-                    // ─── Footer ───
-                    var totalPages = doc.internal.getNumberOfPages();
-                    for (var p = 1; p <= totalPages; p++) {
-                        doc.setPage(p);
-                        doc.setFontSize(8);
-                        doc.setTextColor(160, 160, 160);
-                        doc.text('SkillPath © ' + now.getFullYear() + ' — Page ' + p + '/' + totalPages, pageW / 2, pageH - 7, { align: 'center' });
-                    }
-
-                    // ─── Save ───
-                    doc.save('SkillPath_Dashboard_Report.pdf');
-
-                    btn.innerHTML = originalHTML;
-                    btn.disabled = false;
+                    doc.save('SkillPath_Report.pdf');
                 } catch (err) {
-                    console.error('PDF Generation Error:', err);
+                    console.error(err);
+                } finally {
                     btn.innerHTML = originalHTML;
                     btn.disabled = false;
-                    alert('Erreur: ' + err.message);
                 }
             }, 300);
         }
@@ -401,42 +306,24 @@
         function exportToExcel(event) {
             const btn = event.currentTarget;
             const originalHTML = btn.innerHTML;
-            btn.innerHTML = 'Export...';
-            btn.disabled = true;
+            btn.innerHTML = '...';
             
             try {
-                // Prepare data from the stats and recent users
-            const stats = [
-                ["Indicateur", "Valeur"],
-                ["Utilisateurs", "{{ userCount }}"],
-                ["Cours", "{{ courseCount }}"],
-                ["Modules", "{{ moduleCount }}"],
-                ["Réclamations", "{{ reclamationCount }}"],
-                ["Événements", "{{ eventCount }}"],
-                ["Résultats", "{{ resultatCount }}"]
-            ];
+                const stats = [
+                    ["Indicateur", "Valeur"],
+                    ["Utilisateurs", "{{ userCount }}"],
+                    ["Urgences", "{{ urgentCount }}"],
+                    ["Cours", "{{ courseCount }}"],
+                    ["Modules", "{{ moduleCount }}"],
+                    ["Réclamations", "{{ reclamationCount }}"]
+                ];
 
-            const recentUsers = [
-                [], // Empty line
-                ["Derniers Utilisateurs", "Email", "Rôle", "Date d'inscription"],
-                {% for user in recentUsers %}
-                ["{{ user.username }}", "{{ user.email }}", "{{ user.role|upper }}", "{{ user.createdAt ? user.createdAt|date('d/m/Y') : 'N/A' }}"],
-                {% endfor %}
-            ];
-
-            const wb = XLSX.utils.book_new();
-            const ws_data = stats.concat(recentUsers);
-            const ws = XLSX.utils.aoa_to_sheet(ws_data);
-            
-            // Add some styling (optional)
-            XLSX.utils.book_append_sheet(wb, ws, "Dashboard Summary");
-            XLSX.writeFile(wb, "SkillPath_Dashboard_Export.xlsx");
-            } catch (err) {
-                console.error('Excel Export Error:', err);
-                alert('Erreur lors de l\'export Excel.');
+                const wb = XLSX.utils.book_new();
+                const ws = XLSX.utils.aoa_to_sheet(stats);
+                XLSX.utils.book_append_sheet(wb, ws, "Stats");
+                XLSX.writeFile(wb, "SkillPath_Export.xlsx");
             } finally {
                 btn.innerHTML = originalHTML;
-                btn.disabled = false;
             }
         }
 
@@ -445,174 +332,85 @@
             const textColor = isDark ? '#94A3B8' : '#64748B';
             const gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)';
 
-            // Colors from the design system
             const colors = {
                 primary: '#7C3AED',
                 secondary: '#F59E0B',
                 accent: '#06B6D4',
                 coral: '#FB7185',
-                lavender: '#C4B5FD',
                 mint: '#34D399',
                 slate: '#64748B'
             };
 
             Chart.defaults.color = textColor;
-            Chart.defaults.font.family = "'Outfit', sans-serif";
-            Chart.defaults.font.size = 11;
 
-            // 1. Registration Chart (Line)
-            const regCtx = document.getElementById('registrationChart').getContext('2d');
-            new Chart(regCtx, {
-                type: 'line',
-                data: {
-                    labels: {{ registrationLabels|json_encode|raw }},
-                    datasets: [{
-                        label: 'Nouveaux Utilisateurs',
-                        data: {{ registrationValues|json_encode|raw }},
-                        borderColor: colors.primary,
-                        backgroundColor: 'rgba(124, 58, 237, 0.1)',
-                        fill: true,
-                        tension: 0.4,
-                        borderWidth: 3,
-                        pointBackgroundColor: colors.primary,
-                        pointBorderColor: '#fff',
-                        pointBorderWidth: 2,
-                        pointRadius: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        y: { 
-                            beginAtZero: true, 
-                            grid: { color: gridColor, drawBorder: false }, 
-                            ticks: { color: textColor, padding: 10 } 
-                        },
-                        x: { 
-                            grid: { display: false }, 
-                            ticks: { color: textColor, padding: 10 } 
-                        }
-                    }
-                }
-            });
-
-            // 2. Roles Chart (Doughnut)
-            const rolesCtx = document.getElementById('rolesChart').getContext('2d');
-            new Chart(rolesCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: {{ rolesLabels|json_encode|raw }},
-                    datasets: [{
-                        data: {{ rolesValues|json_encode|raw }},
-                        backgroundColor: [colors.primary, colors.slate],
-                        borderWidth: 0,
-                        hoverOffset: 10
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    cutout: '75%',
-                    plugins: { 
-                        legend: { 
-                            position: 'bottom', 
-                            labels: { 
-                                color: textColor,
-                                usePointStyle: true,
-                                padding: 20,
-                                font: { size: 11, weight: '600' } 
-                            } 
-                        } 
-                    }
-                }
-            });
-
-            // 3. Reclamation Chart (Pie)
-            const recCtx = document.getElementById('reclamationChart').getContext('2d');
-            new Chart(recCtx, {
-                type: 'pie',
-                data: {
-                    labels: {{ reclamationLabels|json_encode|raw }},
-                    datasets: [{
-                        data: {{ reclamationValues|json_encode|raw }},
-                        backgroundColor: [colors.coral, colors.primary, colors.mint, colors.secondary],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { 
-                        legend: { 
-                            position: 'bottom', 
-                            labels: { 
-                                color: textColor,
-                                usePointStyle: true,
-                                padding: 20,
-                                font: { size: 11, weight: '600' } 
-                            } 
-                        } 
-                    }
-                }
-            });
-
-            // 4. Category Chart (Bar)
-            const catCtx = document.getElementById('categoryChart').getContext('2d');
-            new Chart(catCtx, {
-                type: 'bar',
-                data: {
-                    labels: {{ categoriesLabels|json_encode|raw }},
-                    datasets: [{
-                        label: 'Nombre de Cours',
-                        data: {{ categoriesValues|json_encode|raw }},
-                        backgroundColor: 'rgba(6, 182, 212, 0.6)',
-                        borderRadius: 12,
-                        hoverBackgroundColor: colors.accent
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        y: { 
-                            beginAtZero: true, 
-                            grid: { color: gridColor, borderDash: [5, 5], drawBorder: false },
-                            ticks: { color: textColor }
-                        },
-                        x: { 
-                            grid: { display: false },
-                            ticks: { color: textColor }
-                        }
-                    }
-                }
-            });
-
-            // Handle Theme Change for Charts
-            window.addEventListener('themeChanged', () => {
-                const isDarkNow = document.documentElement.classList.contains('dark');
-                const newTextColor = isDarkNow ? '#94A3B8' : '#64748B';
-                const newGridColor = isDarkNow ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)';
-
-                Chart.helpers.each(Chart.instances, (instance) => {
-                    const { scales, plugins } = instance.options;
-                    if (scales) {
-                        if (scales.y) {
-                            if (scales.y.grid) scales.y.grid.color = newGridColor;
-                            if (scales.y.ticks) scales.y.ticks.color = newTextColor;
-                        }
-                        if (scales.x) {
-                            if (scales.x.ticks) scales.x.ticks.color = newTextColor;
-                        }
-                    }
-                    if (plugins && plugins.legend && plugins.legend.labels) {
-                        plugins.legend.labels.color = newTextColor;
-                    }
-                    instance.update();
+            // 1. Registration Chart
+            const regCtx = document.getElementById('registrationChart')?.getContext('2d');
+            if (regCtx) {
+                new Chart(regCtx, {
+                    type: 'line',
+                    data: {
+                        labels: {{ registrationLabels|default([])|json_encode|raw }},
+                        datasets: [{
+                            label: 'Nouveaux Utilisateurs',
+                            data: {{ registrationValues|default([])|json_encode|raw }},
+                            borderColor: colors.primary,
+                            tension: 0.4,
+                            fill: true,
+                            backgroundColor: 'rgba(124, 58, 237, 0.1)'
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false }
                 });
-            });
+            }
+
+            // 2. Roles Chart
+            const rolesCtx = document.getElementById('rolesChart')?.getContext('2d');
+            if (rolesCtx) {
+                new Chart(rolesCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: {{ rolesLabels|default([])|json_encode|raw }},
+                        datasets: [{
+                            data: {{ rolesValues|default([])|json_encode|raw }},
+                            backgroundColor: [colors.primary, colors.slate]
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+            }
+
+            // 3. Reclamation Chart
+            const recCtx = document.getElementById('reclamationChart')?.getContext('2d');
+            if (recCtx) {
+                new Chart(recCtx, {
+                    type: 'pie',
+                    data: {
+                        labels: {{ reclamationLabels|default([])|json_encode|raw }},
+                        datasets: [{
+                            data: {{ reclamationValues|default([])|json_encode|raw }},
+                            backgroundColor: [colors.coral, colors.primary, colors.mint, colors.secondary]
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+            }
+
+            // 4. Category Chart
+            const catCtx = document.getElementById('categoryChart')?.getContext('2d');
+            if (catCtx) {
+                new Chart(catCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: {{ categoriesLabels|default([])|json_encode|raw }},
+                        datasets: [{
+                            data: {{ categoriesValues|default([])|json_encode|raw }},
+                            backgroundColor: colors.accent,
+                            borderRadius: 10
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+                });
+            }
         });
     </script>
 {% endblock %}
