@@ -1,0 +1,256 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}SkillPath - Liste des Cours{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .breadcrumb-item + .breadcrumb-item::before {
+        content: "•";
+        padding: 0 0.5rem;
+        color: #64748b;
+    }
+    .filter-radio:checked + label {
+        color: #7C3AED;
+        font-weight: 700;
+    }
+    .filter-radio:checked + label .count-badge {
+        background-color: #7C3AED;
+        color: white;
+    }
+    .course-card-list {
+        @apply flex flex-col md:flex-row bg-white dark:bg-[#121622] rounded-3xl border border-slate-100 dark:border-white/5 overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-primary/20;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-[#F8FAFC] dark:bg-[#0B0F1A]">
+    {# Dark Header Section #}
+    <header class="bg-[#1A1D1F] py-12 px-6 lg:px-12">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div>
+                <h1 class="text-4xl font-black text-white mb-4">Liste des Cours</h1>
+                <nav class="flex text-sm font-medium">
+                    <ol class="flex items-center space-x-2">
+                        <li class="breadcrumb-item"><a href="{{ path('app_home') }}" class="text-slate-400 hover:text-white transition-colors">Accueil</a></li>
+                        <li class="breadcrumb-item text-slate-500">Cours</li>
+                    </ol>
+                </nav>
+            </div>
+
+            {% if app.user %}
+                <div class="relative">
+                    <button onclick="fetchNotifications()" class="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-slate-400 hover:text-primary transition-all relative border border-white/10">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                        <span id="notification-count" class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-black rounded-full flex items-center justify-center border-2 border-[#1A1D1F] hidden">0</span>
+                    </button>
+
+                    <!-- Dropdown -->
+                    <div id="notification-dropdown" class="absolute right-0 mt-3 w-80 glass dark:bg-slate-900/95 rounded-2xl shadow-2xl border border-white/10 overflow-hidden hidden z-[110] animate-scale-in">
+                        <div class="p-4 border-b border-white/5 bg-white/5">
+                            <h3 class="text-sm font-black text-white uppercase tracking-wider">Notifications</h3>
+                        </div>
+                        <div id="notification-list" class="max-h-96 overflow-y-auto custom-scrollbar">
+                            <!-- Dynamic content -->
+                        </div>
+                        <div class="p-3 text-center border-t border-white/5">
+                            <button class="text-[10px] font-bold text-slate-500 hover:text-primary transition-colors uppercase tracking-widest">Tout marquer comme lu</button>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-6 lg:px-12 py-12">
+        <div class="flex flex-col lg:flex-row gap-8">
+            
+            {# Main Content (Left) #}
+            <div class="flex-1">
+                {# Top Bar: Info & Sorting #}
+                <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+                    <p class="text-sm font-bold text-slate-500">
+                        Affichage de <span class="text-slate-900 dark:text-white">{{ courses|length }}</span> résultats
+                    </p>
+                    
+                    <div class="flex items-center gap-4">
+                        {# View Toggle #}
+                        <div class="flex bg-white dark:bg-white/5 p-1 rounded-xl border border-slate-200 dark:border-white/10">
+                            <button class="p-2 rounded-lg text-slate-400 hover:text-primary transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                            </button>
+                            <button class="p-2 rounded-lg bg-primary text-white shadow-lg shadow-primary/20">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                            </button>
+                        </div>
+
+                        {# Sort Buttons #}
+                        <div class="flex flex-wrap gap-2">
+                            {% set sort_options = {'recent': 'Plus récent', 'old': 'Plus ancien', 'az': 'A-Z', 'za': 'Z-A'} %}
+                            {% for key, label in sort_options %}
+                                <a href="{{ path('front_course_index', app.request.query.all|merge({'sort': key})) }}" 
+                                   class="px-4 py-2 rounded-xl text-xs font-bold transition-all {{ currentSort == key ? 'bg-primary/10 text-primary border border-primary/20' : 'bg-white dark:bg-white/5 text-slate-500 border border-slate-200 dark:border-white/10 hover:border-primary/30' }}">
+                                    {{ label }}
+                                </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                {# Course Grid (List View) #}
+                <div class="space-y-6">
+                    {% for course in courses %}
+                        <div class="course-card-list group">
+                            {# Card Image #}
+                            <div class="w-full md:w-72 h-48 md:h-auto relative overflow-hidden shrink-0">
+                                {% if course.image %}
+                                    <img src="{{ asset('uploads/modules/' ~ course.image) }}" alt="{{ course.title }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                                {% else %}
+                                    <div class="w-full h-full gradient-primary opacity-20 flex items-center justify-center text-white text-4xl font-black">
+                                        {{ course.title|first }}
+                                    </div>
+                                {% endif %}
+                                <div class="absolute top-4 left-4">
+                                    <span class="px-3 py-1 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-lg text-[10px] font-black text-slate-800 dark:text-white uppercase tracking-widest shadow-sm">
+                                        {{ course.price > 0 ? course.price ~ ' DT' : 'Gratuit' }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            {# Card Content #}
+                            <div class="flex-1 p-6 md:p-8 flex flex-col justify-between">
+                                <div>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <div class="flex items-center gap-3">
+                                            <span class="text-[10px] font-black uppercase tracking-[0.2em] text-primary">{{ course.category|default('DÉVELOPPEMENT') }}</span>
+                                            <div class="flex items-center gap-1 text-secondary">
+                                                <svg class="w-3 h-3 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                                <span class="text-[10px] font-bold">4.5</span>
+                                            </div>
+                                        </div>
+                                        <button class="text-slate-300 hover:text-red-500 transition-colors">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                                        </button>
+                                    </div>
+                                    
+                                    <h2 class="text-2xl font-black text-slate-900 dark:text-white mb-2 group-hover:text-primary transition-colors">
+                                        <a href="{{ path('front_course_show', {id: course.id}) }}">{{ course.title }}</a>
+                                    </h2>
+                                    <p class="text-sm text-slate-500 dark:text-slate-400 font-medium line-clamp-2 mb-6 max-w-2xl">
+                                        {{ course.description }}
+                                    </p>
+
+                                    <div class="flex flex-wrap items-center gap-6">
+                                        <div class="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                            <svg class="w-4 h-4 text-primary/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                            <span>{{ course.modules|length }} modules</span>
+                                        </div>
+                                        <div class="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                            <svg class="w-4 h-4 text-secondary/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                                            <span>{{ course.level }}</span>
+                                        </div>
+                                        <div class="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                            <svg class="w-4 h-4 text-success/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                            <span class="text-success">Certifié</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mt-8 pt-6 border-t border-slate-100 dark:border-white/5 flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-full gradient-primary flex items-center justify-center text-white text-xs font-bold shadow-lg shadow-primary/10">SP</div>
+                                        <div>
+                                            <p class="text-xs font-bold text-slate-900 dark:text-white">SkillPath Team</p>
+                                            <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest italic">Instructors</p>
+                                        </div>
+                                    </div>
+                                    <a href="{{ path('front_course_show', {id: course.id}) }}" class="px-6 py-2.5 bg-[#1A1D1F] text-white text-xs font-bold rounded-xl hover:bg-primary transition-all shadow-xl active:scale-95">
+                                        View more
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="py-24 text-center bg-white dark:bg-white/5 rounded-[3rem] border-2 border-dashed border-slate-200 dark:border-white/10">
+                            <h3 class="text-2xl font-black text-slate-900 dark:text-white mb-2">Aucun cours trouvé</h3>
+                            <p class="text-slate-500 font-medium mb-8">Essayez d'ajuster vos filtres de recherche.</p>
+                            <a href="{{ path('front_course_index') }}" class="btn-secondary !py-3 !px-8">Réinitialiser</a>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            {# Sidebar (Right) #}
+            <aside class="w-full lg:w-80 space-y-6">
+                {# Search Widget #}
+                <div class="bg-white dark:bg-[#121622] rounded-3xl p-8 border border-slate-100 dark:border-white/5">
+                    <h3 class="text-lg font-black text-slate-900 dark:text-white mb-6">Rechercher</h3>
+                    <form action="{{ path('front_course_index') }}" method="GET" class="relative group">
+                        <input type="text" name="search" value="{{ currentSearch }}" placeholder="Mots-clés..." 
+                               class="w-full py-3.5 pl-12 pr-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-sm font-medium focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all">
+                        <svg class="w-5 h-5 absolute left-4 top-3.5 text-slate-400 group-focus-within:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                        {# Preserve other filters #}
+                        <input type="hidden" name="level" value="{{ currentLevel }}">
+                        <input type="hidden" name="category" value="{{ currentCategory }}">
+                        <input type="hidden" name="sort" value="{{ currentSort }}">
+                    </form>
+                </div>
+
+                {# Categories Widget #}
+                <div class="bg-white dark:bg-[#121622] rounded-3xl p-8 border border-slate-100 dark:border-white/5">
+                    <h3 class="text-lg font-black text-slate-900 dark:text-white mb-6">Catégories</h3>
+                    <form action="{{ path('front_course_index') }}" method="GET" class="space-y-4">
+                        <input type="hidden" name="search" value="{{ currentSearch }}">
+                        <input type="hidden" name="level" value="{{ currentLevel }}">
+                        <input type="hidden" name="sort" value="{{ currentSort }}">
+                        
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <input type="radio" id="cat-all" name="category" value="" {{ not currentCategory ? 'checked' : '' }} onchange="this.form.submit()"
+                                       class="filter-radio w-5 h-5 border-2 border-slate-200 dark:border-white/10 rounded-full checked:bg-primary checked:border-primary transition-all appearance-none cursor-pointer">
+                                <label for="cat-all" class="text-sm font-medium text-slate-600 dark:text-slate-400 cursor-pointer hover:text-primary transition-colors">Toutes les catégories</label>
+                            </div>
+                        </div>
+
+                        {% for cat in categoriesCount %}
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <input type="radio" id="cat-{{ loop.index }}" name="category" value="{{ cat.name }}" {{ currentCategory == cat.name ? 'checked' : '' }} onchange="this.form.submit()"
+                                           class="filter-radio w-5 h-5 border-2 border-slate-200 dark:border-white/10 rounded-full checked:bg-primary checked:border-primary transition-all appearance-none cursor-pointer">
+                                    <label for="cat-{{ loop.index }}" class="text-sm font-medium text-slate-600 dark:text-slate-400 cursor-pointer hover:text-primary transition-colors">{{ cat.name }}</label>
+                                </div>
+                                <span class="count-badge px-2 py-0.5 bg-slate-100 dark:bg-white/5 rounded-md text-[10px] font-bold text-slate-400 transition-colors">{{ cat.count }}</span>
+                            </div>
+                        {% endfor %}
+                    </form>
+                </div>
+
+                {# Levels Widget #}
+                <div class="bg-white dark:bg-[#121622] rounded-3xl p-8 border border-slate-100 dark:border-white/5">
+                    <h3 class="text-lg font-black text-slate-900 dark:text-white mb-6">Niveau</h3>
+                    <form action="{{ path('front_course_index') }}" method="GET" class="space-y-4">
+                        <input type="hidden" name="search" value="{{ currentSearch }}">
+                        <input type="hidden" name="category" value="{{ currentCategory }}">
+                        <input type="hidden" name="sort" value="{{ currentSort }}">
+
+                        <div class="flex items-center gap-3">
+                            <input type="radio" id="lvl-all" name="level" value="" {{ not currentLevel ? 'checked' : '' }} onchange="this.form.submit()"
+                                   class="filter-radio w-5 h-5 border-2 border-slate-200 dark:border-white/10 rounded-full checked:bg-primary checked:border-primary transition-all appearance-none cursor-pointer">
+                            <label for="lvl-all" class="text-sm font-medium text-slate-600 dark:text-slate-400 cursor-pointer hover:text-primary transition-colors">Tous les niveaux</label>
+                        </div>
+
+                        {% for lvl in ['Débutant', 'Intermédiaire', 'Avancé'] %}
+                            <div class="flex items-center gap-3">
+                                <input type="radio" id="lvl-{{ loop.index }}" name="level" value="{{ lvl }}" {{ currentLevel == lvl ? 'checked' : '' }} onchange="this.form.submit()"
+                                       class="filter-radio w-5 h-5 border-2 border-slate-200 dark:border-white/10 rounded-full checked:bg-primary checked:border-primary transition-all appearance-none cursor-pointer">
+                                <label for="lvl-{{ loop.index }}" class="text-sm font-medium text-slate-600 dark:text-slate-400 cursor-pointer hover:text-primary transition-colors">{{ lvl }}</label>
+                            </div>
+                        {% endfor %}
+                    </form>
+                </div>
+            </aside>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

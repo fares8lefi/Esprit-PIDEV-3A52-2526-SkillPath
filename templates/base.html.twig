@@ -378,6 +378,64 @@
         {% block javascripts %}
             {% block importmap %}{{ importmap('app') }}{% endblock %}
         {% endblock %}
+
+        <script>
+            async function fetchNotifications() {
+                const dropdown = document.getElementById('notification-dropdown');
+                const list = document.getElementById('notification-list');
+                
+                dropdown.classList.toggle('hidden');
+                if (dropdown.classList.contains('hidden')) return;
+
+                list.innerHTML = '<div class="p-4 text-center text-xs text-slate-500 italic">Chargement...</div>';
+
+                try {
+                    const response = await fetch('/notifications/list');
+                    const data = await response.json();
+                    
+                    if (data.notifications.length === 0) {
+                        list.innerHTML = '<div class="p-4 text-center text-xs text-slate-500">Aucune notification</div>';
+                        return;
+                    }
+
+                    list.innerHTML = data.notifications.map(n => `
+                        <div class="p-4 border-b border-slate-50 dark:border-white/5 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors ${n.isRead ? 'opacity-60' : ''}">
+                            <div class="flex justify-between items-start mb-1">
+                                <h4 class="text-xs font-bold ${n.isRead ? '' : 'text-primary'}">${n.title}</h4>
+                                <span class="text-[10px] text-slate-400">${n.createdAt}</span>
+                            </div>
+                            <p class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2 mb-2">${n.message}</p>
+                            ${n.link ? `<a href="${n.link}" onclick="markAsRead(${n.id})" class="text-[10px] font-bold text-primary hover:underline">Voir le cours</a>` : ''}
+                        </div>
+                    `).join('');
+                } catch (e) {
+                    list.innerHTML = '<div class="p-4 text-center text-xs text-red-500">Erreur de chargement</div>';
+                }
+            }
+
+            async function markAsRead(id) {
+                await fetch('/notifications/mark-as-read/' + id, { method: 'POST' });
+                refreshUnreadCount();
+            }
+
+            async function refreshUnreadCount() {
+                try {
+                    const response = await fetch('/notifications/unread-count');
+                    const data = await response.json();
+                    const badge = document.getElementById('notification-count');
+                    if (data.count > 0) {
+                        badge.textContent = data.count > 9 ? '9+' : data.count;
+                        badge.classList.remove('hidden');
+                    } else {
+                        badge.classList.add('hidden');
+                    }
+                } catch (e) {}
+            }
+
+            document.addEventListener('DOMContentLoaded', refreshUnreadCount);
+            // Auto refresh every 30 seconds
+            setInterval(refreshUnreadCount, 30000);
+        </script>
     </head>
 
 <body class="bg-[#FAFAFA] dark:bg-[#0B0F1A] text-slate-800 dark:text-slate-200 transition-colors duration-500">

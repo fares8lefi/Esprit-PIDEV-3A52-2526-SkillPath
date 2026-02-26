@@ -73,12 +73,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Event::class, inversedBy: 'favoritedBy')]
     #[ORM\JoinTable(name: 'user_favorite_events')]
     private Collection $favoriteEvents;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Notification::class, orphanRemoval: true)]
+    private Collection $notifications;
     
     public function __construct()
     {
         $this->courses = new ArrayCollection();
         $this->joinedEvents = new ArrayCollection();
         $this->favoriteEvents = new ArrayCollection();
+        $this->notifications = new ArrayCollection();
     }
 
     public function getId(): ?int

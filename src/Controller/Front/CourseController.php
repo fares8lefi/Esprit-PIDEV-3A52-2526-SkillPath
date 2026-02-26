@@ -18,8 +18,9 @@ class CourseController extends AbstractController
         $search = $request->query->get('search');
         $level = $request->query->get('level');
         $category = $request->query->get('category');
+        $sort = $request->query->get('sort', 'recent');
 
-        $courses = $courseRepository->findByFilters($search, $level, $category);
+        $courses = $courseRepository->findByFilters($search, $level, $category, $sort);
         $categoriesCount = $courseRepository->countByCategories();
 
         return $this->render('FrontOffice/course/index.html.twig', [
@@ -28,6 +29,7 @@ class CourseController extends AbstractController
             'currentSearch' => $search,
             'currentLevel' => $level,
             'currentCategory' => $category,
+            'currentSort' => $sort,
         ]);
     }
 
@@ -54,7 +56,7 @@ class CourseController extends AbstractController
         $user = $this->getUser();
         if (!$user instanceof \App\Entity\User) {
             $this->addFlash('error', 'Vous devez être connecté pour vous inscrire.');
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('app_user_login');
         }
 
         $viewService->enrollUser($user, $course);

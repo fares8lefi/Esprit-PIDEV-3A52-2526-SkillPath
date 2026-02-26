@@ -17,14 +17,15 @@ class CourseRepository extends ServiceEntityRepository
     }
 
     /**
-     * Recherche de cours avec filtres
+     * Recherche de cours avec filtres et tri
      * 
      * @param string|null $search
      * @param string|null $level
      * @param string|null $category
+     * @param string|null $sort
      * @return Course[]
      */
-    public function findByFilters(?string $search = null, ?string $level = null, ?string $category = null): array
+    public function findByFilters(?string $search = null, ?string $level = null, ?string $category = null, ?string $sort = 'recent'): array
     {
         $qb = $this->createQueryBuilder('c');
 
@@ -43,8 +44,23 @@ class CourseRepository extends ServiceEntityRepository
                ->setParameter('category', $category);
         }
 
-        return $qb->orderBy('c.id', 'DESC')
-                  ->getQuery()
+        switch ($sort) {
+            case 'old':
+                $qb->orderBy('c.createdAt', 'ASC');
+                break;
+            case 'az':
+                $qb->orderBy('c.title', 'ASC');
+                break;
+            case 'za':
+                $qb->orderBy('c.title', 'DESC');
+                break;
+            case 'recent':
+            default:
+                $qb->orderBy('c.createdAt', 'DESC');
+                break;
+        }
+
+        return $qb->getQuery()
                   ->getResult();
     }
 

@@ -42,6 +42,28 @@
             <div class="flex items-center gap-4">
                 {% if app.user %}
                     <div class="flex items-center gap-4 pl-4 border-l border-slate-200/50 dark:border-white/5">
+                        
+                        <!-- Notifications -->
+                        <div class="relative">
+                            <button onclick="fetchNotifications()" class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-400 hover:text-primary transition-all relative">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                                <span id="notification-count" class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-black rounded-full flex items-center justify-center border-2 border-white dark:border-slate-900 hidden">0</span>
+                            </button>
+
+                            <!-- Dropdown -->
+                            <div id="notification-dropdown" class="absolute right-0 mt-3 w-80 glass dark:bg-slate-900/90 rounded-2xl shadow-2xl border border-white/10 overflow-hidden hidden z-[110] animate-scale-in">
+                                <div class="p-4 border-b border-slate-50 dark:border-white/5 bg-slate-50/50 dark:bg-white/5">
+                                    <h3 class="text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider">Notifications</h3>
+                                </div>
+                                <div id="notification-list" class="max-h-96 overflow-y-auto custom-scrollbar">
+                                    <!-- Dynamic content -->
+                                </div>
+                                <div class="p-3 text-center border-t border-slate-50 dark:border-white/5">
+                                    <button class="text-[10px] font-bold text-slate-400 hover:text-primary transition-colors uppercase tracking-widest">Tout marquer comme lu</button>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="text-right hidden sm:block">
                             <p class="text-xs font-bold text-slate-900 dark:text-white">{{ app.user.username }}</p>
                             <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Compte {{ app.user.role }}</p>
