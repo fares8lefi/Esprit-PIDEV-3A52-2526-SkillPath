@@ -461,9 +461,9 @@
         {% endfor %}
     </div>
     <!-- Theme Toggle (Micro-delight) -->
-    <button onclick="toggleTheme()" class="fixed bottom-6 right-6 z-[999] w-14 h-14 flex items-center justify-center gradient-primary shadow-2xl shadow-purple-500/25 rounded-2xl hover:scale-110 active:scale-90 transition-all text-white group" title="Toggle theme">
-        <svg class="w-5 h-5 block dark:hidden transition-transform group-hover:rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
-        <svg class="w-5 h-5 hidden dark:block transition-transform group-hover:rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M16.243 17.657l.707.707M6.343 6.343l.707-.707M14.5 12a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/></svg>
+    <button onclick="toggleTheme()" class="fixed bottom-6 left-6 z-[999] w-14 h-14 flex items-center justify-center glass shadow-2xl shadow-black/5 rounded-2xl hover:scale-110 active:scale-90 transition-all text-slate-600 dark:text-amber-400 group border border-slate-200 dark:border-white/10" title="Toggle theme">
+        <svg class="w-6 h-6 block dark:hidden transition-transform group-hover:rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+        <svg class="w-6 h-6 hidden dark:block transition-transform group-hover:rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M16.243 17.657l.707.707M6.343 6.343l.707-.707M14.5 12a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/></svg>
     </button>
 
     {% block body %}{% endblock %}

@@ -86,7 +86,7 @@ class UserCourseViewService
         return $view ? $view->isEnrolled() : false;
     }
 
-    public function getRecommendations(User $user, int $topN = 5): array
+    public function getRecommendations(User $user, int $topN = 1): array
     {
         $unseenCourses = $this->repository->findUnseenCoursesByUser($user->getId());
         $scoredCourses = [];
@@ -95,9 +95,9 @@ class UserCourseViewService
             $features = $this->repository->getMLFeaturesForUser($user->getId(), $course->getId());
             
             try {
-                // Appel au serveur Flask pour la probabilité d'inscription
-                $result = $this->aiService->getPrediction($features, 'Gradient_Boosting');
-                // On suppose que le serveur retourne une probabilité dans [probabilities][1] pour la classe "inscrit"
+                // Utilisation du consensus de tous les modèles AI
+                $result = $this->aiService->getPrediction($features, 'all');
+                // On récupère la probabilité moyenne pour la classe "inscrit"
                 $score = $result['prediction']['probabilities'][1] ?? $course->getRating();
             } catch (\Exception $e) {
                 // Fallback sur le rating en cas d'erreur serveur AI
@@ -115,7 +115,7 @@ class UserCourseViewService
             return $b['score'] <=> $a['score'];
         });
 
-        // Retourne uniquement les objets Course
+        // Retourne uniquement l'objet Course le plus recommandé
         return array_map(fn($item) => $item['course'], array_slice($scoredCourses, 0, $topN));
     }
 }
