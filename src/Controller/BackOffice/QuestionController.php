@@ -30,8 +30,35 @@ class QuestionController extends AbstractController
         }
 
         try {
-            // Import 5 multiple choice questions
-            $response = $httpClient->request('GET', 'https://opentdb.com/api.php?amount=5&type=multiple');
+            // Determine category based on the associated course title
+            $categoryId = 18; // Default to Computers
+            
+            if ($quiz->getCourse()) {
+                $courseTitle = strtolower($quiz->getCourse()->getTitle());
+                if (str_contains($courseTitle, 'math')) {
+                    $categoryId = 19; // Mathematics
+                } elseif (str_contains($courseTitle, 'science') || str_contains($courseTitle, 'nature') || str_contains($courseTitle, 'physique') || str_contains($courseTitle, 'chimie')) {
+                    $categoryId = 17; // Science & Nature
+                } elseif (str_contains($courseTitle, 'geo') || str_contains($courseTitle, 'terre')) {
+                    $categoryId = 22; // Geography
+                } elseif (str_contains($courseTitle, 'histoire') || str_contains($courseTitle, 'history')) {
+                    $categoryId = 23; // History
+                } elseif (str_contains($courseTitle, 'art') || str_contains($courseTitle, 'design')) {
+                    $categoryId = 25; // Art
+                } elseif (str_contains($courseTitle, 'sport')) {
+                    $categoryId = 21; // Sports
+                } elseif (str_contains($courseTitle, 'politique') || str_contains($courseTitle, 'politic')) {
+                    $categoryId = 24; // Politics
+                } elseif (str_contains($courseTitle, 'animal') || str_contains($courseTitle, 'bio')) {
+                    $categoryId = 27; // Animals / Biology
+                }
+            } else {
+                // Determine category randomly if no course is associated
+                $educationalCategories = [17, 18, 19, 22, 23];
+                $categoryId = $educationalCategories[array_rand($educationalCategories)];
+            }
+            
+            $response = $httpClient->request('GET', "https://opentdb.com/api.php?amount=5&category=$categoryId&type=multiple");
             $data = $response->toArray();
 
             if (isset($data['results']) && is_array($data['results'])) {
