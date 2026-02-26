@@ -3,36 +3,6 @@
 {% block title %}Mes Réclamations{% endblock %}
 
 {% block body %}
-<style>
-    @keyframes fadeInUp {
-        from { opacity: 0; transform: translateY(20px) scale(0.95); }
-        to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-    @keyframes fadeOutDown {
-        from { opacity: 1; transform: translateY(0) scale(1); }
-        to { opacity: 0; transform: translateY(20px) scale(0.95); }
-    }
-    @keyframes bounce-dot {
-        0%, 80%, 100% { transform: scale(0); }
-        40% { transform: scale(1); }
-    }
-    @keyframes pulse-ring {
-        0% { transform: scale(0.8); opacity: 1; }
-        100% { transform: scale(2); opacity: 0; }
-    }
-    .chat-open { animation: fadeInUp 0.3s ease-out forwards; }
-    .chat-close { animation: fadeOutDown 0.2s ease-in forwards; }
-    .dot1 { animation: bounce-dot 1.4s infinite ease-in-out -0.32s; }
-    .dot2 { animation: bounce-dot 1.4s infinite ease-in-out -0.16s; }
-    .dot3 { animation: bounce-dot 1.4s infinite ease-in-out 0s; }
-    .msg-fade { animation: fadeInUp 0.25s ease-out; }
-    .chat-bubble-ring {
-        position: absolute; inset: -4px; border-radius: 50%;
-        border: 3px solid rgba(139, 92, 246, 0.4);
-        animation: pulse-ring 2s ease-out infinite;
-    }
-</style>
-
 <div class="min-h-screen mesh-light dark:mesh-dark py-12">
     <div class="max-w-4xl mx-auto px-6">
         <!-- Header -->
@@ -53,7 +23,7 @@
         <!-- Reclamation Cards -->
         <div class="space-y-4">
             {% for reclamation in reclamations %}
-                <div onclick="window.location.href='{{ path('app_reclamation_show', {'id': reclamation.id}) }}'" class="glass-card p-6 rounded-2xl flex flex-col md:flex-row md:items-center gap-4 group cursor-pointer animate-fade-up" style="animation-delay: {{ loop.index * 80 }}ms">
+                <div onclick="window.location.href='{{ path('app_reclamation_show', {'id': reclamation.id}) }}'" class="glass-card p-6 rounded-2xl flex flex-col md:flex-row md:items-center gap-4 group cursor-pointer animate-fade-up {% if reclamation.statut == 'Urgent' %}border-l-4 border-red-500 bg-red-50/30 dark:bg-red-900/10{% endif %}" style="animation-delay: {{ loop.index * 80 }}ms">
                     <div class="flex-1">
                         <div class="flex items-center gap-3 mb-2">
                             <h3 class="text-base font-bold text-slate-900 dark:text-white group-hover:text-primary dark:group-hover:text-primary-light transition-colors">{{ reclamation.sujet }}</h3>
@@ -62,6 +32,8 @@
                                    class="text-[10px] font-black uppercase tracking-widest text-primary hover:underline z-10" 
                                    onclick="event.stopPropagation();">Modifier</a>
                                 <span class="badge badge-amber">En attente</span>
+                            {% elseif reclamation.statut == 'Urgent' %}
+                                <span class="badge badge-red animate-pulse">Urgent ⚡</span>
                             {% elseif reclamation.statut == 'resolved' or reclamation.statut == 'Resolved' %}
                                 <span class="badge badge-green">Résolu</span>
                             {% else %}
@@ -94,77 +66,5 @@
     </div>
 </div>
 
-{# ===== FLOATING CHATBOT WIDGET ===== #}
-<div data-controller="chatbot" id="chatbot-widget">
-    {# Floating Toggle Button #}
-    <button id="chat-toggle-btn"
-            onclick="document.getElementById('chat-panel').classList.toggle('hidden'); document.getElementById('chat-panel').classList.add('chat-open'); document.getElementById('chat-toggle-btn').classList.toggle('hidden');"
-            class="fixed bottom-6 right-6 z-50 w-16 h-16 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-full shadow-2xl flex items-center justify-center text-white text-2xl hover:scale-110 transition-transform duration-200 cursor-pointer">
-        <span class="chat-bubble-ring"></span>
-        💬
-    </button>
-
-    {# Chat Panel #}
-    <div id="chat-panel"
-         class="hidden fixed bottom-6 right-6 z-50 w-96 bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col"
-         style="height: 500px;">
-        
-        {# Header #}
-        <div class="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 px-5 py-4 flex items-center justify-between flex-shrink-0">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center text-xl backdrop-blur-sm">
-                    🤖
-                </div>
-                <div>
-                    <h2 class="text-white font-bold text-sm">AI Assistant</h2>
-                    <p class="text-white/60 text-xs text-left">Powered by Gemini ✨</p>
-                </div>
-            </div>
-            <button onclick="document.getElementById('chat-panel').classList.add('hidden'); document.getElementById('chat-toggle-btn').classList.remove('hidden');"
-                    class="text-white/80 hover:text-white text-xl cursor-pointer transition-colors">
-                ✕
-            </button>
-        </div>
-
-        {# Messages #}
-        <div class="flex-1 overflow-y-auto p-4 space-y-3 bg-gradient-to-b from-gray-50/50 to-white"
-             data-chatbot-target="messages">
-            
-            <div class="flex items-end gap-2 msg-fade">
-                <div class="w-7 h-7 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full flex items-center justify-center text-white text-[10px] flex-shrink-0 font-bold">AI</div>
-                <div class="bg-white border border-gray-200 rounded-2xl rounded-bl-md px-3 py-2 max-w-[80%] shadow-sm">
-                    <p class="text-gray-700 text-sm">Hello! 👋 How can I help you with your reclamations?</p>
-                </div>
-            </div>
-
-            <div class="flex items-end gap-2" data-chatbot-target="typingIndicator" style="display: none;">
-                <div class="w-7 h-7 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full flex items-center justify-center text-white text-[10px] flex-shrink-0 font-bold">AI</div>
-                <div class="bg-white border border-gray-200 rounded-2xl rounded-bl-md px-3 py-2 shadow-sm">
-                    <div class="flex gap-1 items-center h-4">
-                        <span class="w-1.5 h-1.5 bg-gray-400 rounded-full dot1"></span>
-                        <span class="w-1.5 h-1.5 bg-gray-400 rounded-full dot2"></span>
-                        <span class="w-1.5 h-1.5 bg-gray-400 rounded-full dot3"></span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        {# Input #}
-        <div class="border-t border-gray-100 bg-white px-3 py-3 flex-shrink-0">
-            <form class="flex items-center gap-2" data-action="submit->chatbot#sendMessage" data-turbo="false">
-                <input type="text"
-                       class="flex-1 px-4 py-2.5 bg-gray-100 border-0 rounded-full text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:bg-white transition-all"
-                       data-chatbot-target="input"
-                       placeholder="Ask me anything..."
-                       autocomplete="off">
-                <button type="submit"
-                        class="bg-gradient-to-r from-indigo-500 to-purple-500 text-white px-4 py-2.5 rounded-full text-sm font-semibold hover:shadow-lg hover:shadow-purple-500/25 hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                        data-chatbot-target="sendButton">
-                    Send
-                </button>
-            </form>
-        </div>
-    </div>
-</div>
+{{ include('_chatbot.html.twig') }}
 {% endblock %}
-

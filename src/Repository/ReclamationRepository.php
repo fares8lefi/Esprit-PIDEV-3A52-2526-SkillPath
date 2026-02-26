@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Reclamation;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -16,42 +17,15 @@ class ReclamationRepository extends ServiceEntityRepository
         parent::__construct($registry, Reclamation::class);
     }
 
-    //    /**
-    //     * @return Reclamation[] Returns an array of Reclamation objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('r')
-    //            ->andWhere('r.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('r.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
-
-    //    public function findOneBySomeField($value): ?Reclamation
-    //    {
-    //        return $this->createQueryBuilder('r')
-    //            ->andWhere('r.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
-<<<<<<< Updated upstream
-    public function findBySearchAndSort(?string $search, ?string $sortOrder): array
-=======
-    public function findBySearchAndSort(?string $search, ?string $sort = 'id', ?string $direction = 'desc', ?\App\Entity\User $user = null, ?string $status = null): array
->>>>>>> Stashed changes
+    /**
+     * @return Reclamation[]
+     */
+    public function findBySearchAndSort(?string $search, ?string $sort = 'id', ?string $direction = 'desc', ?User $user = null, ?string $status = null): array
     {
         $qb = $this->createQueryBuilder('r')
             ->leftJoin('r.user', 'u')
             ->addSelect('u');
 
-<<<<<<< Updated upstream
-=======
         if ($user) {
             $qb->andWhere('r.user = :user')
                ->setParameter('user', $user);
@@ -62,17 +36,17 @@ class ReclamationRepository extends ServiceEntityRepository
                ->setParameter('status', $status);
         }
 
->>>>>>> Stashed changes
         if ($search) {
-            $qb->andWhere('u.email LIKE :search')
+            $qb->andWhere('r.sujet LIKE :search OR u.email LIKE :search OR r.description LIKE :search')
                ->setParameter('search', '%' . $search . '%');
         }
 
-        if ($sortOrder === 'desc') {
-            $qb->orderBy('u.email', 'DESC');
-        } else {
-            $qb->orderBy('u.email', 'ASC');
-        }
+        // Handle sorting
+        $validSortFields = ['id', 'sujet', 'statut'];
+        $actualSort = in_array($sort, $validSortFields) ? 'r.' . $sort : 'r.id';
+        $actualDirection = strtoupper($direction) === 'ASC' ? 'ASC' : 'DESC';
+
+        $qb->orderBy($actualSort, $actualDirection);
 
         return $qb->getQuery()->getResult();
     }
