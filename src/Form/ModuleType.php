@@ -125,6 +125,15 @@ class ModuleType extends AbstractType
                         'mimeTypesMessage' => 'Formats acceptés: JPG, PNG, WEBP (max 2Mo)',
                     ])
                 ],
+            ])
+            ->add('scheduledAt', \Symfony\Component\Form\Extension\Core\Type\DateTimeType::class, [
+                'label' => 'Planification (Schedule at)',
+                'required' => false,
+                'widget' => 'single_text',
+                'attr' => [
+                    'class' => 'form-input'
+                ],
+                'help' => 'Date et heure à laquelle le module sera visible/proposé dans le calendrier.'
             ]);
     }
 

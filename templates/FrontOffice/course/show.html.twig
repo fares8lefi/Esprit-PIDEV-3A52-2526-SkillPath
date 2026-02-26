@@ -84,8 +84,9 @@
                 </div>
                 {# Stats badges floating #}
                 <div class="absolute -right-6 -bottom-6 glass p-4 rounded-2xl border border-white/10 animate-float shadow-xl">
+                    {% set visible_modules = course.modules|filter(m => m.scheduledAt is null or m.scheduledAt <= date()) %}
                     <p class="text-[10px] font-black uppercase text-slate-500 mb-1">Modules</p>
-                    <p class="text-xl font-black text-white">{{ course.modules|length }} Units</p>
+                    <p class="text-xl font-black text-white">{{ visible_modules|length }} Units</p>
                 </div>
             </div>
 
@@ -150,7 +151,8 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {% for module in course.modules %}
+                {% set visible_modules = course.modules|filter(m => m.scheduledAt is null or m.scheduledAt <= date()) %}
+                {% for module in visible_modules %}
                     {% if isEnrolled %}
                         <a href="{{ path('app_front_office_module_show', {id: module.id}) }}" class="group block relative animate-fade-up" style="animation-delay: {{ loop.index * 100 }}ms">
                     {% else %}
