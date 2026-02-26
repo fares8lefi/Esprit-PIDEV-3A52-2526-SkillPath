@@ -26,12 +26,12 @@ export default class extends Controller {
         this.showTypingIndicator();
 
         try {
-            const response = await fetch('/chatbot/api/message', {
+            const response = await fetch('/api/huggingface-chat', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ message: message }),
+                body: JSON.stringify({ question: message }),
             });
 
             const data = await response.json();
@@ -40,7 +40,7 @@ export default class extends Controller {
             if (data.error) {
                 this.addMessage('Error: ' + data.error, 'bot');
             } else {
-                this.addMessage(data.response, 'bot');
+                this.addMessage(data.answer, 'bot');
             }
         } catch (error) {
             this.hideTypingIndicator();
