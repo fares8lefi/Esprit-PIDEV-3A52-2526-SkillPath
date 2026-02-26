@@ -67,7 +67,7 @@ class UserController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 
-            // Log pour déboguer
+            
             $userEmail = $user->getEmail();
             
             // Envoyer l'email de vérification
