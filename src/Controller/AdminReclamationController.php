@@ -24,12 +24,14 @@ class AdminReclamationController extends AbstractController
         $search = $request->query->get('search');
         $sort = $request->query->get('sort', 'id');
         $direction = $request->query->get('direction', 'desc');
+        $status = $request->query->get('status', 'all');
 
         return $this->render('BackOffice/reclamation/index.html.twig', [
-            'reclamations' => $reclamationRepository->findBySearchAndSort($search, $sort, $direction),
+            'reclamations' => $reclamationRepository->findBySearchAndSort($search, $sort, $direction, null, $status),
             'search' => $search,
             'sort' => $sort,
             'direction' => $direction,
+            'current_status' => $status,
         ]);
     }
 
