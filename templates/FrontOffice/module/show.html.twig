@@ -78,8 +78,12 @@
                     {% set isActive = m.id == module.id %}
                     <a href="{{ path('app_front_office_module_show', {id: m.id}) }}" 
                        class="flex items-center gap-4 p-4 rounded-2xl transition-all group {{ isActive ? 'bg-primary/10 border border-primary/20 text-primary dark:text-white' : 'hover:bg-slate-100 dark:hover:bg-white/5 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
-                        <div class="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs {{ isActive ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'bg-slate-100 dark:bg-white/5 group-hover:bg-slate-200 dark:group-hover:bg-white/10' }}">
-                            {{ loop.index }}
+                        <div class="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs {{ isActive ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'bg-slate-100 dark:bg-white/5 group-hover:bg-slate-200 dark:group-hover:bg-white/10' }} overflow-hidden">
+                            {% if m.image %}
+                                <img src="{{ asset('uploads/modules/' ~ m.image) }}" class="w-full h-full object-cover">
+                            {% else %}
+                                {{ loop.index }}
+                            {% endif %}
                         </div>
                         <div class="flex-grow min-w-0">
                             <p class="text-sm font-bold truncate">{{ m.title }}</p>

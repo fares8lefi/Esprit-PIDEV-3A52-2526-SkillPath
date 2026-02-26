@@ -43,11 +43,35 @@
                     {{ form_errors(form.description) }}
                 </div>
 
+                <div class="md:col-span-1">
+                    <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Logo / Illustration</label>
+                    {{ form_widget(form.imageFile) }}
+                    {{ form_errors(form.imageFile) }}
+                    {% if module.image is defined and module.image %}
+                        <div class="mt-2 flex items-center gap-2">
+                            <span class="text-[10px] text-slate-400">Actuel:</span>
+                            <img src="{{ asset('uploads/modules/' ~ module.image) }}" class="w-8 h-8 rounded border border-white/10 object-cover">
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="md:col-span-1">
+                    <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Document de Cours (PDF/Word)</label>
+                    {{ form_widget(form.documentFile) }}
+                    {{ form_errors(form.documentFile) }}
+                    {% if module.document is defined and module.document %}
+                        <div class="mt-2 flex items-center gap-2">
+                            <span class="text-[10px] text-slate-400">Actuel:</span>
+                            <span class="text-[10px] font-mono text-primary truncate max-w-[100px]">{{ module.document }}</span>
+                        </div>
+                    {% endif %}
+                </div>
+
                 <div class="md:col-span-2">
                     <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Contenu Principal / Ressources</label>
                     {{ form_widget(form.content) }}
                     {{ form_errors(form.content) }}
-                    <p class="text-[10px] text-slate-400 mt-2 italic italic">Supporte le Markdown, texte enrichi, ou URLs de ressources.</p>
+                    <p class="text-[10px] text-slate-400 mt-2 italic italic">Supporte le Markdown, texte enrichi, ou URLs de ressources. Si c'est une vidéo, mettez l'URL ici.</p>
                 </div>
             </div>
 

@@ -61,7 +61,8 @@
                                 <a href="{{ path('app_reclamation_edit', {'id': reclamation.id}) }}" 
                                    class="text-[10px] font-black uppercase tracking-widest text-primary hover:underline z-10" 
                                    onclick="event.stopPropagation();">Modifier</a>
-                                <span class="badge badge-amber">En attente</span>
+                            {% endif %}
+
                             {% if reclamation.statut == 'Urgent' %}
                                 <span class="badge badge-red animate-pulse italic">Urgent ⚡</span>
                             {% elseif reclamation.statut|lower == 'pending' or reclamation.statut|lower == 'en attente' %}

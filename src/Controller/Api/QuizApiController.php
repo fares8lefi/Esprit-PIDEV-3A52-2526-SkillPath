@@ -28,7 +28,7 @@ class QuizApiController extends AbstractController
                 'description' => $quiz->getDescription(),
                 'duration' => $quiz->getDuree(),
                 'questionCount' => count($quiz->getQuestions()),
-                'course' => $quiz->getCours() ? $quiz->getCours()->getTitre() : null,
+                'course' => $quiz->getCourse() ? $quiz->getCourse()->getTitle() : null,
             ];
         }
 

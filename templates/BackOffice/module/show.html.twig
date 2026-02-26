@@ -6,11 +6,18 @@
 <div class="max-w-5xl mx-auto space-y-8 animate-fade-up">
     {# Header #}
     <div class="flex items-center justify-between">
-        <div class="flex items-center gap-4">
-            <a href="{{ path('admin_module_index') }}" class="w-10 h-10 rounded-xl glass flex items-center justify-center text-slate-400 hover:text-primary transition-all">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        <div class="flex items-center gap-6">
+            <a href="{{ path('admin_module_index') }}" class="w-12 h-12 rounded-2xl glass flex items-center justify-center text-slate-400 hover:text-primary transition-all border border-slate-200 dark:border-white/10">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
             </a>
-            <h1 class="text-3xl font-black text-slate-900 dark:text-white">{{ module.title }}</h1>
+            
+            {% if module.image %}
+                <div class="w-16 h-16 rounded-2xl border border-slate-200 dark:border-white/10 overflow-hidden shadow-sm">
+                    <img src="{{ asset('uploads/modules/' ~ module.image) }}" class="w-full h-full object-cover">
+                </div>
+            {% endif %}
+
+            <h1 class="text-3xl font-black text-slate-900 dark:text-white leading-tight">{{ module.title }}</h1>
         </div>
         <div class="flex gap-3">
              <a href="{{ path('admin_module_edit', {id: module.id}) }}" class="btn-secondary !py-2.5 !px-5 !text-xs">Adjust Unit</a>
