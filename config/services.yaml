@@ -29,3 +29,8 @@ services:
   App\Service\AIService:
     arguments:
       $aiUrl: '%env(PYTHON_AI_URL)%'
+
+  App\Service\HuggingFaceTutorService:
+    arguments:
+      $hfToken: '%hf_token%'
+      $hfModel: '%hf_model%'
