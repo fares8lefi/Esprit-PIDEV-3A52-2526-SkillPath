@@ -9,8 +9,13 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Service\GeminiTranslatorService;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\Mime\Address;
 use Endroid\QrCode\Builder\BuilderInterface;
 use Endroid\QrCode\Encoding\Encoding;
 use Endroid\QrCode\ErrorCorrectionLevel;
@@ -20,18 +25,20 @@ use Endroid\QrCode\Writer\PngWriter;
 class EventController extends AbstractController
 {
     #[Route('/', name: 'index', methods: ['GET'])]
-    public function index(EventRepository $eventRepository): Response
+    public function index(Request $request, EventRepository $eventRepository, \App\Repository\LocationRepository $locationRepository): Response
     {
-        // Get upcoming events
-        $events = $eventRepository->createQueryBuilder('e')
-            ->where('e.eventDate >= :today')
-            ->setParameter('today', new \DateTime('today'))
-            ->orderBy('e.eventDate', 'ASC')
-            ->getQuery()
-            ->getResult();
+        $search = $request->query->get('q');
+        $rating = $request->query->get('rating') ? (int)$request->query->get('rating') : null;
+        $locationId = $request->query->get('location') ? (int)$request->query->get('location') : null;
+
+        $events = $eventRepository->findByFilters($search, $rating, $locationId);
 
         return $this->render('FrontOffice/event/index.html.twig', [
             'events' => $events,
+            'locations' => $locationRepository->findAll(),
+            'currentSearch' => $search,
+            'currentRating' => $rating,
+            'currentLocation' => $locationId,
         ]);
     }
 
@@ -58,7 +65,7 @@ class EventController extends AbstractController
 
     #[Route('/{id}/join', name: 'join', methods: ['POST'])]
     #[IsGranted('ROLE_USER')]
-    public function join(Event $event, EntityManagerInterface $entityManager, Request $request): Response
+    public function join(Event $event, EntityManagerInterface $entityManager, Request $request, MailerInterface $mailer, BuilderInterface $customQrCodeBuilder): Response
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -74,7 +81,45 @@ class EventController extends AbstractController
             }
             
             $user->addJoinedEvent($event);
-            $this->addFlash('success', 'Inscription réussie !');
+            
+            // Build the QR Code Billet
+            $data = sprintf(
+                "Billet SkillPath\nÉvénement: %s\nDate: %s\nParticipant: %s\nEmail: %s",
+                $event->getTitle(),
+                $event->getEventDate()->format('d/m/Y'),
+                $user->getUsername(),
+                $user->getEmail()
+            );
+
+            $qrResult = $customQrCodeBuilder->build(
+                data: $data,
+                encoding: new Encoding('UTF-8'),
+                errorCorrectionLevel: ErrorCorrectionLevel::High,
+                size: 300,
+                margin: 10,
+                writer: new PngWriter()
+            );
+            $ticketPngContent = $qrResult->getString();
+
+            // Send Confirmation Email
+            $email = (new TemplatedEmail())
+                ->from(new Address('bizbiz1478@gmail.com', 'SkillPath Events'))
+                ->to($user->getEmail())
+                ->subject('Confirmation d\'inscription : ' . $event->getTitle())
+                ->htmlTemplate('emails/event_registration.html.twig')
+                ->context([
+                    'event' => $event,
+                    'user' => $user,
+                ])
+                ->attach($ticketPngContent, 'billet-' . $event->getId() . '.png', 'image/png');
+
+            try {
+                $mailer->send($email);
+                $this->addFlash('success', 'Inscription réussie ! Un email avec votre billet vous a été envoyé.');
+            } catch (\Exception $e) {
+                // Ignore silent mailer drops for local usage if needed, but alert user
+                $this->addFlash('error', 'Inscription réussie mais l\'envoi de l\'email a échoué.');
+            }
         }
 
         $entityManager->flush();
@@ -137,5 +182,45 @@ class EventController extends AbstractController
             'Content-Type' => 'image/png',
             'Content-Disposition' => 'attachment; filename="billet-' . $event->getId() . '.png"'
         ]);
+    }
+
+    #[Route('/{id}/rate', name: 'rate', methods: ['POST'])]
+    #[IsGranted('ROLE_USER')]
+    public function rate(Event $event, Request $request, EntityManagerInterface $entityManager): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $score = $request->request->get('rating');
+
+        if ($score && is_numeric($score) && $score >= 1 && $score <= 5) {
+            $existingRating = $entityManager->getRepository(\App\Entity\EventRating::class)
+                ->findOneBy(['event' => $event, 'user' => $user]);
+
+            if ($existingRating) {
+                $existingRating->setScore((int)$score);
+            } else {
+                $rating = new \App\Entity\EventRating();
+                $rating->setUser($user);
+                $rating->setScore((int)$score);
+                $event->addRating($rating);
+                $entityManager->persist($rating);
+            }
+
+            $event->updateAverageRating();
+            $entityManager->flush();
+            $this->addFlash('success', 'Merci pour votre évaluation !');
+        } else {
+            $this->addFlash('error', 'Note invalide.');
+        }
+
+        return $this->redirect($request->headers->get('referer') ?: $this->generateUrl('app_event_show', ['id' => $event->getId()]));
+    }
+
+    #[Route('/{id}/translate/{lang}', name: 'translate', methods: ['GET'], requirements: ['lang' => 'en|ar'])]
+    public function translate(Event $event, string $lang, GeminiTranslatorService $translatorService): JsonResponse
+    {
+        $translation = $translatorService->translateEvent($event, $lang);
+
+        return new JsonResponse($translation);
     }
 }

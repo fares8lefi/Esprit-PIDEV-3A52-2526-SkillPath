@@ -44,14 +44,39 @@
                     {% if event.location %}
                     <span class="flex items-center gap-2 text-slate-500 font-medium">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                        {{ event.location.name }}
+                        <span id="event-location" data-original="{{ event.location.name }}">{{ event.location.name }}</span>
                     </span>
                     {% endif %}
+
+                    <!-- AI Translation Buttons -->
+                    <div class="ml-auto flex items-center gap-2">
+                        <span class="text-xs text-slate-500 font-medium">🤖 Traduire :</span>
+                        <button id="btn-translate-en" onclick="translateEvent('en')" class="flex items-center gap-1 px-3 py-1.5 text-xs font-bold rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-primary hover:text-white transition-all duration-200">
+                            🇺🇸 English
+                        </button>
+                        <button id="btn-translate-ar" onclick="translateEvent('ar')" class="flex items-center gap-1 px-3 py-1.5 text-xs font-bold rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-primary hover:text-white transition-all duration-200">
+                            🇸🇦 العربية
+                        </button>
+                        <button id="btn-translate-reset" onclick="resetTranslation()" class="hidden flex items-center gap-1 px-3 py-1.5 text-xs font-bold rounded-xl bg-red-100 text-red-600 hover:bg-red-200 transition-all duration-200">
+                            ↩ Original
+                        </button>
+                    </div>
                 </div>
 
-                <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white mb-6 leading-tight">
+                <h1 id="event-title" data-original="{{ event.title }}" class="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white mb-4 leading-tight">
                     {{ event.title }}
                 </h1>
+
+                <div class="flex items-center gap-2 mb-6">
+                    <div class="flex">
+                        {% set rating = event.averageRating|default(0) %}
+                        {% for i in 1..5 %}
+                            <svg class="w-6 h-6 {{ i <= rating ? 'text-yellow-400 fill-yellow-400' : 'text-slate-200 dark:text-slate-700' }}" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        {% endfor %}
+                    </div>
+                    <span class="text-xl font-bold text-slate-700 dark:text-slate-300">{{ event.averageRating|default(0)|number_format(1) }}</span>
+                    <span class="text-slate-500">({{ event.ratings|length|default(0) }} avis)</span>
+                </div>
 
                 <!-- Flash Messages -->
                 {% for message in app.flashes('success') %}
@@ -66,8 +91,38 @@
                     </div>
                 {% endfor %}
 
-                <div class="prose prose-lg prose-slate dark:prose-invert max-w-none">
+                <div id="event-description" data-original="{{ event.description|e('html_attr') }}" class="prose prose-lg prose-slate dark:prose-invert max-w-none transition-opacity duration-300">
                     {{ event.description|nl2br }}
+                </div>
+
+                <div class="mt-12">
+                    <h3 class="text-2xl font-bold text-slate-900 dark:text-white mb-6">Évaluer cet événement</h3>
+                    {% if app.user %}
+                        <form action="{{ path('app_event_rate', {id: event.id}) }}" method="post" class="bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-6 border border-slate-100 dark:border-white/5">
+                            <div class="flex flex-col sm:flex-row items-center gap-6">
+                                <div class="flex-1 w-full">
+                                    <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-3">Votre note (sur 5)</label>
+                                    <div class="flex items-center gap-2 flex-row-reverse justify-end rating-stars">
+                                        {% for i in 5..1 %}
+                                            <input type="radio" name="rating" id="star{{ i }}" value="{{ i }}" class="peer hidden" required>
+                                            <label for="star{{ i }}" class="cursor-pointer text-slate-300 peer-checked:text-yellow-400 hover:text-yellow-400 transition-colors">
+                                                <svg class="w-10 h-10 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                            </label>
+                                        {% endfor %}
+                                        <style>
+                                            .rating-stars label:hover ~ label { color: #facc15 !important; }
+                                        </style>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn-primary w-full sm:w-auto px-8 py-3 shadow-lg shadow-primary/30">Soumettre</button>
+                            </div>
+                        </form>
+                    {% else %}
+                        <div class="bg-blue-50/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800/30 rounded-2xl p-6 text-center">
+                            <p class="text-blue-800 dark:text-blue-300 mb-4">Vous devez être connecté pour laisser une évaluation.</p>
+                            <a href="{{ path('app_user_login') }}" class="btn-primary inline-flex">Se connecter</a>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -85,7 +140,8 @@
                         </div>
                         <div>
                             <span class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Date</span>
-                            <span class="text-lg font-bold text-slate-900 dark:text-white">{{ event.eventDate|date('d F Y') }}</span>
+                            <span class="block text-lg font-bold text-slate-900 dark:text-white">{{ event.eventDate|date('d F Y') }}</span>
+                            <span class="text-sm font-medium text-primary">{{ event.eventDate|ago }}</span>
                         </div>
                     </div>
 
@@ -140,4 +196,63 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+const translateUrlBase = "{{ path('app_event_translate', {id: event.id, lang: 'en'}) }}".replace('/en', '/{lang}');
+
+async function translateEvent(lang) {
+    const btns = ['btn-translate-en','btn-translate-ar'];
+    btns.forEach(id => { document.getElementById(id).disabled = true; document.getElementById(id).textContent = '...⏳'; });
+
+    const url = translateUrlBase.replace('{lang}', lang);
+
+    try {
+        const resp = await fetch(url);
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        const data = await resp.json();
+
+        const dir = lang === 'ar' ? 'rtl' : 'ltr';
+        fadeTo('#event-title', data.title, dir);
+        fadeHtmlTo('#event-description', (data.description || '').replace(/\n/g, '<br>'), dir);
+        const locEl = document.getElementById('event-location');
+        if (locEl && data.location) fadeTo('#event-location', data.location, dir);
+
+        document.getElementById('btn-translate-reset').classList.remove('hidden');
+    } catch(e) {
+        alert('Erreur de traduction : ' + e.message);
+    } finally {
+        document.getElementById('btn-translate-en').disabled = false;
+        document.getElementById('btn-translate-en').innerHTML = '🇺🇸 English';
+        document.getElementById('btn-translate-ar').disabled = false;
+        document.getElementById('btn-translate-ar').innerHTML = '🇸🇦 العربية';
+    }
+}
+
+function resetTranslation() {
+    const titleEl = document.getElementById('event-title');
+    const descEl  = document.getElementById('event-description');
+    const locEl   = document.getElementById('event-location');
+    fadeTo('#event-title', titleEl.dataset.original, 'ltr');
+    fadeHtmlTo('#event-description', descEl.dataset.original.replace(/\n/g, '<br>'), 'ltr');
+    if (locEl) fadeTo('#event-location', locEl.dataset.original, 'ltr');
+    document.getElementById('btn-translate-reset').classList.add('hidden');
+}
+
+function fadeTo(sel, text, dir) {
+    const el = document.querySelector(sel);
+    el.style.transition = 'opacity 0.3s';
+    el.style.opacity = 0;
+    setTimeout(() => { el.textContent = text; el.dir = dir; el.style.opacity = 1; }, 300);
+}
+
+function fadeHtmlTo(sel, html, dir) {
+    const el = document.querySelector(sel);
+    el.style.transition = 'opacity 0.3s';
+    el.style.opacity = 0;
+    setTimeout(() => { el.innerHTML = html; el.dir = dir; el.style.opacity = 1; }, 300);
+}
+</script>
 {% endblock %}
