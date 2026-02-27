@@ -16,6 +16,31 @@ class EventRepository extends ServiceEntityRepository
         parent::__construct($registry, Event::class);
     }
 
+    public function findByFilters(?string $search, ?int $rating, ?int $locationId): array
+    {
+        $qb = $this->createQueryBuilder('e')
+            ->where('e.eventDate >= :today')
+            ->setParameter('today', new \DateTime('today'))
+            ->orderBy('e.eventDate', 'ASC');
+
+        if ($search) {
+            $qb->andWhere('e.title LIKE :search OR e.description LIKE :search')
+               ->setParameter('search', '%' . $search . '%');
+        }
+
+        if ($rating) {
+            $qb->andWhere('e.averageRating >= :rating')
+               ->setParameter('rating', $rating);
+        }
+
+        if ($locationId) {
+            $qb->andWhere('e.location = :locationId')
+               ->setParameter('locationId', $locationId);
+        }
+
+        return $qb->getQuery()->getResult();
+    }
+
     //    /**
     //     * @return Event[] Returns an array of Event objects
     //     */

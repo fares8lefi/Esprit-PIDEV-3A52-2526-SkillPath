@@ -34,19 +34,7 @@ class EventController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $imageFile = $form->get('imageFile')->getData();
-            if ($imageFile) {
-                $original = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
-                $safeName = $slugger->slug($original);
-                $newName = $safeName . '-' . uniqid() . '.' . $imageFile->guessExtension();
-
-                try {
-                    $imageFile->move($this->getParameter('events_upload_dir'), $newName);
-                    $event->setImage($newName);
-                } catch (FileException $e) {
-                    $this->addFlash('error', 'Upload échoué.');
-                }
-            }
+            // VichUploaderBundle will handle the file upload automatically
 
             $entityManager->persist($event);
             $entityManager->flush();
@@ -76,19 +64,7 @@ class EventController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $imageFile = $form->get('imageFile')->getData();
-            if ($imageFile) {
-                $original = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
-                $safeName = $slugger->slug($original);
-                $newName = $safeName . '-' . uniqid() . '.' . $imageFile->guessExtension();
-
-                try {
-                    $imageFile->move($this->getParameter('events_upload_dir'), $newName);
-                    $event->setImage($newName);
-                } catch (FileException $e) {
-                    $this->addFlash('error', 'Upload échoué.');
-                }
-            }
+            // VichUploaderBundle will handle the file upload automatically
 
             $entityManager->flush();
             $this->addFlash('success', 'L\'événement a été modifié avec succès.');

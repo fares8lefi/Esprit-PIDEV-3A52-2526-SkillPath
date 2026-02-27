@@ -13,8 +13,8 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Vich\UploaderBundle\Form\Type\VichImageType;
 
 class EventType extends AbstractType
 {
@@ -79,20 +79,16 @@ class EventType extends AbstractType
                     'class' => 'w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-skillpath-blue focus:border-transparent transition-all',
                 ],
             ])
-            ->add('imageFile', FileType::class, [
-                'label' => 'Image (optionnel)',
-                'mapped' => false,
+            ->add('imageFile', VichImageType::class, [
+                'label' => 'Image de l\'événement',
                 'required' => false,
+                'allow_delete' => true,
+                'download_uri' => true,
+                'image_uri' => true,
+                'asset_helper' => true,
                 'attr' => [
                     'class' => 'w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-skillpath-blue focus:border-transparent transition-all'
                 ],
-                'constraints' => [
-                    new File([
-                        'maxSize' => '3M',
-                        'mimeTypes' => ['image/jpeg', 'image/png', 'image/webp'],
-                        'mimeTypesMessage' => 'Formats acceptés: JPG, PNG, WEBP',
-                    ])
-                ]
             ]);
     }
 

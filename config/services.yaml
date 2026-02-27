@@ -34,3 +34,7 @@ services:
     arguments:
       $hfToken: '%hf_token%'
       $hfModel: '%hf_model%'
+
+  App\Service\GeminiTranslatorService:
+    arguments:
+      $geminiApiKey: '%env(GEMINI_API_KEY)%'
