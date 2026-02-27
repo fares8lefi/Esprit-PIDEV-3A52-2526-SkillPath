@@ -34,19 +34,22 @@ class CourseController extends AbstractController
     }
 
     #[Route('/{id}', name: 'show', methods: ['GET'])]
-    public function show(Course $course, \App\Service\UserCourseViewService $viewService): Response
+    public function show(Course $course, \App\Service\UserCourseViewService $viewService, \Doctrine\ORM\EntityManagerInterface $em): Response
     {
         $user = $this->getUser();
         $isEnrolled = false;
+        $isCompleted = false;
         
         if ($user instanceof \App\Entity\User) {
-            $viewService->recordView($user, $course);
+            $view = $viewService->recordView($user, $course);
             $isEnrolled = $viewService->isUserEnrolled($user, $course);
+            $isCompleted = $view->isCompleted();
         }
 
         return $this->render('FrontOffice/course/show.html.twig', [
             'course' => $course,
             'isEnrolled' => $isEnrolled,
+            'isCompleted' => $isCompleted,
         ]);
     }
 
@@ -75,6 +78,60 @@ class CourseController extends AbstractController
 
         return $this->render('FrontOffice/course/my_courses.html.twig', [
             'courses' => $user->getCourses(),
+        ]);
+    }
+
+    #[Route('/{id}/complete', name: 'complete', methods: ['POST'])]
+    public function complete(Course $course, \App\Service\UserCourseViewService $viewService): \Symfony\Component\HttpFoundation\JsonResponse
+    {
+        $user = $this->getUser();
+        if (!$user instanceof \App\Entity\User) {
+            return new \Symfony\Component\HttpFoundation\JsonResponse(['status' => 'error', 'message' => 'Non authentifié'], 403);
+        }
+
+        $viewService->markCourseAsCompleted($user, $course);
+        return new \Symfony\Component\HttpFoundation\JsonResponse(['status' => 'success']);
+    }
+
+    #[Route('/{id}/certificate/download', name: 'certificate_download', methods: ['GET'])]
+    public function downloadCertificate(
+        Course $course, 
+        \App\Service\UserCourseViewService $viewService,
+        \App\Service\CertificateService $certificateService,
+        \Doctrine\ORM\EntityManagerInterface $entityManager
+    ): Response {
+        $user = $this->getUser();
+        if (!$user instanceof \App\Entity\User) {
+            $this->addFlash('error', 'Vous devez être connecté.');
+            return $this->redirectToRoute('app_user_login');
+        }
+
+        // Vérifier si complété
+        $view = $entityManager->getRepository(\App\Entity\UserCourseView::class)->findOneBy(['user' => $user, 'course' => $course]);
+        if (!$view || !$view->isCompleted()) {
+            $this->addFlash('error', "Vous n'avez pas encore terminé ce cours.");
+            return $this->redirectToRoute('front_course_show', ['id' => $course->getId()]);
+        }
+
+        // Chercher ou créer le certificat
+        $certRepo = $entityManager->getRepository(\App\Entity\Certificate::class);
+        $certificate = $certRepo->findOneBy(['user' => $user, 'course' => $course]);
+
+        if (!$certificate) {
+            $certificate = new \App\Entity\Certificate();
+            $certificate->setUser($user);
+            $certificate->setCourse($course);
+            $certificate->setCertCode('CERT-' . $user->getId() . '-' . $course->getId() . '-' . date('Y'));
+            $entityManager->persist($certificate);
+            $entityManager->flush();
+        }
+
+        // Générer PDF
+        $pdfContent = $certificateService->generatePdfContent($certificate);
+
+        return new Response($pdfContent, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="Certificat_' . $course->getId() . '.pdf"'
         ]);
     }
 }

@@ -49,6 +49,9 @@ class Module
     #[ORM\JoinColumn(nullable: false)]
     private ?Course $course = null;
 
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTimeInterface $scheduledAt = null;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -166,6 +169,17 @@ class Module
     public function setDocument(?string $document): static
     {
         $this->document = $document;
+        return $this;
+    }
+
+    public function getScheduledAt(): ?\DateTimeInterface
+    {
+        return $this->scheduledAt;
+    }
+
+    public function setScheduledAt(?\DateTimeInterface $scheduledAt): static
+    {
+        $this->scheduledAt = $scheduledAt;
         return $this;
     }
 

@@ -415,6 +415,141 @@
     </div>
 </div>
 
+{# FLOATING CHATBOT WIDGET #}
+<div id="ai-chat-widget" class="fixed bottom-6 right-6 z-[100] flex flex-col items-end">
+    {# Chat Window #}
+    <div id="ai-chat-window" class="hidden w-[380px] h-[550px] bg-white rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-gray-100 mb-4 animate-fade-in-up origin-bottom-right">
+        {# Chat Header #}
+        <div class="h-16 px-6 bg-[#1E88E5] flex items-center justify-between shadow-lg">
+            <div class="flex items-center gap-3 text-white">
+                <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center backdrop-blur-md">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                </div>
+                <div>
+                    <h2 class="font-bold text-sm">Assistant SkillPath</h2>
+                    <p class="text-[10px] text-white/70">En ligne • IA</p>
+                </div>
+            </div>
+            <button id="close-chat" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+
+        {# Chat Messages #}
+        <div id="chat-messages" class="flex-grow p-6 space-y-4 overflow-y-auto custom-scrollbar scroll-smooth bg-gray-50/50">
+            <div class="flex flex-col items-center justify-center h-full text-center text-gray-400 opacity-40 px-10" id="empty-state">
+                <p class="text-xs font-medium">Une question sur ce module ? Je suis là !</p>
+            </div>
+        </div>
+
+        {# Chat Input Area #}
+        <div class="p-4 bg-white border-t border-gray-100">
+            <form id="tutor-form">
+                <div class="flex gap-2 overflow-x-auto pb-3 mb-3 no-scrollbar">
+                        <span class="mode-chip whitespace-nowrap px-3 py-1.5 rounded-full text-[10px] font-bold uppercase bg-[#1E88E5] text-white cursor-pointer" data-value="expliquer">💡 Expliquer</span>
+                        <span class="mode-chip whitespace-nowrap px-3 py-1.5 rounded-full text-[10px] font-bold uppercase bg-gray-100 text-gray-500 cursor-pointer" data-value="resumer">📝 Résumer</span>
+                        <span class="mode-chip whitespace-nowrap px-3 py-1.5 rounded-full text-[10px] font-bold uppercase bg-gray-100 text-gray-500 cursor-pointer" data-value="quiz">❓ Quiz</span>
+                </div>
+                
+                <select id="mode" class="hidden"><option value="expliquer" selected>expliquer</option></select>
+                <textarea id="context" class="hidden">{{ module.title }} : {{ module.content|striptags|slice(0, 1000) }}</textarea>
+
+                <div class="relative flex items-center">
+                    <input type="text" id="question" class="w-full bg-gray-50 border-gray-100 rounded-2xl py-3.5 pl-4 pr-12 text-sm text-gray-800 focus:ring-2 focus:ring-blue-200" placeholder="Une question ?" autocomplete="off">
+                    <button type="submit" id="submit-btn" class="absolute right-1.5 p-2 bg-[#1E88E5] text-white rounded-xl shadow-lg">
+                        <svg id="btn-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {# Toggle Button #}
+    <button id="toggle-chat" class="w-16 h-16 bg-[#1E88E5] text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 transition-all">
+        <svg id="toggle-open-icon" class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+    </button>
+</div>
+
+<style>
+    @keyframes fade-in-up { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    .animate-fade-in-up { animation: fade-in-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const chatWindow = document.getElementById('ai-chat-window');
+        const toggleBtn = document.getElementById('toggle-chat');
+        const closeBtn = document.getElementById('close-chat');
+        const form = document.getElementById('tutor-form');
+        const chatMessages = document.getElementById('chat-messages');
+        const questionInput = document.getElementById('question');
+        const contextInput = document.getElementById('context');
+        const modeSelect = document.getElementById('mode');
+
+        const toggleChat = () => chatWindow.classList.toggle('hidden');
+        if(toggleBtn) toggleBtn.addEventListener('click', toggleChat);
+        if(closeBtn) closeBtn.addEventListener('click', toggleChat);
+
+        // Mode chips logic
+        const modeChips = document.querySelectorAll('.mode-chip');
+        modeChips.forEach(chip => {
+            chip.addEventListener('click', () => {
+                modeSelect.value = chip.dataset.value;
+                modeChips.forEach(c => {
+                    c.classList.remove('bg-[#1E88E5]', 'text-white');
+                    c.classList.add('bg-gray-100', 'text-gray-500');
+                });
+                chip.classList.remove('bg-gray-100', 'text-gray-500');
+                chip.classList.add('bg-[#1E88E5]', 'text-white');
+            });
+        });
+
+        function addMessage(text, isUser = false) {
+            document.getElementById('empty-state')?.remove();
+            const div = document.createElement('div');
+            div.className = `flex ${isUser ? 'justify-end' : 'justify-start'} animate-fade-in-up items-end gap-2`;
+            const content = `<div class="${isUser ? 'bg-[#1E88E5] text-white' : 'bg-white border text-gray-800'} p-3.5 rounded-2xl max-w-[85%] text-xs leading-relaxed overflow-hidden break-words"><div class="prose prose-sm prose-p:my-1 prose-ul:my-1 prose-li:my-0">${text}</div></div>`;
+            div.innerHTML = content;
+            chatMessages.appendChild(div);
+            // Wait for DOM to update then scroll
+            setTimeout(() => {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 50);
+        }
+
+        if(form) {
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const question = questionInput.value.trim();
+                if (!question) return;
+
+                addMessage(question, true);
+                questionInput.value = '';
+
+                try {
+                    const response = await fetch('/api/huggingface-chat', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ question, context: contextInput.value, mode: modeSelect.value })
+                    });
+                    const data = await response.json();
+                    
+                    // Basic markdown parsing for bold and line breaks
+                    let formattedAnswer = (data.answer || "Erreur de réponse.")
+                        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                        .replace(/\n/g, '<br>');
+                        
+                    addMessage(formattedAnswer);
+                } catch (error) {
+                    addMessage("Erreur de connexion.");
+                }
+            });
+        }
+    });
+</script>
+
 <script>
     function openCompletionModal() {
         const modal = document.getElementById('completionModal');
@@ -422,14 +557,19 @@
         const content = document.getElementById('modalContent');
         
         modal.classList.remove('hidden');
-        // Trigger reflow
         void modal.offsetWidth;
         
         backdrop.classList.remove('opacity-0');
         content.classList.remove('scale-95', 'opacity-0');
         content.classList.add('scale-100', 'opacity-100');
-        
-        // Optional: Trigger confetti here if library installed
+
+        // Appeler la route de complétion en arrière-plan
+        fetch('{{ path('front_course_complete', {id: module.course.id}) }}', {
+            method: 'POST',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        }).then(response => response.json())
+          .then(data => console.log('Cours complété:', data))
+          .catch(err => console.error('Erreur complétion:', err));
     }
 
     function closeCompletionModal() {
