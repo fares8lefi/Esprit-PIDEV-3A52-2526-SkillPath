@@ -86,6 +86,15 @@ class UserCourseViewService
         return $view ? $view->isEnrolled() : false;
     }
 
+    public function markCourseAsCompleted(User $user, Course $course): void
+    {
+        $view = $this->recordView($user, $course);
+        if (!$view->isCompleted()) {
+            $view->setIsCompleted(true);
+            $this->entityManager->flush();
+        }
+    }
+
     public function getRecommendations(User $user, int $topN = 5): array
     {
         $unseenCourses = $this->repository->findUnseenCoursesByUser($user->getId());

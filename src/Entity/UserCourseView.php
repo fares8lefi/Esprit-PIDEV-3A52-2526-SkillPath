@@ -34,6 +34,9 @@ class UserCourseView
     #[ORM\Column]
     private ?bool $isEnrolled = false;
 
+    #[ORM\Column]
+    private ?bool $isCompleted = false;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -102,6 +105,17 @@ class UserCourseView
     public function setIsEnrolled(bool $isEnrolled): static
     {
         $this->isEnrolled = $isEnrolled;
+        return $this;
+    }
+
+    public function isCompleted(): ?bool
+    {
+        return $this->isCompleted;
+    }
+
+    public function setIsCompleted(bool $isCompleted): static
+    {
+        $this->isCompleted = $isCompleted;
         return $this;
     }
 }

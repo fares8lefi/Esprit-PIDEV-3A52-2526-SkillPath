@@ -553,14 +553,19 @@
         const content = document.getElementById('modalContent');
         
         modal.classList.remove('hidden');
-        // Trigger reflow
         void modal.offsetWidth;
         
         backdrop.classList.remove('opacity-0');
         content.classList.remove('scale-95', 'opacity-0');
         content.classList.add('scale-100', 'opacity-100');
-        
-        // Optional: Trigger confetti here if library installed
+
+        // Appeler la route de complétion en arrière-plan
+        fetch('{{ path('front_course_complete', {id: module.course.id}) }}', {
+            method: 'POST',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        }).then(response => response.json())
+          .then(data => console.log('Cours complété:', data))
+          .catch(err => console.error('Erreur complétion:', err));
     }
 
     function closeCompletionModal() {
