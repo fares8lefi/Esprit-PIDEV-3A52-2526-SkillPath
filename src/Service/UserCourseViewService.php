@@ -38,6 +38,9 @@ class UserCourseViewService
             $this->entityManager->flush();
         }
 
+        // Recalculer dynamiquement le niveau de l'utilisateur à chaque clic/vue
+        $this->updateUserLevel($user);
+
         return $view;
     }
 
@@ -91,7 +94,47 @@ class UserCourseViewService
         $view = $this->recordView($user, $course);
         if (!$view->isCompleted()) {
             $view->setIsCompleted(true);
+            $this->updateUserLevel($user);
             $this->entityManager->flush();
+        }
+    }
+
+    public function updateUserLevel(User $user): void
+    {
+        $userViews = $this->repository->findByUser($user->getId());
+        
+        $levelCounts = [
+            'Débutant' => 0,
+            'Intermédiaire' => 0,
+            'Avancé' => 0
+        ];
+        
+        $totalViews = 0;
+        
+        foreach ($userViews as $view) {
+            if ($view->getCourse() && $view->getCourse()->getLevel()) {
+                $level = $view->getCourse()->getLevel();
+                foreach (array_keys($levelCounts) as $definedLevel) {
+                    if (strtolower($level) === strtolower($definedLevel)) {
+                        // Un cours consulté vaut 1 point, un cours terminé vaut 3 points pour le calcul du niveau
+                        $weight = $view->isCompleted() ? 3 : 1; 
+                        $levelCounts[$definedLevel] += $weight;
+                        $totalViews++;
+                        break;
+                    }
+                }
+            }
+        }
+        
+        if ($totalViews > 0) {
+            $majorityLevel = array_keys($levelCounts, max($levelCounts))[0];
+            
+            // On s'assure de ne flusher que s'il y a un réel changement
+            if ($user->getNiveau() !== $majorityLevel) {
+                $user->setNiveau($majorityLevel);
+                $this->entityManager->persist($user);
+                $this->entityManager->flush();
+            }
         }
     }
 
