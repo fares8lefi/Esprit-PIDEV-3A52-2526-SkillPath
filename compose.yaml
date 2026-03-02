@@ -1,20 +1,51 @@
+# compose.yaml — Configuration Docker locale (tests uniquement)
+# Usage : docker compose up -d
+# Site accessible sur : http://localhost:8080
 
 services:
-###> doctrine/doctrine-bundle ###
-  database:
-    image: postgres:${POSTGRES_VERSION:-16}-alpine
+
+  # ── Application Symfony (PHP 8.2 + Apache) ────────────────
+  app:
+    build: .
+    ports:
+      - "8090:80"
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-app}
-      # You should definitely change the password in production
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-!ChangeMe!}
-      POSTGRES_USER: ${POSTGRES_USER:-app}
+      APP_ENV: dev
+      APP_DEBUG: "1"
+      APP_SECRET: localsecretfortest
+      DATABASE_URL: "mysql://root:root@mysql:3306/skillpathdb?serverVersion=8.0&charset=utf8mb4"
     volumes:
-      - database_data:/var/lib/postgresql/data:rw
-      # You may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!
-      # - ./docker/db/data:/var/lib/postgresql/data:rw
-###< doctrine/doctrine-bundle ###
+      - .:/var/www/html # Code source monté → modif immédiatement visibles
+      - /var/www/html/vendor # Vendor reste dans l'image
+      - /var/www/html/var # var/ reste dans l'image (cache/logs)
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - skillpath
+
+  # ── Base de données MySQL ──────────────────────────────────
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: skillpathdb
+    ports:
+      - "3307:3306" # 3307 pour ne pas confliter avec MySQL local
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - skillpath
 
 volumes:
-###> doctrine/doctrine-bundle ###
-  database_data:
-###< doctrine/doctrine-bundle ###
+  mysql_data:
+
+
+networks:
+  skillpath:
+    driver: bridge
