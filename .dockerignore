@@ -1,0 +1,51 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Docker
+Dockerfile
+compose.yaml
+compose.override.yaml
+compose.prod.yaml
+.dockerignore
+docker/
+
+# Dépendances Node (non nécessaires dans le conteneur PHP)
+node_modules/
+
+# Cache et logs locaux (recréés par Symfony dans le conteneur)
+var/cache/
+var/log/
+var/sessions/
+
+# Tests (non nécessaires en runtime)
+tests/
+phpunit.dist.xml
+phpunit.xml
+phpstan.dist.neon
+phpstan-baseline.neon
+
+# Scripts CI (non nécessaires dans le conteneur)
+scripts/
+.github/
+
+# Fichiers de développement local
+.env.local
+.env.*.local
+.env.test
+
+# IDE / éditeurs
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Documentation
+README.md
+CHANGELOG.md
+docs/
+
+# OS
+.DS_Store
+Thumbs.db
