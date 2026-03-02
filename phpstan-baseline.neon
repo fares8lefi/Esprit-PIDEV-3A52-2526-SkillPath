@@ -1,0 +1,469 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Parameter \#1 \$user of method App\\Entity\\Reponse\:\:setUser\(\) expects App\\Entity\\User\|null, Symfony\\Component\\Security\\Core\\User\\UserInterface\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Controller/AdminReclamationController.php
+
+		-
+			message: '#^Parameter \#1 \$etudiant of method App\\Entity\\Resultat\:\:setEtudiant\(\) expects App\\Entity\\User\|null, Symfony\\Component\\Security\\Core\\User\\UserInterface given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Controller/Api/QuizApiController.php
+
+		-
+			message: '#^Call to an undefined method Doctrine\\ORM\\EntityRepository\<App\\Entity\\UserCourseView\>\:\:findByUserAndCourse\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Controller/FrontOffice/QuizController.php
+
+		-
+			message: '#^Parameter \#1 \$etudiant of method App\\Entity\\Resultat\:\:setEtudiant\(\) expects App\\Entity\\User\|null, Symfony\\Component\\Security\\Core\\User\\UserInterface given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Controller/FrontOffice/QuizController.php
+
+		-
+			message: '#^Method App\\Controller\\GoogleController\:\:connectAction\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Controller/GoogleController.php
+
+		-
+			message: '#^Method App\\Controller\\GoogleController\:\:connectCheckAction\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Controller/GoogleController.php
+
+		-
+			message: '#^If condition is always true\.$#'
+			identifier: if.alwaysTrue
+			count: 2
+			path: src/Controller/ReclamationController.php
+
+		-
+			message: '#^Parameter \#1 \$user of method App\\Entity\\Reclamation\:\:setUser\(\) expects App\\Entity\\User\|null, Symfony\\Component\\Security\\Core\\User\\UserInterface\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Controller/ReclamationController.php
+
+		-
+			message: '#^Parameter \#1 \$user of method App\\Entity\\Reponse\:\:setUser\(\) expects App\\Entity\\User\|null, Symfony\\Component\\Security\\Core\\User\\UserInterface\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Controller/ReclamationController.php
+
+		-
+			message: '#^Parameter \#4 \$user of method App\\Repository\\ReclamationRepository\:\:findBySearchAndSort\(\) expects App\\Entity\\User\|null, Symfony\\Component\\Security\\Core\\User\\UserInterface\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Controller/ReclamationController.php
+
+		-
+			message: '#^Property App\\Entity\\Certificate\:\:\$id \(int\|null\) is never assigned int so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: src/Entity/Certificate.php
+
+		-
+			message: '#^Property App\\Entity\\Course\:\:\$id \(int\|null\) is never assigned int so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: src/Entity/Course.php
+
+		-
+			message: '#^Property App\\Entity\\Event\:\:\$favoritedBy with generic interface Doctrine\\Common\\Collections\\Collection does not specify its types\: TKey, T$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Entity/Event.php
+
+		-
+			message: '#^Property App\\Entity\\Event\:\:\$id \(int\|null\) is never assigned int so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: src/Entity/Event.php
+
+		-
+			message: '#^Property App\\Entity\\Event\:\:\$participants with generic interface Doctrine\\Common\\Collections\\Collection does not specify its types\: TKey, T$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Entity/Event.php
+
+		-
+			message: '#^Property App\\Entity\\Event\:\:\$ratings with generic interface Doctrine\\Common\\Collections\\Collection does not specify its types\: TKey, T$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Entity/Event.php
+
+		-
+			message: '#^Property App\\Entity\\Event\:\:\$updatedAt is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: src/Entity/Event.php
+
+		-
+			message: '#^Property App\\Entity\\EventRating\:\:\$id \(int\|null\) is never assigned int so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: src/Entity/EventRating.php
+
+		-
+			message: '#^Property App\\Entity\\Location\:\:\$id \(int\|null\) is never assigned int so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: src/Entity/Location.php
+
+		-
+			message: '#^Property App\\Entity\\Module\:\:\$id \(int\|null\) is never assigned int so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: src/Entity/Module.php
+
+		-
+			message: '#^Property App\\Entity\\Notification\:\:\$id \(int\|null\) is never assigned int so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: src/Entity/Notification.php
+
+		-
+			message: '#^Property App\\Entity\\Notification\:\:\$isRead \(bool\|null\) is never assigned null so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: src/Entity/Notification.php
+
+		-
+			message: '#^Property App\\Entity\\Question\:\:\$id \(int\|null\) is never assigned int so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: src/Entity/Question.php
+
+		-
+			message: '#^Property App\\Entity\\Reclamation\:\:\$id \(int\|null\) is never assigned int so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: src/Entity/Reclamation.php
+
+		-
+			message: '#^Class App\\Entity\\Reclamation referenced with incorrect case\: App\\Entity\\reclamation\.$#'
+			identifier: class.nameCase
+			count: 2
+			path: src/Entity/Reponse.php
+
+		-
+			message: '#^Property App\\Entity\\Reponse\:\:\$id \(int\|null\) is never assigned int so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: src/Entity/Reponse.php
+
+		-
+			message: '#^Property App\\Entity\\Resultat\:\:\$id \(int\|null\) is never assigned int so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: src/Entity/Resultat.php
+
+		-
+			message: '#^Property App\\Entity\\User\:\:\$favoriteEvents with generic interface Doctrine\\Common\\Collections\\Collection does not specify its types\: TKey, T$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Entity/User.php
+
+		-
+			message: '#^Property App\\Entity\\User\:\:\$id \(int\|null\) is never assigned int so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: src/Entity/User.php
+
+		-
+			message: '#^Property App\\Entity\\User\:\:\$joinedEvents with generic interface Doctrine\\Common\\Collections\\Collection does not specify its types\: TKey, T$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Entity/User.php
+
+		-
+			message: '#^Property App\\Entity\\User\:\:\$notifications is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: src/Entity/User.php
+
+		-
+			message: '#^Property App\\Entity\\User\:\:\$notifications with generic interface Doctrine\\Common\\Collections\\Collection does not specify its types\: TKey, T$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Entity/User.php
+
+		-
+			message: '#^Property App\\Entity\\UserCourseView\:\:\$id \(int\|null\) is never assigned int so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: src/Entity/UserCourseView.php
+
+		-
+			message: '#^Property App\\Entity\\UserCourseView\:\:\$isCompleted \(bool\|null\) is never assigned null so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: src/Entity/UserCourseView.php
+
+		-
+			message: '#^Property App\\Entity\\UserCourseView\:\:\$isEnrolled \(bool\|null\) is never assigned null so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: src/Entity/UserCourseView.php
+
+		-
+			message: '#^Property App\\Entity\\UserCourseView\:\:\$timeSpent \(int\|null\) is never assigned null so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: src/Entity/UserCourseView.php
+
+		-
+			message: '#^Method App\\EventListener\\ModuleAddedListener\:\:postPersist\(\) has parameter \$args with generic class Doctrine\\Persistence\\Event\\LifecycleEventArgs but does not specify its types\: TObjectManager$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/EventListener/ModuleAddedListener.php
+
+		-
+			message: '#^Property App\\EventListener\\ModuleAddedListener\:\:\$logger has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: src/EventListener/ModuleAddedListener.php
+
+		-
+			message: '#^Property App\\EventListener\\ModuleAddedListener\:\:\$notificationService has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: src/EventListener/ModuleAddedListener.php
+
+		-
+			message: '#^Class App\\Form\\CourseType extends generic class Symfony\\Component\\Form\\AbstractType but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Form/CourseType.php
+
+		-
+			message: '#^Class App\\Form\\EventType extends generic class Symfony\\Component\\Form\\AbstractType but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Form/EventType.php
+
+		-
+			message: '#^Class App\\Form\\LocationType extends generic class Symfony\\Component\\Form\\AbstractType but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Form/LocationType.php
+
+		-
+			message: '#^Class App\\Form\\ModuleType extends generic class Symfony\\Component\\Form\\AbstractType but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Form/ModuleType.php
+
+		-
+			message: '#^Class App\\Form\\QuestionType extends generic class Symfony\\Component\\Form\\AbstractType but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Form/QuestionType.php
+
+		-
+			message: '#^Class App\\Form\\QuizType extends generic class Symfony\\Component\\Form\\AbstractType but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Form/QuizType.php
+
+		-
+			message: '#^Class App\\Form\\ReclamationStatusType extends generic class Symfony\\Component\\Form\\AbstractType but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Form/ReclamationStatusType.php
+
+		-
+			message: '#^Class App\\Form\\ReclamationType extends generic class Symfony\\Component\\Form\\AbstractType but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Form/ReclamationType.php
+
+		-
+			message: '#^Class App\\Form\\ReponseType extends generic class Symfony\\Component\\Form\\AbstractType but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Form/ReponseType.php
+
+		-
+			message: '#^Class App\\Repository\\CertificateRepository has PHPDoc tag @method for method findBy\(\) parameter \#1 \$criteria with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Repository/CertificateRepository.php
+
+		-
+			message: '#^Class App\\Repository\\CertificateRepository has PHPDoc tag @method for method findBy\(\) parameter \#2 \$orderBy with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Repository/CertificateRepository.php
+
+		-
+			message: '#^Class App\\Repository\\CertificateRepository has PHPDoc tag @method for method findOneBy\(\) parameter \#1 \$criteria with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Repository/CertificateRepository.php
+
+		-
+			message: '#^Class App\\Repository\\CertificateRepository has PHPDoc tag @method for method findOneBy\(\) parameter \#2 \$orderBy with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Repository/CertificateRepository.php
+
+		-
+			message: '#^Method App\\Repository\\CourseRepository\:\:countByCategories\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Repository/CourseRepository.php
+
+		-
+			message: '#^Method App\\Repository\\CourseRepository\:\:findLatest\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Repository/CourseRepository.php
+
+		-
+			message: '#^Method App\\Repository\\EventRepository\:\:findByFilters\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Repository/EventRepository.php
+
+		-
+			message: '#^Class App\\Repository\\ModuleRepository extends generic class Doctrine\\Bundle\\DoctrineBundle\\Repository\\ServiceEntityRepository but does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Repository/ModuleRepository.php
+
+		-
+			message: '#^Method App\\Repository\\NotificationRepository\:\:findUnreadByUser\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Repository/NotificationRepository.php
+
+		-
+			message: '#^Method App\\Repository\\NotificationRepository\:\:findUnreadByUser\(\) has parameter \$user with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Repository/NotificationRepository.php
+
+		-
+			message: '#^Method App\\Repository\\QuizRepository\:\:findAllWithRelations\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Repository/QuizRepository.php
+
+		-
+			message: '#^Method App\\Repository\\QuizRepository\:\:searchAndSort\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Repository/QuizRepository.php
+
+		-
+			message: '#^Method App\\Repository\\QuizRepository\:\:searchAndSortQuery\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Repository/QuizRepository.php
+
+		-
+			message: '#^Class App\\Repository\\UserCourseViewRepository has PHPDoc tag @method for method findBy\(\) parameter \#1 \$criteria with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Repository/UserCourseViewRepository.php
+
+		-
+			message: '#^Class App\\Repository\\UserCourseViewRepository has PHPDoc tag @method for method findBy\(\) parameter \#2 \$orderBy with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Repository/UserCourseViewRepository.php
+
+		-
+			message: '#^Class App\\Repository\\UserCourseViewRepository has PHPDoc tag @method for method findOneBy\(\) parameter \#1 \$criteria with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Repository/UserCourseViewRepository.php
+
+		-
+			message: '#^Class App\\Repository\\UserCourseViewRepository has PHPDoc tag @method for method findOneBy\(\) parameter \#2 \$orderBy with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Repository/UserCourseViewRepository.php
+
+		-
+			message: '#^Method App\\Repository\\UserCourseViewRepository\:\:getMLFeaturesForUser\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Repository/UserCourseViewRepository.php
+
+		-
+			message: '#^Call to an undefined method Symfony\\Component\\HttpFoundation\\Session\\SessionInterface\:\:getFlashBag\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Security/GoogleAuthenticator.php
+
+		-
+			message: '#^Expression on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.expr
+			count: 1
+			path: src/Security/GoogleAuthenticator.php
+
+		-
+			message: '#^Method App\\Service\\AIService\:\:getPrediction\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Service/AIService.php
+
+		-
+			message: '#^Method App\\Service\\AIService\:\:getPrediction\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Service/AIService.php
+
+		-
+			message: '#^Property App\\Service\\CertificateService\:\:\$pdf has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: src/Service/CertificateService.php
+
+		-
+			message: '#^Property App\\Service\\CertificateService\:\:\$twig has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: src/Service/CertificateService.php
+
+		-
+			message: '#^Method App\\Service\\GeminiTranslatorService\:\:getFallback\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Service/GeminiTranslatorService.php
+
+		-
+			message: '#^Method App\\Service\\GeminiTranslatorService\:\:translateEvent\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Service/GeminiTranslatorService.php
+
+		-
+			message: '#^Property App\\Service\\NotificationService\:\:\$entityManager has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: src/Service/NotificationService.php
+
+		-
+			message: '#^Method App\\Service\\OllamaService\:\:analyzeReclamation\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Service/OllamaService.php
+
+		-
+			message: '#^Method App\\Service\\UserCourseViewService\:\:getRecommendations\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Service/UserCourseViewService.php
+
+		-
+			message: '#^Call to function method_exists\(\) with ''Symfony\\\\Component\\\\Dotenv\\\\Dotenv'' and ''bootEnv'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: tests/bootstrap.php
