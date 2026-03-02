@@ -218,6 +218,17 @@ class Quiz
         return $this;
     }
 
+    public function getDuration(): ?int
+    {
+        return $this->duree;
+    }
+
+    public function setDuration(int $duration): static
+    {
+        $this->duree = $duration;
+        return $this;
+    }
+
     public function __toString(): string
     {
         return $this->titre ?? '';
