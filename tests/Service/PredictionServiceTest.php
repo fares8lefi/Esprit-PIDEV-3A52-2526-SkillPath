@@ -12,6 +12,7 @@ use App\Service\PredictionService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Uid\UuidV7;
 
 class PredictionServiceTest extends TestCase
 {
@@ -45,8 +46,9 @@ class PredictionServiceTest extends TestCase
 
     public function testGetEffectiveDomainFromInteractions(): void
     {
+        $uuid = new UuidV7();
         $user = $this->createMock(User::class);
-        $user->method('getId')->willReturn(1);
+        $user->method('getId')->willReturn($uuid);
         
         $course1 = $this->createMock(Course::class);
         $course1->method('getCategory')->willReturn('Design');
@@ -54,7 +56,7 @@ class PredictionServiceTest extends TestCase
         $view1 = $this->createMock(UserCourseView::class);
         $view1->method('getCourse')->willReturn($course1);
 
-        $this->userCourseViewRepository->method('findByUser')->with(1)->willReturn([$view1]);
+        $this->userCourseViewRepository->method('findByUser')->with($uuid)->willReturn([$view1]);
 
         $domain = $this->predictionService->getEffectiveDomain($user);
 
@@ -63,8 +65,9 @@ class PredictionServiceTest extends TestCase
 
     public function testGetGlobalStats(): void
     {
+        $uuid = new UuidV7();
         $user = $this->createMock(User::class);
-        $user->method('getId')->willReturn(1);
+        $user->method('getId')->willReturn($uuid);
 
         $certRepo = $this->createMock(EntityRepository::class);
         $certRepo->method('count')->willReturn(5);
