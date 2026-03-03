@@ -24,7 +24,7 @@ class UserCourseViewRepository extends ServiceEntityRepository
     /**
      * @return UserCourseView[]
      */
-    public function findByUser(int $userId): array
+    public function findByUser(mixed $userId): array
     {
         return $this->createQueryBuilder('u')
             ->andWhere('u.user = :userId')
@@ -33,7 +33,7 @@ class UserCourseViewRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findByUserAndCourse(int $userId, int $courseId): ?UserCourseView
+    public function findByUserAndCourse(mixed $userId, int $courseId): ?UserCourseView
     {
         return $this->createQueryBuilder('u')
             ->andWhere('u.user = :userId')
@@ -47,7 +47,7 @@ class UserCourseViewRepository extends ServiceEntityRepository
     /**
      * @return \App\Entity\Course[]
      */
-    public function findUnseenCoursesByUser(int $userId): array
+    public function findUnseenCoursesByUser(mixed $userId): array
     {
         $subQuery = $this->createQueryBuilder('uv')
             ->select('c.id')
@@ -67,7 +67,7 @@ class UserCourseViewRepository extends ServiceEntityRepository
     /**
      * @return UserCourseView[]
      */
-    public function findEnrolledCoursesByUser(int $userId): array
+    public function findEnrolledCoursesByUser(mixed $userId): array
     {
         return $this->createQueryBuilder('u')
             ->andWhere('u.user = :userId')
@@ -78,7 +78,7 @@ class UserCourseViewRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function getMLFeaturesForUser(int $userId, int $courseId): array
+    public function getMLFeaturesForUser(mixed $userId, int $courseId): array
     {
         $view = $this->findByUserAndCourse($userId, $courseId);
         $user = $this->getEntityManager()->getRepository(\App\Entity\User::class)->find($userId);

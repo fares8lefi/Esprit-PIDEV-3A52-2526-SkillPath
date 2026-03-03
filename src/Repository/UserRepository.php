@@ -23,22 +23,23 @@ class UserRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('u');
 
-        if ($query) {
-            $qb->andWhere('u.username LIKE :query OR u.email LIKE :query')
+        if ($query !== null && $query !== '') {
+            $qb->andWhere('(u.username LIKE :query OR u.email.value LIKE :query)')
                ->setParameter('query', '%' . $query . '%');
         }
 
-        if ($role) {
+        if ($role !== null && $role !== '') {
             $qb->andWhere('u.role = :role')
                ->setParameter('role', $role);
         }
 
-        if ($status) {
+        if ($status !== null && $status !== '') {
             $qb->andWhere('u.status = :status')
                ->setParameter('status', $status);
         }
 
-        return $qb->orderBy('u.id', 'DESC')
+        return $qb->orderBy('u.createdAt', 'DESC')
+                  ->addOrderBy('u.id', 'DESC')
                   ->getQuery()
                   ->getResult();
     }

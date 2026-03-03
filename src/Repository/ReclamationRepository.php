@@ -27,8 +27,8 @@ class ReclamationRepository extends ServiceEntityRepository
             ->addSelect('u');
 
         if ($user) {
-            $qb->andWhere('r.user = :user')
-               ->setParameter('user', $user);
+            $qb->andWhere('u.email.value = :userEmail')
+               ->setParameter('userEmail', $user->getEmail());
         }
 
         if ($status && $status !== 'all') {
@@ -37,7 +37,7 @@ class ReclamationRepository extends ServiceEntityRepository
         }
 
         if ($search) {
-            $qb->andWhere('r.sujet LIKE :search OR u.email LIKE :search OR r.description LIKE :search')
+            $qb->andWhere('r.sujet LIKE :search OR u.email.value LIKE :search OR r.description LIKE :search')
                ->setParameter('search', '%' . $search . '%');
         }
 
