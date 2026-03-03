@@ -54,17 +54,15 @@
                     {% set course = item.course %}
                     <div class="group relative bg-white dark:bg-[#121622] rounded-[2.5rem] border border-slate-200/50 dark:border-white/5 overflow-hidden hover:border-primary/30 transition-all duration-500 flex flex-col md:flex-row shadow-xl shadow-slate-200/20 dark:shadow-none items-stretch">
                         
-                        {# Info Panel (Scores & IA) #}
-                        <div class="w-full md:w-64 p-8 border-b md:border-b-0 md:border-r border-slate-200/50 dark:border-white/5 flex flex-col items-center justify-center bg-slate-50/50 dark:bg-white/[0.02]">
-                            <div class="text-center mb-4">
-                                <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Score Pertinence</div>
-                                <div class="text-4xl font-black text-primary">{{ item.score }}</div>
-                            </div>
-                            
-                            <div class="w-full bg-slate-200 dark:bg-white/10 rounded-full h-2 mb-2 overflow-hidden">
-                                <div class="bg-gradient-to-r from-secondary to-primary h-2 rounded-full transition-all" style="width: {{ item.probability }}%"></div>
-                            </div>
-                            <p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest text-center">{{ item.probability }}% Probabilité de Succès</p>
+                        {# Course Image #}
+                        <div class="w-full md:w-72 h-48 md:h-auto relative overflow-hidden shrink-0">
+                            {% if course.image %}
+                                <img src="{{ asset('uploads/modules/' ~ course.image) }}" alt="{{ course.title }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                            {% else %}
+                                <div class="w-full h-full gradient-primary opacity-20 flex items-center justify-center text-white text-4xl font-black">
+                                    {{ course.title|first }}
+                                </div>
+                            {% endif %}
                         </div>
 
                         {# Course Info #}
