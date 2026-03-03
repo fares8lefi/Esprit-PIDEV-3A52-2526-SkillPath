@@ -35,7 +35,9 @@ class QuestionController extends AbstractController
             
             if ($quiz->getCourse()) {
                 $courseTitle = strtolower($quiz->getCourse()->getTitle());
-                if (str_contains($courseTitle, 'math')) {
+                if (str_contains($courseTitle, 'java') || str_contains($courseTitle, 'devops') || str_contains($courseTitle, 'informatique')) {
+                    $categoryId = 18; // Computers (Java, DevOps, IT)
+                } elseif (str_contains($courseTitle, 'math')) {
                     $categoryId = 19; // Mathematics
                 } elseif (str_contains($courseTitle, 'science') || str_contains($courseTitle, 'nature') || str_contains($courseTitle, 'physique') || str_contains($courseTitle, 'chimie')) {
                     $categoryId = 17; // Science & Nature
