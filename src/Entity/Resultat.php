@@ -15,48 +15,51 @@ class Resultat
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'resultats')]
-    #[ORM\JoinColumn(name: 'id_quiz', referencedColumnName: 'id_quiz', nullable: false)]
-    private ?Quiz $quiz = null;
+    #[ORM\JoinColumn(name: 'quiz_id', referencedColumnName: 'id_quiz', nullable: false, onDelete: 'CASCADE')]
+    private Quiz $quiz;
 
     #[ORM\ManyToOne]
-    #[ORM\JoinColumn(name: 'id_etudiant', referencedColumnName: 'id', nullable: false)]
-    private ?User $etudiant = null;
+    #[ORM\JoinColumn(name: 'etudiant_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    private User $etudiant;
 
     #[ORM\Column]
-    private ?int $score = null;
+    private int $score;
 
     #[ORM\Column(name: 'note_max')]
-    private ?int $noteMax = null;
+    private int $noteMax;
 
     #[ORM\Column(name: 'date_passage', type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $datePassage = null;
+    private \DateTimeInterface $datePassage;
+
+    public function __construct()
+    {
+        $this->datePassage = new \DateTimeImmutable();
+    }
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getQuiz(): ?Quiz
+    public function getQuiz(): Quiz
     {
         return $this->quiz;
     }
 
-    public function setQuiz(?Quiz $quiz): static
+    public function setQuiz(Quiz $quiz): static
     {
         $this->quiz = $quiz;
-
         return $this;
     }
 
-    public function getEtudiant(): ?User
+    public function getEtudiant(): User
     {
         return $this->etudiant;
     }
 
-    public function setEtudiant(?User $etudiant): static
+    public function setEtudiant(User $etudiant): static
     {
         $this->etudiant = $etudiant;
-
         return $this;
     }
 
@@ -84,7 +87,7 @@ class Resultat
         return $this;
     }
 
-    public function getDatePassage(): ?\DateTimeInterface
+    public function getDatePassage(): \DateTimeInterface
     {
         return $this->datePassage;
     }
@@ -92,7 +95,6 @@ class Resultat
     public function setDatePassage(\DateTimeInterface $datePassage): static
     {
         $this->datePassage = $datePassage;
-
         return $this;
     }
 }

@@ -16,52 +16,51 @@ class Question
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'questions')]
-    #[ORM\JoinColumn(name: 'id_quiz', referencedColumnName: 'id_quiz', nullable: false)]
-    private ?Quiz $quiz = null;
+    #[ORM\JoinColumn(name: 'quiz_id', referencedColumnName: 'id_quiz', nullable: false, onDelete: 'CASCADE')]
+    private Quiz $quiz;
 
     #[ORM\Column(type: Types::TEXT)]
     #[Assert\NotBlank(message: "L'énoncé de la question est obligatoire")]
     #[Assert\Length(min: 5, minMessage: "L'énoncé doit faire au moins 5 caractères")]
-    private ?string $enonce = null;
+    private string $enonce;
 
     #[ORM\Column(name: 'choix_a', length: 255)]
     #[Assert\NotBlank(message: "Le choix A est obligatoire")]
-    private ?string $choixA = null;
+    private string $choixA;
 
     #[ORM\Column(name: 'choix_b', length: 255)]
     #[Assert\NotBlank(message: "Le choix B est obligatoire")]
-    private ?string $choixB = null;
+    private string $choixB;
 
     #[ORM\Column(name: 'choix_c', length: 255)]
-    private ?string $choixC = null;
+    private string $choixC;
 
     #[ORM\Column(name: 'choix_d', length: 255)]
-    private ?string $choixD = null;
+    private string $choixD;
 
     #[ORM\Column(name: 'bonne_reponse', length: 1)]
     #[Assert\NotBlank(message: "La bonne réponse est obligatoire")]
     #[Assert\Choice(choices: ['A', 'B', 'C', 'D'], message: "La bonne réponse doit être A, B, C ou D")]
-    private ?string $bonneReponse = null;
+    private string $bonneReponse;
 
     #[ORM\Column]
     #[Assert\NotNull(message: "Le nombre de points est obligatoire")]
     #[Assert\Positive(message: "Le nombre de points doit être positif")]
-    private ?int $points = null;
+    private int $points;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getQuiz(): ?Quiz
+    public function getQuiz(): Quiz
     {
         return $this->quiz;
     }
 
-    public function setQuiz(?Quiz $quiz): static
+    public function setQuiz(Quiz $quiz): static
     {
         $this->quiz = $quiz;
-
         return $this;
     }
 

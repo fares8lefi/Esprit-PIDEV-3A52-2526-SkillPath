@@ -7,34 +7,53 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Entity\Course;
 
+use App\Entity\Trait\BlameableTrait;
+use App\Entity\Trait\TimestampableTrait;
+
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Symfony\Component\HttpFoundation\File\File;
+use Gedmo\Mapping\Annotation as Gedmo;
+
 #[ORM\Entity(repositoryClass: ModuleRepository::class)]
+#[Vich\Uploadable]
 class Module
 {
+    use BlameableTrait;
+    use TimestampableTrait;
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
+    public function __construct(User $createdBy)
+    {
+        $this->createdBy = $createdBy;
+        $this->createdAt = new \DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
     #[ORM\Column(length: 120)]
     #[Assert\NotBlank(message: "Le titre est obligatoire.")]
     #[Assert\Length(min: 2, max: 120)]
-    private ?string $title = null;
+    private string $title;
 
     #[ORM\Column(type: "text", nullable: true)]
     #[Assert\Length(max: 2000)]
     private ?string $description = null;
 
     #[ORM\Column(type: "datetime_immutable")]
-    private ?\DateTimeImmutable $createdAt = null;
+    #[Gedmo\Timestampable(on: 'create')]
+    private \DateTimeImmutable $createdAt;
 
-    #[ORM\Column(type: 'datetime', nullable: true)]
-    private ?\DateTime $updatedAt = null;
 
     #[ORM\Column(length: 30, nullable: true)]
     private ?string $level = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $image = null;
+
+    #[Vich\UploadableField(mapping: 'module_images', fileNameProperty: 'image')]
+    private ?File $imageFile = null;
 
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $type = null;
@@ -45,17 +64,19 @@ class Module
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $document = null;
 
+    #[Vich\UploadableField(mapping: 'module_documents', fileNameProperty: 'document')]
+    private ?File $documentFile = null;
+
     #[ORM\ManyToOne(targetEntity: Course::class, inversedBy: 'modules')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
     private ?Course $course = null;
 
-    #[ORM\Column(type: 'datetime', nullable: true)]
-    private ?\DateTimeInterface $scheduledAt = null;
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private ?\DateTimeImmutable $scheduledAt = null;
 
-    public function __construct()
-    {
-        $this->createdAt = new \DateTimeImmutable();
-    }
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private ?\DateTimeImmutable $updatedAt = null;
+
 
     public function getId(): ?int
     {
@@ -84,27 +105,11 @@ class Module
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $createdAt): static
-    {
-        $this->createdAt = $createdAt;
-        return $this;
-    }
-
-    public function getUpdatedAt(): ?\DateTime
-    {
-        return $this->updatedAt;
-    }
-
-    public function setUpdatedAt(?\DateTime $updatedAt): static
-    {
-        $this->updatedAt = $updatedAt;
-        return $this;
-    }
 
     public function getLevel(): ?string
     {
@@ -172,14 +177,53 @@ class Module
         return $this;
     }
 
-    public function getScheduledAt(): ?\DateTimeInterface
+    public function getScheduledAt(): ?\DateTimeImmutable
     {
         return $this->scheduledAt;
     }
 
-    public function setScheduledAt(?\DateTimeInterface $scheduledAt): static
+    public function setScheduledAt(?\DateTimeImmutable $scheduledAt): static
     {
         $this->scheduledAt = $scheduledAt;
+        return $this;
+    }
+
+    public function setImageFile(?File $imageFile = null): void
+    {
+        $this->imageFile = $imageFile;
+
+        if (null !== $imageFile) {
+            $this->updatedAt = new \DateTimeImmutable();
+        }
+    }
+
+    public function getImageFile(): ?File
+    {
+        return $this->imageFile;
+    }
+
+    public function setDocumentFile(?File $documentFile = null): void
+    {
+        $this->documentFile = $documentFile;
+
+        if (null !== $documentFile) {
+            $this->updatedAt = new \DateTimeImmutable();
+        }
+    }
+
+    public function getDocumentFile(): ?File
+    {
+        return $this->documentFile;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
         return $this;
     }
 

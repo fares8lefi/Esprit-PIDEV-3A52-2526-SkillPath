@@ -8,10 +8,17 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
+use App\Entity\Trait\BlameableTrait;
+use App\Entity\Trait\TimestampableTrait;
+use Gedmo\Mapping\Annotation as Gedmo;
+
 #[ORM\Entity(repositoryClass: CourseRepository::class)]
 #[ORM\Table(name: 'course')]
 class Course
 {
+    use BlameableTrait;
+    use TimestampableTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -19,7 +26,7 @@ class Course
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: 'Le titre est obligatoire')]
-    private ?string $title = null;
+    private string $title;
 
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $description = null;
@@ -33,17 +40,16 @@ class Course
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $category = null;
 
-    #[ORM\Column(type: 'datetime')]
-    private ?\DateTimeInterface $createdAt = null;
 
-    #[ORM\Column(type: 'datetime', nullable: true)]
-    private ?\DateTimeInterface $updatedAt = null;
+    #[ORM\Column(type: 'datetime_immutable')]
+    #[Gedmo\Timestampable(on: 'create')]
+    private \DateTimeImmutable $createdAt;
 
     #[ORM\Column(nullable: true)]
     private ?int $duration = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?float $price = null;
+    #[ORM\Column(type: 'decimal', precision: 10, scale: 2, nullable: true)]
+    private ?string $price = null;
 
     #[ORM\Column(nullable: true)]
     private ?float $rating = null;
@@ -51,13 +57,13 @@ class Course
     /**
      * @var Collection<int, Module>
      */
-    #[ORM\OneToMany(mappedBy: 'course', targetEntity: Module::class, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(mappedBy: 'course', targetEntity: Module::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $modules;
 
     /**
      * @var Collection<int, Quiz>
      */
-    #[ORM\OneToMany(targetEntity: Quiz::class, mappedBy: 'course', cascade: ['remove'])]
+    #[ORM\OneToMany(targetEntity: Quiz::class, mappedBy: 'course', orphanRemoval: true, cascade: ['persist', 'remove'])]
     private Collection $quizzes;
 
     /**
@@ -66,12 +72,13 @@ class Course
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'courses')]
     private Collection $users;
 
-    public function __construct()
+    public function __construct(User $createdBy)
     {
-        $this->createdAt = new \DateTime();
+        $this->createdBy = $createdBy;
         $this->modules = new ArrayCollection();
         $this->quizzes = new ArrayCollection();
         $this->users = new ArrayCollection();
+        $this->createdAt = new \DateTimeImmutable();
     }
 
     public function getId(): ?int
@@ -134,26 +141,14 @@ class Course
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeInterface
+    public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeInterface $createdAt): static
-    {
-        $this->createdAt = $createdAt;
-        return $this;
-    }
-
-    public function getUpdatedAt(): ?\DateTimeInterface
+    public function getUpdatedAt(): ?\DateTimeImmutable
     {
         return $this->updatedAt;
-    }
-
-    public function setUpdatedAt(?\DateTimeInterface $updatedAt): static
-    {
-        $this->updatedAt = $updatedAt;
-        return $this;
     }
 
     /**
@@ -251,12 +246,12 @@ class Course
         return $this;
     }
 
-    public function getPrice(): ?float
+    public function getPrice(): ?string
     {
         return $this->price;
     }
 
-    public function setPrice(?float $price): static
+    public function setPrice(?string $price): static
     {
         $this->price = $price;
         return $this;

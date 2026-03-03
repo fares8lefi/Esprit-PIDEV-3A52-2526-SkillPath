@@ -11,35 +11,42 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Gedmo\Mapping\Annotation as Gedmo;
 use App\Entity\Event;
+use App\Entity\Embeddable\Email;
+use Symfony\Component\Serializer\Annotation\Ignore;
+use SensitiveParameter;
+use Symfony\Component\Uid\UuidV7;
+
+use App\Entity\Trait\BlameableTrait;
+use App\Entity\Trait\TimestampableTrait;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
+#[ORM\Table(name: '`user`')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    use TimestampableTrait;
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    #[ORM\Column(type: 'uuid', unique: true)]
+    private UuidV7 $id;
 
-    #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: "L'adresse email est obligatoire.")]
-    #[Assert\Email(message: "Veuillez entrer une adresse email valide.")]
-    private ?string $email = null;
+    #[ORM\Embedded(class: Email::class, columnPrefix: false)]
+    private Email $email;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: "Le nom d'utilisateur est obligatoire.")]
     #[Assert\Length(min: 3, minMessage: "Le nom d'utilisateur doit faire au moins {{ limit }} caractères.")]
-    private ?string $username = null;
+    private string $username;
 
     #[ORM\Column(length: 255)]
-    private ?string $status = null;
+    private string $status;
 
     #[ORM\Column(length: 255)]
-    private ?string $role = null;
+    private string $role;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: "Le mot de passe est obligatoire.")]
     #[Assert\Length(min: 8, minMessage: "Le mot de passe doit faire au moins {{ limit }} caractères.")]
-    private ?string $password = null;
+    #[Ignore]
+    private string $password;
 
     #[ORM\Column(type: 'boolean')]
     private bool $isVerified = false;
@@ -49,7 +56,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'datetime')]
     #[Gedmo\Timestampable(on: 'create')]
-    private ?\DateTimeInterface $createdAt = null;
+    private \DateTimeInterface $createdAt;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $domaine = null;
@@ -74,30 +81,32 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\JoinTable(name: 'user_favorite_events')]
     private Collection $favoriteEvents;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Notification::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Notification::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
     private Collection $notifications;
     
     public function __construct()
     {
+        $this->id = new UuidV7();
         $this->courses = new ArrayCollection();
         $this->joinedEvents = new ArrayCollection();
         $this->favoriteEvents = new ArrayCollection();
         $this->notifications = new ArrayCollection();
+        $this->createdAt = new \DateTime();
     }
 
-    public function getId(): ?int
+    public function getId(): UuidV7
     {
         return $this->id;
     }
 
-    public function getEmail(): ?string
+    public function getEmail(): string
     {
-        return $this->email;
+        return $this->email->getValue();
     }
 
     public function setEmail(string $email): static
     {
-        $this->email = $email;
+        $this->email = new Email($email);
 
         return $this;
     }
@@ -143,10 +152,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->password;
     }
 
-    public function setPassword(string $password): static
+    public function setPassword(#[SensitiveParameter] string $password): static
     {
         $this->password = $password;
-
         return $this;
     }
 
@@ -204,7 +212,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->email;
+        return (string) $this->email->getValue();
     }
 
     public function isVerified(): bool

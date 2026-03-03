@@ -4,15 +4,15 @@ namespace App\Entity;
 
 use App\Repository\UserCourseViewRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Uid\UuidV7;
 
 #[ORM\Entity(repositoryClass: UserCourseViewRepository::class)]
 #[ORM\Table(name: 'user_course_view')]
 class UserCourseView
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    #[ORM\Column(type: 'uuid', unique: true)]
+    private UuidV7 $id;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: false)]
@@ -23,7 +23,7 @@ class UserCourseView
     private ?Course $course = null;
 
     #[ORM\Column]
-    private ?int $timeSpent = 0;
+    private int $timeSpent = 0;
 
     #[ORM\Column(nullable: true)]
     private ?float $quizScore = null;
@@ -32,15 +32,20 @@ class UserCourseView
     private ?string $engagementLevel = null; // low, medium, high
 
     #[ORM\Column]
-    private ?bool $isEnrolled = false;
+    private bool $isEnrolled = false;
 
     #[ORM\Column]
-    private ?bool $isCompleted = false;
+    private bool $isCompleted = false;
 
     #[ORM\Column(options: ["default" => 0])]
-    private ?int $maxModuleReached = 0;
+    private int $maxModuleReached = 0;
 
-    public function getId(): ?int
+    public function __construct()
+    {
+        $this->id = new UuidV7();
+    }
+
+    public function getId(): UuidV7
     {
         return $this->id;
     }

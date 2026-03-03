@@ -15,11 +15,22 @@ class Certificate
     private ?int $id = null;
 
     #[ORM\Column(length: 255, unique: true)]
-    private ?string $certCode = null;
+    private string $certCode;
 
     #[ORM\Column(type: 'datetime')]
     #[Gedmo\Timestampable(on: 'create')]
-    private ?\DateTimeInterface $issuedAt = null;
+    private \DateTimeInterface $issuedAt;
+
+    public function __construct()
+    {
+        $this->issuedAt = new \DateTime();
+    }
+
+    public function setIssuedAt(\DateTimeInterface $issuedAt): static
+    {
+        $this->issuedAt = $issuedAt;
+        return $this;
+    }
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: false)]
@@ -45,15 +56,9 @@ class Certificate
         return $this;
     }
 
-    public function getIssuedAt(): ?\DateTimeInterface
+    public function getIssuedAt(): \DateTimeInterface
     {
         return $this->issuedAt;
-    }
-
-    public function setIssuedAt(\DateTimeInterface $issuedAt): static
-    {
-        $this->issuedAt = $issuedAt;
-        return $this;
     }
 
     public function getUser(): ?User

@@ -20,19 +20,19 @@ class Event
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $title = null;
+    private string $title;
 
     #[ORM\Column(length: 255)]
-    private ?string $description = null;
+    private string $description;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTime $eventDate = null;
+    private \DateTime $eventDate;
 
     #[ORM\Column(type: Types::TIME_MUTABLE)]
-    private ?\DateTime $startTime = null;
+    private \DateTime $startTime;
 
     #[ORM\Column(type: Types::TIME_MUTABLE)]
-    private ?\DateTime $endTime = null;
+    private \DateTime $endTime;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $image = null;
@@ -55,7 +55,7 @@ class Event
     #[ORM\Column(type: 'float', nullable: true)]
     private ?float $averageRating = null;
 
-    #[ORM\OneToMany(mappedBy: 'event', targetEntity: EventRating::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'event', targetEntity: EventRating::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
     private Collection $ratings;
 
     public function __construct()

@@ -14,9 +14,10 @@ class Reponse
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $message = null;
+    private string $message;
 
     #[ORM\ManyToOne(inversedBy: 'reponses')]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?Reclamation $reclamation = null;
 
     #[ORM\ManyToOne]
@@ -40,12 +41,12 @@ class Reponse
         return $this;
     }
 
-    public function getReclamation(): ?reclamation
+    public function getReclamation(): ?Reclamation
     {
         return $this->reclamation;
     }
 
-    public function setReclamation(?reclamation $reclamation): static
+    public function setReclamation(?Reclamation $reclamation): static
     {
         $this->reclamation = $reclamation;
 

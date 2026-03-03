@@ -22,7 +22,6 @@ class Quiz
     #[Assert\NotBlank(message: "Le titre est obligatoire")]
     #[Assert\Length(min: 3, minMessage: "Le titre doit faire au moins 3 caractères")]
     private ?string $titre = null;
-
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     #[Assert\NotBlank(message: "La description est obligatoire")]
     #[Assert\Length(min: 10, minMessage: "La description doit faire au moins 10 caractères")]
@@ -31,27 +30,27 @@ class Quiz
     #[ORM\Column]
     #[Assert\NotNull(message: "La durée est obligatoire")]
     #[Assert\Positive(message: "La durée doit être positive")]
-    private ?int $duree = null;
+    private int $duree;
 
     #[ORM\Column(name: 'note_max')]
     #[Assert\NotNull(message: "La note max est obligatoire")]
     #[Assert\Positive(message: "La note max doit être positive")]
-    private ?int $noteMax = null;
+    private int $noteMax;
 
     #[ORM\Column(name: 'date_creation', type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $dateCreation = null;
+    private \DateTimeInterface $dateCreation;
 
 
     /**
      * @var Collection<int, Question>
      */
-    #[ORM\OneToMany(targetEntity: Question::class, mappedBy: 'quiz', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: Question::class, mappedBy: 'quiz', orphanRemoval: true, cascade: ['persist'])]
     private Collection $questions;
 
     /**
      * @var Collection<int, Resultat>
      */
-    #[ORM\OneToMany(targetEntity: Resultat::class, mappedBy: 'quiz', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: Resultat::class, mappedBy: 'quiz', orphanRemoval: true, cascade: ['persist'])]
     private Collection $resultats;
 
     #[ORM\ManyToOne(inversedBy: 'quizzes')]
@@ -62,6 +61,9 @@ class Quiz
     {
         $this->questions = new ArrayCollection();
         $this->resultats = new ArrayCollection();
+        $this->dateCreation = new \DateTime();
+        $this->duree = 0;
+        $this->noteMax = 0;
     }
 
     public function getId(): ?int

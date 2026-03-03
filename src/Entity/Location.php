@@ -16,19 +16,19 @@ class Location
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $name = null;
+    private string $name;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $building = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $roomNumber = null;
+    private string $roomNumber;
 
     #[ORM\Column]
-    private ?int $maxCapacity = null;
+    private int $maxCapacity;
 
     #[ORM\Column(length: 255)]
-    private ?string $image = null;
+    private string $image;
 
     /**
      * @var Collection<int, Event>
