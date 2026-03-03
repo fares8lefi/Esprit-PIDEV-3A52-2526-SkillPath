@@ -135,7 +135,7 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_user_show', methods: ['GET'], requirements: ['id' => '\d+'])]
+    #[Route('/{id}', name: 'app_user_show', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN')]
     public function show(User $user): Response
     {
@@ -144,7 +144,7 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'app_user_edit', methods: ['GET', 'POST'], requirements: ['id' => '\d+'])]
+    #[Route('/{id}/edit', name: 'app_user_edit', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
     public function edit(Request $request, User $user, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
     {
@@ -175,7 +175,7 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/delete', name: 'app_user_delete', methods: ['POST'], requirements: ['id' => '\d+'])]
+    #[Route('/{id}/delete', name: 'app_user_delete', methods: ['POST'])]
     #[IsGranted('ROLE_ADMIN')]
     public function delete(Request $request, User $user, EntityManagerInterface $entityManager): Response
     {
@@ -197,11 +197,19 @@ class UserController extends AbstractController
 
         $users = $userRepository->findByAdvancedSearch($query, $role, $status);
 
+        // Global stats for the cards
+        $totalUsers = $userRepository->count([]);
+        $activeUsers = $userRepository->count(['status' => 'active']);
+        $pendingUsers = $userRepository->count(['status' => 'pending']);
+
         return $this->render('BackOffice/user/index.html.twig', [
             'users' => $users,
             'currentQuery' => $query,
             'currentRole' => $role,
             'currentStatus' => $status,
+            'totalUsers' => $totalUsers,
+            'activeUsers' => $activeUsers,
+            'pendingUsers' => $pendingUsers,
         ]);
     }
 
@@ -221,7 +229,7 @@ class UserController extends AbstractController
             
             
             // Trouver l'utilisateur
-            $user = $userRepository->findOneBy(['email' => $email]);
+            $user = $userRepository->findOneBy(['email.value' => $email]);
             
             if ($user === null) {
                 $this->addFlash('error', 'Aucun compte trouvé avec cet email.');
@@ -269,7 +277,7 @@ class UserController extends AbstractController
     public function resendVerification(Request $request, EntityManagerInterface $entityManager, UserRepository $userRepository, MailerInterface $mailer): Response
     {
         $email = $request->request->get('email');
-        $user = $userRepository->findOneBy(['email' => $email]);
+        $user = $userRepository->findOneBy(['email.value' => $email]);
 
         if ($user && !$user->isVerified()) {
             // Générer un nouveau code
@@ -346,7 +354,7 @@ class UserController extends AbstractController
     {
         if ($request->isMethod('POST')) {
             $emailRequested = $request->request->get('email');
-            $user = $userRepository->findOneBy(['email' => $emailRequested]);
+            $user = $userRepository->findOneBy(['email.value' => $emailRequested]);
 
             if ($user) {
                 // Générer un code de réinitialisation
@@ -385,7 +393,7 @@ class UserController extends AbstractController
         if ($request->isMethod('POST')) {
             $code = $request->request->get('code');
             $newPassword = $request->request->get('password');
-            $user = $userRepository->findOneBy(['email' => $emailParam]);
+            $user = $userRepository->findOneBy(['email.value' => $emailParam]);
 
             if ($user && $user->getVerificationCode() === $code && !empty($code)) {
                 $user->setPassword($passwordHasher->hashPassword($user, $newPassword));

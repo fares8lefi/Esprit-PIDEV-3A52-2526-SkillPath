@@ -28,7 +28,6 @@ class QuizController extends AbstractController
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $quiz = new Quiz();
-        $quiz->setDateCreation(new \DateTime());
         $form = $this->createForm(QuizType::class, $quiz);
         $form->handleRequest($request);
 

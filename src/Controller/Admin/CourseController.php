@@ -49,7 +49,7 @@ class CourseController extends AbstractController
     #[Route('/new', name: 'new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
-        $course = new Course();
+        $course = new Course($this->getUser());
         $form = $this->createForm(CourseType::class, $course);
         $form->handleRequest($request);
 

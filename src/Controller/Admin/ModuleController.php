@@ -43,7 +43,7 @@ class ModuleController extends AbstractController
         EntityManagerInterface $em,
         ModuleManager $moduleManager
     ): Response {
-        $module = new Module();
+        $module = new Module($this->getUser());
         $form = $this->createForm(ModuleType::class, $module);
         $form->handleRequest($request);
 

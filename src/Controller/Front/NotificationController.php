@@ -19,7 +19,7 @@ class NotificationController extends AbstractController
             return new JsonResponse(['count' => 0]);
         }
 
-        return new JsonResponse(['count' => count($repository->findUnreadByUser($user))]);
+        return new JsonResponse(['count' => $repository->countUnreadByUser($user)]);
     }
 
     #[Route('/list', name: 'list', methods: ['GET'])]
