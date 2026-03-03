@@ -53,7 +53,7 @@ class ModuleAddedListener
         $link = "/course/" . $course->getId(); 
 
         try {
-            $this->notificationService->notifyUsers($users, $title, $message, $link);
+            $this->notificationService->notifyUsers($users, $title, $message, $link, $module->getCreatedBy());
             $this->logger->info("ModuleAddedListener: Notifications sent successfully");
         } catch (\Exception $e) {
             $this->logger->error("ModuleAddedListener: Error sending notifications: " . $e->getMessage());

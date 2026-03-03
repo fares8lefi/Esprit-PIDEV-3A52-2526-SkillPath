@@ -12,6 +12,8 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Vich\UploaderBundle\Form\Type\VichFileType;
+use Vich\UploaderBundle\Form\Type\VichImageType;
 
 class ModuleType extends AbstractType
 {
@@ -89,6 +91,27 @@ class ModuleType extends AbstractType
                     'class' => 'form-input resize-none',
                     'rows' => 3,
                     'placeholder' => 'Bref résumé...'
+                ],
+            ])
+            ->add('imageFile', VichImageType::class, [
+                'label' => 'Logo / Illustration',
+                'required' => false,
+                'allow_delete' => true,
+                'download_uri' => true,
+                'image_uri' => true,
+                'asset_helper' => true,
+                'attr' => [
+                    'class' => 'form-input'
+                ],
+            ])
+            ->add('documentFile', VichFileType::class, [
+                'label' => 'Document de Cours (PDF/Word)',
+                'required' => false,
+                'allow_delete' => true,
+                'download_uri' => true,
+                'asset_helper' => true,
+                'attr' => [
+                    'class' => 'form-input'
                 ],
             ])
             ->add('scheduledAt', \Symfony\Component\Form\Extension\Core\Type\DateTimeType::class, [
