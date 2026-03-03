@@ -34,12 +34,42 @@ class UserCourseViewService
             $view->setCourse($course);
             $view->setTimeSpent(0);
             $view->setIsEnrolled(false);
+            $view->setMaxModuleReached(0); // Nouveau champ initialisé
             $this->entityManager->persist($view);
             $this->entityManager->flush();
         }
 
-        // Recalculer dynamiquement le niveau de l'utilisateur à chaque clic/vue
+        // Recalculer dynamiquement le niveau et le domaine de l'utilisateur à chaque clic/vue
         $this->updateUserLevel($user);
+        $this->updateUserPreferredDomain($user);
+
+        return $view;
+    }
+
+    /**
+     * Enregistre la vue d'un module spécifique et met à jour l'index max atteint.
+     */
+    public function recordModuleView(User $user, \App\Entity\Module $module): UserCourseView
+    {
+        $view = $this->recordView($user, $module->getCourse());
+        
+        // Trouver la position du module actuel (1-indexed, trié par ID)
+        $courseModules = $module->getCourse()->getModules()->toArray();
+        usort($courseModules, fn($a, $b) => $a->getId() <=> $b->getId());
+        
+        $currentIndex = 0;
+        foreach ($courseModules as $index => $m) {
+            if ($m->getId() === $module->getId()) {
+                $currentIndex = $index + 1;
+                break;
+            }
+        }
+
+        // Mettre à jour si on a atteint un nouveau sommet
+        if ($currentIndex > $view->getMaxModuleReached()) {
+            $view->setMaxModuleReached($currentIndex);
+            $this->entityManager->flush();
+        }
 
         return $view;
     }
@@ -135,6 +165,42 @@ class UserCourseViewService
                 $this->entityManager->persist($user);
                 $this->entityManager->flush();
             }
+        }
+    }
+
+    public function updateUserPreferredDomain(User $user): void
+    {
+        // Si le domaine est déjà renseigné, on ne le touche pas
+        if (trim($user->getDomaine() ?? '') !== '') {
+            return;
+        }
+
+        $userViews = $this->repository->findByUser($user->getId());
+        if (empty($userViews)) {
+            return;
+        }
+
+        $domainCounts = [];
+        foreach ($userViews as $view) {
+            $course = $view->getCourse();
+            if ($course && $course->getCategory()) {
+                $cat = trim($course->getCategory());
+                if ($cat !== '') {
+                    $domainCounts[$cat] = ($domainCounts[$cat] ?? 0) + 1;
+                }
+            }
+        }
+
+        if (empty($domainCounts)) {
+            return;
+        }
+
+        arsort($domainCounts);
+        $majorityDomain = (string) array_key_first($domainCounts);
+
+        if ($user->getDomaine() !== $majorityDomain) {
+            $user->setDomaine($majorityDomain);
+            $this->entityManager->flush();
         }
     }
 

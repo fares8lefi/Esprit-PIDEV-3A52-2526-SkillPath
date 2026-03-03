@@ -55,7 +55,7 @@ class Quiz
     private Collection $resultats;
 
     #[ORM\ManyToOne(inversedBy: 'quizzes')]
-    #[ORM\JoinColumn(nullable: true)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
     private ?Course $course = null;
 
     public function __construct()

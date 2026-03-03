@@ -24,11 +24,12 @@ class ModuleController extends AbstractController
             return $this->redirectToRoute('front_course_show', ['id' => $module->getCourse()->getId()]);
         }
 
-        // Enregistrer la vue du module (crée l'entrée si inexistante)
-        $viewService->recordView($user, $module->getCourse());
+        // Enregistrer la vue du module et mettre à jour l'index max
+        $userView = $viewService->recordModuleView($user, $module);
 
         return $this->render('FrontOffice/module/show.html.twig', [
             'module' => $module,
+            'userCourseView' => $userView,
         ]);
     }
 

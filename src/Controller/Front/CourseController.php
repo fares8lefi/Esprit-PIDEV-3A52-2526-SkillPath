@@ -3,7 +3,9 @@
 namespace App\Controller\Front;
 
 use App\Entity\Course;
+use App\Entity\User;
 use App\Repository\CourseRepository;
+use App\Service\PredictionService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -12,9 +14,19 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/course', name: 'front_course_')]
 class CourseController extends AbstractController
 {
-    #[Route('/', name: 'index', methods: ['GET'])]
-    public function index(Request $request, CourseRepository $courseRepository): Response
+    private PredictionService $predictionService;
+
+    public function __construct(PredictionService $predictionService)
     {
+        $this->predictionService = $predictionService;
+    }
+
+    #[Route('/', name: 'index', methods: ['GET'])]
+    public function index(
+        Request $request, 
+        CourseRepository $courseRepository,
+        \App\Repository\CertificateRepository $certificateRepository
+    ): Response {
         $search = $request->query->get('search');
         $level = $request->query->get('level');
         $category = $request->query->get('category');
@@ -23,6 +35,25 @@ class CourseController extends AbstractController
         $courses = $courseRepository->findByFilters($search, $level, $category, $sort);
         $categoriesCount = $courseRepository->countByCategories();
 
+        // Calculer les scores IA et vérifier les certifications si l'utilisateur est connecté
+        $aiScores = [];
+        $certifiedCourseIds = [];
+        $user = $this->getUser();
+        
+        if ($user instanceof User) {
+            foreach ($courses as $course) {
+                $aiScores[$course->getId()] = $this->predictionService->predictSuccessProbability($user, $course);
+            }
+
+            // Récupérer les IDs des cours pour lesquels l'utilisateur a un certificat
+            $userCertificates = $certificateRepository->findBy(['user' => $user]);
+            foreach ($userCertificates as $cert) {
+                if ($cert->getCourse()) {
+                    $certifiedCourseIds[] = $cert->getCourse()->getId();
+                }
+            }
+        }
+
         return $this->render('FrontOffice/course/index.html.twig', [
             'courses' => $courses,
             'categoriesCount' => $categoriesCount,
@@ -30,6 +61,8 @@ class CourseController extends AbstractController
             'currentLevel' => $level,
             'currentCategory' => $category,
             'currentSort' => $sort,
+            'aiScores' => $aiScores,
+            'certifiedCourseIds' => $certifiedCourseIds,
         ]);
     }
 
@@ -39,17 +72,20 @@ class CourseController extends AbstractController
         $user = $this->getUser();
         $isEnrolled = false;
         $isCompleted = false;
+        $isCertified = false;
         
         if ($user instanceof \App\Entity\User) {
             $view = $viewService->recordView($user, $course);
             $isEnrolled = $viewService->isUserEnrolled($user, $course);
             $isCompleted = $view->isCompleted();
+            $isCertified = $em->getRepository(\App\Entity\Certificate::class)->findOneBy(['user' => $user, 'course' => $course]) !== null;
         }
 
         return $this->render('FrontOffice/course/show.html.twig', [
             'course' => $course,
             'isEnrolled' => $isEnrolled,
             'isCompleted' => $isCompleted,
+            'isCertified' => $isCertified,
         ]);
     }
 
@@ -69,7 +105,7 @@ class CourseController extends AbstractController
     }
 
     #[Route('/my-courses', name: 'my_courses', methods: ['GET'])]
-    public function myCourses(): Response
+    public function myCourses(\App\Repository\UserCourseViewRepository $repository): Response
     {
         $user = $this->getUser();
         if (!$user instanceof \App\Entity\User) {
@@ -77,7 +113,7 @@ class CourseController extends AbstractController
         }
 
         return $this->render('FrontOffice/course/my_courses.html.twig', [
-            'courses' => $user->getCourses(),
+            'views' => $repository->findByUser($user->getId()),
         ]);
     }
 
