@@ -26,7 +26,7 @@
             </div>
             <div>
                 <p class="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider">Total Membres</p>
-                <p class="text-2xl font-black text-slate-900 dark:text-white">{{ users|length }}</p>
+                <p class="text-2xl font-black text-slate-900 dark:text-white">{{ totalUsers }}</p>
             </div>
         </div>
         <div class="glass-card p-5 rounded-2xl flex items-center gap-4 border-b-2 border-green-500">
@@ -35,7 +35,7 @@
             </div>
             <div>
                 <p class="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider">Actifs</p>
-                <p class="text-2xl font-black text-slate-900 dark:text-white">{{ users|filter(u => u.status == 'active')|length }}</p>
+                <p class="text-2xl font-black text-slate-900 dark:text-white">{{ activeUsers }}</p>
             </div>
         </div>
         <div class="glass-card p-5 rounded-2xl flex items-center gap-4 border-b-2 border-amber-500">
@@ -44,7 +44,7 @@
             </div>
             <div>
                 <p class="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider">En Attente</p>
-                <p class="text-2xl font-black text-slate-900 dark:text-white">{{ users|filter(u => u.status == 'pending')|length }}</p>
+                <p class="text-2xl font-black text-slate-900 dark:text-white">{{ pendingUsers }}</p>
             </div>
         </div>
     </div>
@@ -74,7 +74,7 @@
                         <option value="">Tous les statuts</option>
                         <option value="active" {{ currentStatus == 'active' ? 'selected' : '' }}>Actif</option>
                         <option value="pending" {{ currentStatus == 'pending' ? 'selected' : '' }}>En attente</option>
-                        <option value="blocked" {{ currentStatus == 'blocked' ? 'selected' : '' }}>Bloqué</option>
+                        <option value="suspended" {{ currentStatus == 'suspended' ? 'selected' : '' }}>Suspendu</option>
                     </select>
 
                     <div class="flex gap-2">

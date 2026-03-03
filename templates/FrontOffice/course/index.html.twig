@@ -25,6 +25,33 @@
 
 {% block body %}
 <div class="min-h-screen bg-[#F8FAFC] dark:bg-[#0B0F1A]">
+    <!-- Premium Navigation -->
+    <nav class="glass sticky top-0 z-[100] px-6 lg:px-12 py-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="{{ path('app_home') }}" class="flex items-center gap-3 group transition-transform hover:scale-105">
+                <div class="w-10 h-10 gradient-primary rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/20">
+                    <img src="{{ asset('images/logo.png') }}" alt="Logo" class="w-6 h-6 invert brightness-0">
+                </div>
+                <span class="text-2xl font-black tracking-tight text-slate-900 dark:text-white">Skill<span class="gradient-text">Path</span></span>
+            </a>
+
+            <div class="flex items-center gap-6">
+                <a href="{{ path('app_event_index') }}" class="text-xs font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary-light transition-colors">Événements</a>
+                {% if app.user %}
+                    <a href="{{ path('app_recommendations') }}" class="text-xs font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary-light transition-colors">Recommandations</a>
+                    <a href="{{ path('front_course_my_courses') }}" class="text-xs font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary-light transition-colors">Mes Cours</a>
+                {% endif %}
+                <a href="{{ path('app_home') }}" class="text-xs font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary-light transition-colors">Accueil</a>
+                <div class="h-8 w-[1px] bg-slate-200 dark:bg-slate-800"></div>
+                {% if app.user %}
+                    <a href="{{ path('app_logout') }}" class="text-xs font-black uppercase tracking-widest text-red-500 hover:text-red-600 transition-colors">Déconnexion</a>
+                {% else %}
+                    <a href="{{ path('app_user_login') }}" class="text-xs font-black uppercase tracking-widest text-primary hover:text-primary-light transition-colors">Connexion</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
     {# Dark Header Section #}
     <header class="bg-[#1A1D1F] py-12 px-6 lg:px-12">
         <div class="max-w-7xl mx-auto flex justify-between items-center">

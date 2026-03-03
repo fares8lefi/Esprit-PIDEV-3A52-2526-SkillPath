@@ -4,7 +4,51 @@
 
 {% block body %}
 <div class="relative min-h-screen mesh-light dark:mesh-dark overflow-hidden">
-    
+    <!-- Premium Header -->
+    <nav class="glass sticky top-0 z-[100] px-6 lg:px-12 py-4 shadow-sm backdrop-blur-md">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <a href="{{ path('app_home') }}" class="flex items-center gap-3 group transition-transform hover:scale-105">
+                <div class="w-10 h-10 gradient-primary rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/20">
+                    <img src="{{ asset('images/logo.png') }}" alt="Logo" class="w-6 h-6 invert brightness-0">
+                </div>
+                <span class="text-2xl font-black tracking-tight text-slate-900 dark:text-white">Skill<span class="gradient-text">Path</span></span>
+            </a>
+
+            <div class="flex items-center gap-6">
+                <a href="{{ path('app_event_index') }}" class="text-xs font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary-light transition-colors">Événements</a>
+                <a href="{{ path('front_course_index') }}" class="text-xs font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary-light transition-colors">Catalogue</a>
+                <a href="{{ path('app_home') }}" class="text-xs font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary-light transition-colors">Accueil</a>
+                
+                {% if app.user %}
+                    <!-- Notifications -->
+                    <div class="relative">
+                        <button onclick="fetchNotifications()" class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-400 hover:text-primary transition-all relative">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                            <span id="notification-count" class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-black rounded-full flex items-center justify-center border-2 border-white dark:border-slate-900 hidden">0</span>
+                        </button>
+
+                        <!-- Dropdown -->
+                        <div id="notification-dropdown" class="absolute right-0 mt-3 w-80 glass dark:bg-slate-900/90 rounded-2xl shadow-2xl border border-white/10 overflow-hidden hidden z-[110] animate-scale-in">
+                            <div class="p-4 border-b border-slate-50 dark:border-white/5 bg-slate-50/50 dark:bg-white/5">
+                                <h3 class="text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider">Notifications</h3>
+                            </div>
+                            <div id="notification-list" class="max-h-96 overflow-y-auto custom-scrollbar">
+                                <!-- Dynamic content -->
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="h-8 w-[1px] bg-slate-200 dark:bg-slate-800"></div>
+                {% if app.user %}
+                    <a href="{{ path('app_logout') }}" class="text-xs font-black uppercase tracking-widest text-red-500 hover:text-red-600 transition-colors">Déconnexion</a>
+                {% else %}
+                    <a href="{{ path('app_user_login') }}" class="text-xs font-black uppercase tracking-widest text-primary hover:text-primary-light transition-colors">Connexion</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
     <!-- Header / Hero pour recommendations -->
     <section class="max-w-7xl mx-auto px-6 lg:px-12 pt-20 pb-16">
         <div class="text-center animate-fade-up">
@@ -31,11 +75,7 @@
 
     <!-- Results Section -->
     <section class="max-w-7xl mx-auto px-6 lg:px-12 pb-28">
-        <div class="flex justify-between items-center mb-8">
-            <a href="{{ path('app_home') }}" class="text-sm font-bold text-slate-500 hover:text-primary transition-colors flex items-center gap-2">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                Retour à l'accueil
-            </a>
+        <div class="flex justify-end items-center mb-8">
             <span class="text-xs font-black text-slate-400 uppercase tracking-widest">{{ recommendations|length }} Cours Trouvés</span>
         </div>
 

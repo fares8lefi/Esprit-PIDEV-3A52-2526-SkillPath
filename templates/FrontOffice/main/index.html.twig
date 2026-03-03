@@ -35,10 +35,7 @@
                 <a href="{{ path('front_course_index') }}" class="text-sm font-semibold text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary-light transition-colors">Catalogue</a>
                 {% if app.user %}
                     <a href="{{ path('front_course_my_courses') }}" class="text-sm font-semibold text-primary font-bold">Mes Cours</a>
-                    <a href="{{ path('app_recommendations') }}" class="text-sm font-semibold text-primary font-bold flex items-center gap-1">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                        IA Recommandations
-                    </a>
+                    <a href="{{ path('app_recommendations') }}" class="text-sm font-semibold text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary-light transition-colors">Recommandations</a>
                 {% endif %}
             </div>
 
