@@ -1,0 +1,52 @@
+# Use the front controller as index file. It serves as a fallback solution when
+# every other rewrite/redirect fails (e.g. in an aliased environment), and
+# ensures no 404 header is sent by the web server.
+DirectoryIndex index.php
+
+# By default, Apache does not evaluate symbolic links if you did not enable this
+# temporary fix http://bugs.php.net/bug.php?id=14634
+# With Apache >= 2.4, the EnableSendfile on/off directive is useless
+# Alternatively you can use this to disable all features for URLs containing .php:
+# <Files *.php>
+#     Header set X-UA-Compatible "IE=edge"
+# </Files>
+
+<IfModule mod_negotiation.c>
+    Options -MultiViews
+</IfModule>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Determine the RewriteBase automatically and set it as environment variable.
+    # If you are using Apache aliases to do mass virtual hosting or install the
+    # temporary fix for the mod_rewrite issue, use this directive:
+    # RewriteBase /
+    # If your application's front controller is not symfony's standard index.php:
+    # RewriteRule ^$ /index.php [QSA,L]
+    # If you are using a subdirectory, e.g. if your URL is something like
+    # http://localhost/symfony, rather than http://localhost/:
+
+    # Redirect to URI without front controller to prevent duplicate content
+    # (with and without `/index.php`). Only do this redirect on the initial
+    # rewrite by Apache and not on subsequent cycles. Also make sure, that
+    # the following test is not triggered if the user is using a GET parameter.
+    RewriteCond %{ENV:REDIRECT_STATUS} ^$
+    RewriteRule ^index\.php(?:/(.*)|$) %{ENV:BASE}/$1 [R=301,L]
+
+    # If the requested filename exists, simply serve it.
+    # We only want to let Apache serve files and not directories.
+    # Rewrite all other queries to the front controller.
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^(.*)$ %{ENV:BASE}/index.php [QSA,L]
+</IfModule>
+
+<IfModule !mod_rewrite.c>
+    <IfModule mod_alias.c>
+        # When mod_rewrite is not available, we instruct a temporary redirect of
+        # the start page to the front controller explicitly so that the website
+        # and the generated links can still be used.
+        RedirectMatch 307 ^/$ /index.php/
+        # RedirectTemp cannot be used instead
+    </IfModule>
+</IfModule>
