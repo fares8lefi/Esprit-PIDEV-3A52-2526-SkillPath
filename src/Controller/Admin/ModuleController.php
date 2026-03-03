@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\Module;
 use App\Form\ModuleType;
 use App\Repository\ModuleRepository;
+use App\Service\ModuleManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -39,39 +40,29 @@ class ModuleController extends AbstractController
     #[Route('/new', name: 'new', methods: ['GET', 'POST'])]
     public function new(
         Request $request,
-        EntityManagerInterface $em
+        EntityManagerInterface $em,
+        ModuleManager $moduleManager
     ): Response {
         $module = new Module();
         $form = $this->createForm(ModuleType::class, $module);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $documentFile = $form->get('documentFile')->getData();
-            if ($documentFile) {
-                $newFilename = uniqid() . '-' . $documentFile->getClientOriginalName();
-                try {
-                    $documentFile->move(
-                        $this->getParameter('modules_upload_dir'),
-                        $newFilename
-                    );
-                    $module->setDocument($newFilename);
-                } catch (\Exception $e) {
-                    $this->addFlash('error', 'Erreur lors de l\'upload du document.');
-                }
+
+            if (!$moduleManager->isValidTitle($module->getTitle())) {
+                $this->addFlash('error', 'Le titre du module doit comporter au moins 2 caractères.');
+                return $this->render('BackOffice/module/new.html.twig', [
+                    'form' => $form->createView(),
+                    'module' => $module,
+                ]);
             }
 
-            $imageFile = $form->get('imageFile')->getData();
-            if ($imageFile) {
-                $newImageName = uniqid() . '-' . $imageFile->getClientOriginalName();
-                try {
-                    $imageFile->move(
-                        $this->getParameter('modules_upload_dir'),
-                        $newImageName
-                    );
-                    $module->setImage($newImageName);
-                } catch (\Exception $e) {
-                    $this->addFlash('error', 'Erreur lors de l\'upload de l\'image.');
-                }
+            if (!$moduleManager->isValidDescription($module->getDescription() ?? '')) {
+                $this->addFlash('error', 'La description du module doit comporter entre 10 et 500 caractères.');
+                return $this->render('BackOffice/module/new.html.twig', [
+                    'form' => $form->createView(),
+                    'module' => $module,
+                ]);
             }
 
             $em->persist($module);
@@ -99,41 +90,28 @@ class ModuleController extends AbstractController
     public function edit(
         Request $request,
         Module $module,
-        EntityManagerInterface $em
+        EntityManagerInterface $em,
+        ModuleManager $moduleManager
     ): Response {
         $form = $this->createForm(ModuleType::class, $module);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $documentFile = $form->get('documentFile')->getData();
-            if ($documentFile) {
-                $newFilename = uniqid() . '-' . $documentFile->getClientOriginalName();
-                try {
-                    $documentFile->move(
-                        $this->getParameter('modules_upload_dir'),
-                        $newFilename
-                    );
-                    
-                    // Optionnel : Supprimer l'ancien fichier ici
-                    
-                    $module->setDocument($newFilename);
-                } catch (\Exception $e) {
-                    $this->addFlash('error', 'Erreur lors de l\'upload du document.');
-                }
+
+            if (!$moduleManager->isValidTitle($module->getTitle())) {
+                $this->addFlash('error', 'Le titre du module doit comporter au moins 2 caractères.');
+                return $this->render('BackOffice/module/edit.html.twig', [
+                    'form' => $form->createView(),
+                    'module' => $module,
+                ]);
             }
 
-            $imageFile = $form->get('imageFile')->getData();
-            if ($imageFile) {
-                $newImageName = uniqid() . '-' . $imageFile->getClientOriginalName();
-                try {
-                    $imageFile->move(
-                        $this->getParameter('modules_upload_dir'),
-                        $newImageName
-                    );
-                    $module->setImage($newImageName);
-                } catch (\Exception $e) {
-                    $this->addFlash('error', 'Erreur lors de l\'upload de l\'image.');
-                }
+            if (!$moduleManager->isValidDescription($module->getDescription() ?? '')) {
+                $this->addFlash('error', 'La description du module doit comporter entre 10 et 500 caractères.');
+                return $this->render('BackOffice/module/edit.html.twig', [
+                    'form' => $form->createView(),
+                    'module' => $module,
+                ]);
             }
 
             $em->flush();

@@ -71,7 +71,20 @@
                     <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Contenu Principal / Ressources</label>
                     {{ form_widget(form.content) }}
                     {{ form_errors(form.content) }}
-                    <p class="text-[10px] text-slate-400 mt-2 italic italic">Supporte le Markdown, texte enrichi, ou URLs de ressources. Si c'est une vidéo, mettez l'URL ici.</p>
+                    <p class="text-[10px] text-slate-400 mt-2 italic">Supporte le Markdown, texte enrichi, ou URLs de ressources. Si c'est une vidéo, mettez l'URL ici.</p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Niveau de difficulté</label>
+                    {{ form_widget(form.level) }}
+                    {{ form_errors(form.level) }}
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Planification (Schedule at)</label>
+                    {{ form_widget(form.scheduledAt) }}
+                    {{ form_errors(form.scheduledAt) }}
+                    <p class="text-[10px] text-slate-400 mt-2 italic">Date et heure à laquelle le module sera visible.</p>
                 </div>
             </div>
 

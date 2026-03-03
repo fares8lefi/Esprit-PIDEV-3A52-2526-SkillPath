@@ -151,8 +151,13 @@
                                             <span>{{ course.level }}</span>
                                         </div>
                                         <div class="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400">
-                                            <svg class="w-4 h-4 text-success/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                            <span class="text-success">Certifié</span>
+                                            {% if course.id in certifiedCourseIds|default([]) %}
+                                                <svg class="w-4 h-4 text-success/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                                <span class="text-success">Certifié</span>
+                                            {% else %}
+                                                <svg class="w-4 h-4 text-red-500/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                                                <span class="text-red-500">Pas encore certifié</span>
+                                            {% endif %}
                                         </div>
 
                                         {# Hover Agenda Menu #}
@@ -197,6 +202,16 @@
                                                 </div>
                                             </div>
                                         </div>
+
+                                        {# AI Success Probability Badge #}
+                                        {% if aiScores[course.id] is defined %}
+                                            <div class="flex items-center gap-2 py-1.5 px-3 bg-primary/5 dark:bg-primary/20 rounded-xl border border-primary/20 animate-pulse transition-all hover:scale-105">
+                                                <svg class="w-3.5 h-3.5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                                <span class="text-primary text-[9px] font-black uppercase tracking-wider">
+                                                    la probabilité de reussite dans ce cours est : {{ aiScores[course.id] }}%
+                                                </span>
+                                            </div>
+                                        {% endif %}
                                     </div>
                                 </div>
 

@@ -19,7 +19,7 @@ class UserCourseView
     private ?User $user = null;
 
     #[ORM\ManyToOne(targetEntity: Course::class)]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?Course $course = null;
 
     #[ORM\Column]
@@ -36,6 +36,9 @@ class UserCourseView
 
     #[ORM\Column]
     private ?bool $isCompleted = false;
+
+    #[ORM\Column(options: ["default" => 0])]
+    private ?int $maxModuleReached = 0;
 
     public function getId(): ?int
     {
@@ -116,6 +119,17 @@ class UserCourseView
     public function setIsCompleted(bool $isCompleted): static
     {
         $this->isCompleted = $isCompleted;
+        return $this;
+    }
+
+    public function getMaxModuleReached(): ?int
+    {
+        return $this->maxModuleReached;
+    }
+
+    public function setMaxModuleReached(int $maxModuleReached): static
+    {
+        $this->maxModuleReached = $maxModuleReached;
         return $this;
     }
 }

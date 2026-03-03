@@ -35,8 +35,11 @@
                 <a href="{{ path('front_course_index') }}" class="text-sm font-semibold text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary-light transition-colors">Catalogue</a>
                 {% if app.user %}
                     <a href="{{ path('front_course_my_courses') }}" class="text-sm font-semibold text-primary font-bold">Mes Cours</a>
+                    <a href="{{ path('app_recommendations') }}" class="text-sm font-semibold text-primary font-bold flex items-center gap-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        IA Recommandations
+                    </a>
                 {% endif %}
-                <a href="#stats" class="text-sm font-semibold text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary-light transition-colors">About</a>
             </div>
 
             <div class="flex items-center gap-4">
@@ -102,7 +105,7 @@
                     Access world-class curricula designed by industry architects to optimize your career and dominate tomorrow's technologies.
                 </p>
                 <div class="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
-                    <a href="#catalogue" class="btn-primary w-full sm:w-auto text-center flex items-center justify-center gap-2 !py-4 !px-8">
+                    <a href="{{ path('front_course_index') }}" class="btn-primary w-full sm:w-auto text-center flex items-center justify-center gap-2 !py-4 !px-8">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                         Start Adventure
                     </a>
@@ -127,9 +130,9 @@
                             <span class="badge badge-green ml-auto">Nouveau</span>
                         </div>
                         <div class="progress-bar">
-                            <div class="progress-bar-fill" style="width: 75%"></div>
+                            <div class="progress-bar-fill" style="width: {{ userStats.progression }}%"></div>
                         </div>
-                        <p class="text-right text-[10px] font-bold text-slate-400 mt-2">75% Complété</p>
+                        <p class="text-right text-[10px] font-bold text-slate-400 mt-2">{{ userStats.progression }}% Complété</p>
                     </div>
 
                     <!-- Card 2: Stats -->
@@ -146,8 +149,8 @@
                         <div class="w-10 h-10 rounded-xl bg-secondary/10 flex items-center justify-center mb-3">
                             <svg class="w-5 h-5 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
                         </div>
-                        <p class="text-2xl font-black text-slate-900 dark:text-white">12</p>
-                        <p class="text-xs font-semibold text-slate-400">Badges obtenus</p>
+                        <p class="text-2xl font-black text-slate-900 dark:text-white">{{ userStats.certifs }}</p>
+                        <p class="text-xs font-semibold text-slate-400">Certificats obtenus</p>
                     </div>
                 </div>
                 <!-- Decorative blurs -->
@@ -354,10 +357,15 @@
                                         <div class="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
                                         <span>{{ course.modules|length }} Chapters</span>
                                     </div>
-                                    <div class="flex items-center gap-2">
-                                        <svg class="w-3.5 h-3.5 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                        <span>{{ course.duration|default('120') }} min</span>
-                                    </div>
+                                        <div class="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                            {% if course.id in certifiedCourseIds|default([]) %}
+                                                <svg class="w-4 h-4 text-success/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                                <span class="text-success">Certifié</span>
+                                            {% else %}
+                                                <svg class="w-4 h-4 text-red-500/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                                                <span class="text-red-500">Pas encore certifié</span>
+                                            {% endif %}
+                                        </div>
                                     <div class="flex items-center gap-2">
                                         <span class="text-primary font-black">{{ course.price|default('0.00') }} DT</span>
                                     </div>
@@ -438,32 +446,6 @@
         </div>
     </section>
 
-    <!-- Stats -->
-    <section id="stats" class="max-w-7xl mx-auto px-6 lg:px-12 pb-28">
-        <div class="gradient-primary rounded-3xl p-12 lg:p-16 relative overflow-hidden shadow-2xl shadow-purple-500/10">
-            <div class="absolute top-0 right-0 w-80 h-80 bg-accent/15 rounded-full blur-[100px]"></div>
-            <div class="absolute bottom-0 left-0 w-80 h-80 bg-secondary/10 rounded-full blur-[100px]"></div>
-            
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-10 relative z-10 text-center">
-                <div class="animate-fade-up">
-                    <h4 class="text-4xl lg:text-5xl font-black text-white mb-2">50k+</h4>
-                    <p class="text-xs font-bold text-white/50 uppercase tracking-widest">Élèves</p>
-                </div>
-                <div class="animate-fade-up delay-100">
-                    <h4 class="text-4xl lg:text-5xl font-black text-white mb-2">120</h4>
-                    <p class="text-xs font-bold text-white/50 uppercase tracking-widest">Formateurs</p>
-                </div>
-                <div class="animate-fade-up delay-200">
-                    <h4 class="text-4xl lg:text-5xl font-black text-white mb-2">4.9</h4>
-                    <p class="text-xs font-bold text-white/50 uppercase tracking-widest">Note Moyenne</p>
-                </div>
-                <div class="animate-fade-up delay-300">
-                    <h4 class="text-4xl lg:text-5xl font-black text-white mb-2">98%</h4>
-                    <p class="text-xs font-bold text-white/50 uppercase tracking-widest">Succès</p>
-                </div>
-            </div>
-        </div>
-    </section>
 
     <!-- Footer -->
     <footer class="border-t border-slate-200/30 dark:border-white/5 pt-16 pb-8">

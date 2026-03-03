@@ -21,7 +21,9 @@ class MainController extends AbstractController
     public function index(
         Request $request, 
         CourseRepository $courseRepository,
-        \App\Service\UserCourseViewService $viewService
+        \App\Service\UserCourseViewService $viewService,
+        \App\Service\PredictionService $predictionService,
+        \App\Repository\CertificateRepository $certificateRepository
     ): Response {
         $search = $request->query->get('search');
         $level = $request->query->get('level');
@@ -31,9 +33,25 @@ class MainController extends AbstractController
         $categoriesCount = $courseRepository->countByCategories();
 
         $recommendations = [];
+        $userStats = ['progression' => 0, 'certifs' => 0];
+        
         $user = $this->getUser();
+        $certifiedCourseIds = [];
         if ($user instanceof \App\Entity\User) {
             $recommendations = $viewService->getRecommendations($user);
+            
+            // On utilise le PredictionService pour les stats globales
+            $stats = $predictionService->getGlobalStats($user);
+            $userStats['progression'] = $stats['progression'];
+            $userStats['certifs'] = $stats['certifs'];
+
+            // Récupérer les IDs des cours certifiés
+            $userCertificates = $certificateRepository->findBy(['user' => $user]);
+            foreach ($userCertificates as $cert) {
+                if ($cert->getCourse()) {
+                    $certifiedCourseIds[] = $cert->getCourse()->getId();
+                }
+            }
         }
 
         return $this->render('FrontOffice/main/index.html.twig', [
@@ -43,6 +61,8 @@ class MainController extends AbstractController
             'currentLevel' => $level,
             'currentCategory' => $category,
             'recommendedCourses' => $recommendations,
+            'userStats' => $userStats,
+            'certifiedCourseIds' => $certifiedCourseIds,
         ]);
     }
 
