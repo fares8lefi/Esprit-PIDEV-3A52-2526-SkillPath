@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  tests:
+    name: PHPStan & PHPUnit
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: skillpathdb_test
+        options: >-
+          --health-cmd "mysqladmin ping -uroot -proot"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 3306:3306
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: PHP 8.2
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: pdo, pdo_mysql, intl, zip
+
+      - name: Cache Composer
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: composer-${{ hashFiles('composer.lock') }}
+
+      - name: Install dependencies
+        run: composer install --no-interaction --no-progress
+
+      - name: PHPStan
+        run: vendor/bin/phpstan analyse --memory-limit=512M --no-progress
+
+      - name: PHPUnit
+        env:
+          APP_ENV: test
+          APP_SECRET: testsecret
+          DATABASE_URL: "mysql://root:root@127.0.0.1:3306/skillpathdb_test?serverVersion=8.0&charset=utf8mb4"
+        run: php bin/phpunit --testdox
