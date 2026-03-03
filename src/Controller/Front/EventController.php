@@ -20,6 +20,8 @@ use Endroid\QrCode\Builder\BuilderInterface;
 use Endroid\QrCode\Encoding\Encoding;
 use Endroid\QrCode\ErrorCorrectionLevel;
 use Endroid\QrCode\Writer\PngWriter;
+use Endroid\QrCode\Writer\SvgWriter;
+use Psr\Log\LoggerInterface;
 
 #[Route('/event', name: 'app_event_')]
 class EventController extends AbstractController
@@ -65,7 +67,7 @@ class EventController extends AbstractController
 
     #[Route('/{id}/join', name: 'join', methods: ['POST'])]
     #[IsGranted('ROLE_USER')]
-    public function join(Event $event, EntityManagerInterface $entityManager, Request $request, MailerInterface $mailer, BuilderInterface $customQrCodeBuilder): Response
+    public function join(Event $event, EntityManagerInterface $entityManager, Request $request, MailerInterface $mailer, BuilderInterface $customQrCodeBuilder, LoggerInterface $logger): Response
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -82,7 +84,7 @@ class EventController extends AbstractController
             
             $user->addJoinedEvent($event);
             
-            // Build the QR Code Billet
+            // Build the QR Code Billet (may fail if GD extension is missing)
             $data = sprintf(
                 "Billet SkillPath\nÉvénement: %s\nDate: %s\nParticipant: %s\nEmail: %s",
                 $event->getTitle(),
@@ -91,33 +93,62 @@ class EventController extends AbstractController
                 $user->getEmail()
             );
 
-            $qrResult = $customQrCodeBuilder->build(
-                data: $data,
-                encoding: new Encoding('UTF-8'),
-                errorCorrectionLevel: ErrorCorrectionLevel::High,
-                size: 300,
-                margin: 10,
-                writer: new PngWriter()
-            );
-            $ticketPngContent = $qrResult->getString();
+            $ticketContent = null;
+            $ticketMime = null;
+            $ticketFilename = null;
+            try {
+                $usePng = extension_loaded('gd');
+                $writer = $usePng ? new PngWriter() : new SvgWriter();
+
+                $qrResult = $customQrCodeBuilder->build(
+                    data: $data,
+                    encoding: new Encoding('UTF-8'),
+                    errorCorrectionLevel: ErrorCorrectionLevel::High,
+                    size: 300,
+                    margin: 10,
+                    writer: $writer
+                );
+
+                $ticketContent = $qrResult->getString();
+                if ($usePng) {
+                    $ticketMime = 'image/png';
+                    $ticketFilename = 'billet-' . $event->getId() . '.png';
+                } else {
+                    $ticketMime = 'image/svg+xml';
+                    $ticketFilename = 'billet-' . $event->getId() . '.svg';
+                }
+            } catch (\Throwable $e) {
+                $logger->warning('QR generation failed', ['exception' => $e->getMessage(), 'event' => $event->getId(), 'user' => $user->getEmail()]);
+                // Fail gracefully if image generation is not possible
+                $this->addFlash('warning', 'Billet non généré (problème de génération d\'image).');
+            }
 
             // Send Confirmation Email
+            $fromAddress = getenv('MAILER_FROM') ?: ($_ENV['MAILER_FROM'] ?? null) ?: 'skillPathdonotreply@gmail.com';
+
             $email = (new TemplatedEmail())
-                ->from(new Address('bizbiz1478@gmail.com', 'SkillPath Events'))
+                ->from(new Address($fromAddress, 'SkillPath Events'))
                 ->to($user->getEmail())
                 ->subject('Confirmation d\'inscription : ' . $event->getTitle())
                 ->htmlTemplate('emails/event_registration.html.twig')
                 ->context([
                     'event' => $event,
                     'user' => $user,
-                ])
-                ->attach($ticketPngContent, 'billet-' . $event->getId() . '.png', 'image/png');
+                ]);
+
+            if ($ticketContent !== null) {
+                $email->attach($ticketContent, $ticketFilename, $ticketMime);
+            }
 
             try {
                 $mailer->send($email);
-                $this->addFlash('success', 'Inscription réussie ! Un email avec votre billet vous a été envoyé.');
-            } catch (\Exception $e) {
-                // Ignore silent mailer drops for local usage if needed, but alert user
+                if ($ticketContent !== null) {
+                    $this->addFlash('success', 'Inscription réussie ! Un email avec votre billet vous a été envoyé.');
+                } else {
+                    $this->addFlash('success', 'Inscription réussie ! L\'email a été envoyé sans billet.');
+                }
+            } catch (\Throwable $e) {
+                $logger->error('Failed to send registration email', ['exception' => $e->getMessage(), 'user' => $user->getEmail(), 'event' => $event->getId()]);
                 $this->addFlash('error', 'Inscription réussie mais l\'envoi de l\'email a échoué.');
             }
         }
@@ -169,18 +200,26 @@ class EventController extends AbstractController
             $user->getEmail()
         );
 
+        // Use PNG when GD is available, otherwise fall back to SVG
+        $usePng = extension_loaded('gd');
+        $writer = $usePng ? new PngWriter() : new SvgWriter();
+
         $result = $customQrCodeBuilder->build(
             data: $data,
             encoding: new Encoding('UTF-8'),
             errorCorrectionLevel: ErrorCorrectionLevel::High,
             size: 300,
             margin: 10,
-            writer: new PngWriter()
+            writer: $writer
         );
 
-        return new Response($result->getString(), 200, [
-            'Content-Type' => 'image/png',
-            'Content-Disposition' => 'attachment; filename="billet-' . $event->getId() . '.png"'
+        $content = $result->getString();
+        $mime = $usePng ? 'image/png' : 'image/svg+xml';
+        $filename = 'billet-' . $event->getId() . ($usePng ? '.png' : '.svg');
+
+        return new Response($content, 200, [
+            'Content-Type' => $mime,
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"'
         ]);
     }
 

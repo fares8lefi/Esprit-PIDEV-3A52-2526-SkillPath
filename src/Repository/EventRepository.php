@@ -18,9 +18,8 @@ class EventRepository extends ServiceEntityRepository
 
     public function findByFilters(?string $search, ?int $rating, ?int $locationId): array
     {
+        // Do not filter out past events here — let the front-office show all events
         $qb = $this->createQueryBuilder('e')
-            ->where('e.eventDate >= :today')
-            ->setParameter('today', new \DateTime('today'))
             ->orderBy('e.eventDate', 'ASC');
 
         if ($search) {
