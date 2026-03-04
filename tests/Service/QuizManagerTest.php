@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 class QuizManagerTest extends TestCase
 {
-    public function testValidQuiz()
+    public function testValidQuiz(): void
     {
         $quiz = new Quiz();
         $quiz->setTitle('Quiz Symfony');
@@ -19,7 +19,7 @@ class QuizManagerTest extends TestCase
         $this->assertTrue($manager->validate($quiz));
     }
 
-    public function testQuizWithoutTitle()
+    public function testQuizWithoutTitle(): void
     {
         $this->expectException(\InvalidArgumentException::class);
 
@@ -30,7 +30,7 @@ class QuizManagerTest extends TestCase
         $manager->validate($quiz);
     }
 
-    public function testQuizWithInvalidDuration()
+    public function testQuizWithInvalidDuration(): void
     {
         $this->expectException(\InvalidArgumentException::class);
 

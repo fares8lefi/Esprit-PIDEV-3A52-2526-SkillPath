@@ -14,10 +14,10 @@ use Symfony\Component\Uid\UuidV7;
 
 class UserCourseViewServiceTest extends TestCase
 {
-    private $entityManager;
-    private $repository;
-    private $aiService;
-    private $userCourseViewService;
+    private \PHPUnit\Framework\MockObject\MockObject&EntityManagerInterface $entityManager;
+    private \PHPUnit\Framework\MockObject\MockObject&UserCourseViewRepository $repository;
+    private \PHPUnit\Framework\MockObject\MockObject&AIService $aiService;
+    private UserCourseViewService $userCourseViewService;
 
     protected function setUp(): void
     {

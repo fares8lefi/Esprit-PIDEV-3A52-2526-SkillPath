@@ -12,9 +12,9 @@ use Symfony\Bundle\SecurityBundle\Security;
 
 class NotificationServiceTest extends TestCase
 {
-    private $entityManager;
-    private $security;
-    private $notificationService;
+    private \PHPUnit\Framework\MockObject\MockObject&EntityManagerInterface $entityManager;
+    private \PHPUnit\Framework\MockObject\MockObject&Security $security;
+    private NotificationService $notificationService;
 
     protected function setUp(): void
     {

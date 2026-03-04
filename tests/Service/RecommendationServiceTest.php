@@ -16,26 +16,20 @@ use Symfony\Component\Uid\UuidV7;
 
 class RecommendationServiceTest extends TestCase
 {
-    private $courseRepository;
-    private $userCourseViewRepository;
-    private $aiService;
-    private $entityManager;
-    private $predictionService;
-    private $recommendationService;
+    private \PHPUnit\Framework\MockObject\MockObject&CourseRepository $courseRepository;
+    private \PHPUnit\Framework\MockObject\MockObject&UserCourseViewRepository $userCourseViewRepository;
+    private \PHPUnit\Framework\MockObject\MockObject&PredictionService $predictionService;
+    private RecommendationService $recommendationService;
 
     protected function setUp(): void
     {
         $this->courseRepository = $this->createMock(CourseRepository::class);
         $this->userCourseViewRepository = $this->createMock(UserCourseViewRepository::class);
-        $this->aiService = $this->createMock(AIService::class);
-        $this->entityManager = $this->createMock(EntityManagerInterface::class);
         $this->predictionService = $this->createMock(PredictionService::class);
         
         $this->recommendationService = new RecommendationService(
             $this->courseRepository,
             $this->userCourseViewRepository,
-            $this->aiService,
-            $this->entityManager,
             $this->predictionService
         );
     }

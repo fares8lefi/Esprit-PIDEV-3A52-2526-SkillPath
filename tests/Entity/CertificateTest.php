@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 class CertificateTest extends TestCase
 {
-    public function testCertificateEntity()
+    public function testCertificateEntity(): void
     {
         $certificate = new Certificate();
         

@@ -9,8 +9,8 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
 
 class AIServiceTest extends TestCase
 {
-    private $httpClient;
-    private $aiService;
+    private \PHPUnit\Framework\MockObject\MockObject&HttpClientInterface $httpClient;
+    private AIService $aiService;
 
     protected function setUp(): void
     {

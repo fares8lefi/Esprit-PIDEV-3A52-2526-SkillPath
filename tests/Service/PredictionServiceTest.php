@@ -16,10 +16,10 @@ use Symfony\Component\Uid\UuidV7;
 
 class PredictionServiceTest extends TestCase
 {
-    private $userCourseViewRepository;
-    private $aiService;
-    private $entityManager;
-    private $predictionService;
+    private \PHPUnit\Framework\MockObject\MockObject&UserCourseViewRepository $userCourseViewRepository;
+    private \PHPUnit\Framework\MockObject\MockObject&AIService $aiService;
+    private \PHPUnit\Framework\MockObject\MockObject&EntityManagerInterface $entityManager;
+    private PredictionService $predictionService;
 
     protected function setUp(): void
     {
