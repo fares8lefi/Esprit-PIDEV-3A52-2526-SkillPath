@@ -24,6 +24,7 @@ class ReclamationManagerTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
 
         $reclamation = new Reclamation();
+        $reclamation->setSujet('');
         $reclamation->setDescription('Test sans sujet');
 
         $manager = new ReclamationManager();
@@ -36,6 +37,7 @@ class ReclamationManagerTest extends TestCase
 
         $reclamation = new Reclamation();
         $reclamation->setSujet('Test sans description');
+        $reclamation->setDescription('');
 
         $manager = new ReclamationManager();
         $manager->validate($reclamation);
