@@ -30,13 +30,33 @@ class ReclamationController extends AbstractController
     }
 
     #[Route('/new', name: 'app_reclamation_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger, \App\Service\OllamaService $ollamaService): Response
     {
         $reclamation = new Reclamation();
         $form = $this->createForm(ReclamationType::class, $reclamation);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $description = $reclamation->getDescription();
+            
+            // AI Analysis
+            $analysis = $ollamaService->analyzeReclamation($description);
+            
+            if ($analysis['has_bad_words']) {
+                $this->addFlash('error', 'Votre réclamation contient des mots inappropriés et a été refusée.');
+                $form->get('description')->addError(new \Symfony\Component\Form\FormError('Contenu inapproprié détecté. Veuillez reformuler.'));
+                return $this->render('FrontOffice/reclamation/new.html.twig', [
+                    'reclamation' => $reclamation,
+                    'form' => $form->createView(),
+                ]);
+            }
+
+            $statut = 'Pending';
+            if ($analysis['is_aggressive']) {
+                $statut = 'Urgent';
+                $reclamation->setDescription($analysis['clean_description'] ?? $description);
+            }
+
             /** @var UploadedFile $attachmentFile */
             $attachmentFile = $form->get('pieceJointe')->getData();
 
@@ -51,16 +71,20 @@ class ReclamationController extends AbstractController
                         $newFilename
                     );
                 } catch (FileException $e) {
-                    // ... handle exception if something happens during file upload
+                    // ... handle exception
                 }
 
                 $reclamation->setPieceJointe($newFilename);
             }
 
             $reclamation->setUser($this->getUser());
-            $reclamation->setStatut('Pending');
+            $reclamation->setStatut($statut);
             $entityManager->persist($reclamation);
             $entityManager->flush();
+
+            if ($statut === 'Urgent') {
+                $this->addFlash('warning', 'Votre réclamation a été marquée comme URGENTE en raison de votre ton passionné. Nous la traiterons en priorité.');
+            }
 
             return $this->redirectToRoute('app_reclamation_index', [], Response::HTTP_SEE_OTHER);
         }

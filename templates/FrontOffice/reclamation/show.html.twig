@@ -58,6 +58,8 @@
                         </a>
                         <span class="badge badge-amber">En attente</span>
                     </div>
+                {% elseif reclamation.statut == 'Urgent' %}
+                    <span class="badge badge-red animate-pulse">Urgent ⚡</span>
                 {% elseif reclamation.statut == 'Resolved' %}
                     <span class="badge badge-green">Résolu</span>
                 {% else %}
@@ -131,4 +133,6 @@
         {% endif %}
     </div>
 </div>
+
+{{ include('_chatbot.html.twig') }}
 {% endblock %}

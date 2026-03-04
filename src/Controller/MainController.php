@@ -21,13 +21,19 @@ class MainController extends AbstractController
 
     #[Route('/admin', name: 'app_admin_dashboard')]
     #[IsGranted('ROLE_ADMIN')]
-    public function adminDashboard(UserRepository $userRepository,CoursRepository $coursRepository,ModuleRepository $moduleRepository
+    public function adminDashboard(
+        UserRepository $userRepository,
+        CoursRepository $coursRepository,
+        ModuleRepository $moduleRepository,
+        \App\Repository\ReclamationRepository $reclamationRepository
     ): Response
     {
         return $this->render('BackOffice/main/dashboard.html.twig', [
             'userCount' => $userRepository->count([]),
             'coursCount' => $coursRepository->count([]),
             'moduleCount' => $moduleRepository->count([]),
+            'reclamationCount' => $reclamationRepository->count([]),
+            'urgentCount' => $reclamationRepository->count(['statut' => 'Urgent']),
             'recentUsers' => $userRepository->findBy([], ['id' => 'DESC'], 3),
         ]);
     }
