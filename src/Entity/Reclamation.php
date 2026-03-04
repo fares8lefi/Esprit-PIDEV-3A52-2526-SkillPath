@@ -19,14 +19,14 @@ class Reclamation
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: "Le sujet ne peut pas être vide.")]
-    private ?string $sujet = null;
+    private string $sujet;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: "La description ne peut pas être vide.")]
-    private ?string $description = null;
+    private string $description;
 
     #[ORM\Column(length: 255)]
-    private ?string $statut = null;
+    private string $statut;
 
     /**
      * @var Collection<int, Reponse>

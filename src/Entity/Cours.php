@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\CoursRepository;  // ✅ Changé
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -49,9 +51,19 @@ class Cours  // ✅ Changé de Content à Cours
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $updatedAt = null;
 
+    #[ORM\OneToOne(mappedBy: 'cours', targetEntity: Quiz::class)]
+    private ?Quiz $quiz = null;
+
+    /**
+     * @var Collection<int, User>
+     */
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'cours')]
+    private Collection $users;
+
     public function __construct()
     {
         $this->createdAt = new \DateTime();
+        $this->users = new ArrayCollection();
     }
 
     public function getId(): ?int

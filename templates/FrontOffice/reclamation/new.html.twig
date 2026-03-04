@@ -20,15 +20,11 @@
                     <p class="text-slate-500 dark:text-slate-400 font-medium">Décrivez votre problème en détail pour que notre équipe puisse vous aider efficacement.</p>
                 </div>
 
-<<<<<<< Updated upstream
-                {{ form_start(form, {'attr': {'class': 'space-y-8'}}) }}
-=======
                 {{ form_start(form, {'attr': {
                     'class': 'space-y-8', 
                     'enctype': 'multipart/form-data',
                     'data-controller': 'voice-recognition'
                 }}) }}
->>>>>>> Stashed changes
                     <div class="space-y-3">
                         {{ form_label(form.sujet, 'Sujet ou Titre', {'label_attr': {'class': 'text-xs font-bold uppercase tracking-widest text-slate-400 ml-1'}}) }}
                         {{ form_widget(form.sujet, {'attr': {'class': 'form-input', 'placeholder': 'Ex: Problème d\'accès au cours...'}}) }}
@@ -75,11 +71,7 @@
     </div>
 </div>
 {% endblock %}
-<<<<<<< Updated upstream
-=======
 
 {% block javascripts %}
     {{ parent() }}
 {% endblock %}
-
->>>>>>> Stashed changes

@@ -16,13 +16,13 @@ class Module
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(name: 'title', length: 255)]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
     private ?string $description = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[ORM\Column(name: 'created_at', type: Types::DATE_MUTABLE)]
     private ?\DateTime $dateCreation = null;
 
     #[ORM\Column(length: 255)]

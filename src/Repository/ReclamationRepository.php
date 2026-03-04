@@ -40,18 +40,15 @@ class ReclamationRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
-<<<<<<< Updated upstream
-    public function findBySearchAndSort(?string $search, ?string $sortOrder): array
-=======
+    /**
+     * @return array<int, Reclamation>
+     */
     public function findBySearchAndSort(?string $search, ?string $sort = 'id', ?string $direction = 'desc', ?\App\Entity\User $user = null, ?string $status = null): array
->>>>>>> Stashed changes
     {
         $qb = $this->createQueryBuilder('r')
             ->leftJoin('r.user', 'u')
             ->addSelect('u');
 
-<<<<<<< Updated upstream
-=======
         if ($user) {
             $qb->andWhere('r.user = :user')
                ->setParameter('user', $user);
@@ -62,17 +59,18 @@ class ReclamationRepository extends ServiceEntityRepository
                ->setParameter('status', $status);
         }
 
->>>>>>> Stashed changes
         if ($search) {
-            $qb->andWhere('u.email LIKE :search')
+            $qb->andWhere('u.email LIKE :search OR r.description LIKE :search OR r.sujet LIKE :search')
                ->setParameter('search', '%' . $search . '%');
         }
 
-        if ($sortOrder === 'desc') {
-            $qb->orderBy('u.email', 'DESC');
-        } else {
-            $qb->orderBy('u.email', 'ASC');
+        // Handle sorting
+        $sortField = 'r.' . $sort;
+        if ($sort === 'email') {
+            $sortField = 'u.email';
         }
+
+        $qb->orderBy($sortField, $direction === 'asc' ? 'ASC' : 'DESC');
 
         return $qb->getQuery()->getResult();
     }

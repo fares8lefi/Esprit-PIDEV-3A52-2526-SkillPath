@@ -22,14 +22,6 @@ class AdminReclamationController extends AbstractController
     public function index(Request $request, ReclamationRepository $reclamationRepository): Response
     {
         $search = $request->query->get('search');
-<<<<<<< Updated upstream
-        $sort = $request->query->get('sort', 'asc');
-
-        return $this->render('BackOffice/reclamation/index.html.twig', [
-            'reclamations' => $reclamationRepository->findBySearchAndSort($search, $sort),
-            'search' => $search,
-            'sort' => $sort,
-=======
         $sort = $request->query->get('sort', 'id');
         $direction = $request->query->get('direction', 'desc');
         $status = $request->query->get('status', 'all');
@@ -40,7 +32,6 @@ class AdminReclamationController extends AbstractController
             'sort' => $sort,
             'direction' => $direction,
             'current_status' => $status,
->>>>>>> Stashed changes
         ]);
     }
 

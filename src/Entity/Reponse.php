@@ -40,12 +40,12 @@ class Reponse
         return $this;
     }
 
-    public function getReclamation(): ?reclamation
+    public function getReclamation(): ?Reclamation
     {
         return $this->reclamation;
     }
 
-    public function setReclamation(?reclamation $reclamation): static
+    public function setReclamation(?Reclamation $reclamation): static
     {
         $this->reclamation = $reclamation;
 

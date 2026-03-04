@@ -53,7 +53,7 @@ class CoursRepository extends ServiceEntityRepository
     /**
      * Récupère les contenus par module
      * 
-     * @param Module $module
+     * @param \App\Entity\Module $module
      * @return Cours[]
      */
     public function findByModule($module): array
@@ -87,7 +87,7 @@ class CoursRepository extends ServiceEntityRepository
     /**
      * Compte le nombre de contenus par type
      * 
-     * @return array
+     * @return array<int, array<string, mixed>>
      */
     public function countByType(): array
     {
