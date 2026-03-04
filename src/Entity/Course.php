@@ -19,10 +19,11 @@ class Course
     use BlameableTrait;
     use TimestampableTrait;
 
+    /** @var int|null */
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $id = null;
+    private ?int $id;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: 'Le titre est obligatoire')]
@@ -170,11 +171,7 @@ class Course
 
     public function removeModule(Module $module): static
     {
-        if ($this->modules->removeElement($module)) {
-            if ($module->getCourse() === $this) {
-                $module->setCourse(null);
-            }
-        }
+        $this->modules->removeElement($module);
         return $this;
     }
 
@@ -197,11 +194,7 @@ class Course
 
     public function removeQuiz(Quiz $quiz): static
     {
-        if ($this->quizzes->removeElement($quiz)) {
-            if ($quiz->getCourse() === $this) {
-                $quiz->setCourse(null);
-            }
-        }
+        $this->quizzes->removeElement($quiz);
         return $this;
     }
 

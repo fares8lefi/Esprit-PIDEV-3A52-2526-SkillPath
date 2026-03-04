@@ -16,6 +16,9 @@ class EventRepository extends ServiceEntityRepository
         parent::__construct($registry, Event::class);
     }
 
+    /**
+     * @return Event[]
+     */
     public function findByFilters(?string $search, ?int $rating, ?int $locationId): array
     {
         // Do not filter out past events here — let the front-office show all events

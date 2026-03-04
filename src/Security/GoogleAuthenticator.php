@@ -53,7 +53,7 @@ class GoogleAuthenticator extends OAuth2Authenticator
                 if (!$user) {
                     $user = new User();
                     $user->setEmail($email);
-                    $user->setUsername($googleUser->getName() ?? $email);
+                    $user->setUsername($googleUser->getName());
                     $user->setStatus('active');
                     $user->setRole('student');
                     $user->setIsVerified(true);
@@ -84,7 +84,10 @@ class GoogleAuthenticator extends OAuth2Authenticator
     {
         $message = strtr($exception->getMessageKey(), $exception->getMessageData());
 
-        $request->getSession()->getFlashBag()->add('error', $message);
+        $session = $request->getSession();
+        if ($session instanceof \Symfony\Component\HttpFoundation\Session\Session) {
+            $session->getFlashBag()->add('error', $message);
+        }
 
         return new RedirectResponse($this->router->generate('app_user_login'));
     }

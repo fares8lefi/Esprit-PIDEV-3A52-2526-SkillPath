@@ -10,9 +10,9 @@ use Doctrine\Persistence\ManagerRegistry;
  * @extends ServiceEntityRepository<Certificate>
  *
  * @method Certificate|null find($id, $lockMode = null, $lockVersion = null)
- * @method Certificate|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Certificate|null findOneBy(array<string, mixed> $criteria, array<string, string>|null $orderBy = null)
  * @method Certificate[]    findAll()
- * @method Certificate[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Certificate[]    findBy(array<string, mixed> $criteria, array<string, string>|null $orderBy = null, $limit = null, $offset = null)
  */
 class CertificateRepository extends ServiceEntityRepository
 {

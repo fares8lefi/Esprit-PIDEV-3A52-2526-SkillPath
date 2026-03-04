@@ -15,6 +15,9 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Vich\UploaderBundle\Form\Type\VichFileType;
 use Vich\UploaderBundle\Form\Type\VichImageType;
 
+/**
+ * @extends AbstractType<Module>
+ */
 class ModuleType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void

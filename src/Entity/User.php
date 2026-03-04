@@ -20,10 +20,11 @@ use App\Entity\Trait\BlameableTrait;
 use App\Entity\Trait\TimestampableTrait;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\Table(name: '`user`')]
+#[ORM\Table(name: 'users')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     use TimestampableTrait;
+    use BlameableTrait;
     #[ORM\Id]
     #[ORM\Column(type: 'uuid', unique: true)]
     private UuidV7 $id;
@@ -73,19 +74,31 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Course::class, inversedBy: 'users')]
     private Collection $courses;
 
+    /**
+     * @var Collection<int, Event>
+     */
     #[ORM\ManyToMany(targetEntity: Event::class, inversedBy: 'participants')]
     #[ORM\JoinTable(name: 'user_joined_events')]
     private Collection $joinedEvents;
 
+    /**
+     * @var Collection<int, Event>
+     */
     #[ORM\ManyToMany(targetEntity: Event::class, inversedBy: 'favoritedBy')]
     #[ORM\JoinTable(name: 'user_favorite_events')]
     private Collection $favoriteEvents;
 
+    /**
+     * @var Collection<int, Notification>
+     */
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Notification::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
     private Collection $notifications;
-    
-    public function __construct()
+
+    public function __construct(?User $createdBy = null)
     {
+        if ($createdBy) {
+            $this->createdBy = $createdBy;
+        }
         $this->id = new UuidV7();
         $this->courses = new ArrayCollection();
         $this->joinedEvents = new ArrayCollection();
@@ -97,6 +110,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getId(): UuidV7
     {
         return $this->id;
+    }
+
+    /**
+     * @return Collection<int, Notification>
+     */
+    public function getNotifications(): Collection
+    {
+        return $this->notifications;
     }
 
     public function getEmail(): string

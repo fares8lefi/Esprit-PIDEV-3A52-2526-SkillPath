@@ -54,6 +54,9 @@ class OllamaService
             return 'An error occurred: ' . $e->getMessage();
         }
     }
+    /**
+     * @return array{is_aggressive: bool, has_bad_words: bool, clean_description: string}
+     */
     public function analyzeReclamation(string $description): array
     {
         // 1. Manual safety check (Safety net)

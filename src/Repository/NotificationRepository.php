@@ -16,7 +16,10 @@ class NotificationRepository extends ServiceEntityRepository
         parent::__construct($registry, Notification::class);
     }
 
-    public function findUnreadByUser($user)
+    /**
+     * @return Notification[]
+     */
+    public function findUnreadByUser(\App\Entity\User $user): array
     {
         return $this->createQueryBuilder('n')
             ->andWhere('n.user = :user')
@@ -29,7 +32,7 @@ class NotificationRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function countUnreadByUser($user): int
+    public function countUnreadByUser(\App\Entity\User $user): int
     {
         return (int) $this->createQueryBuilder('n')
             ->select('COUNT(n.id)')

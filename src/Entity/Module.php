@@ -68,8 +68,8 @@ class Module
     private ?File $documentFile = null;
 
     #[ORM\ManyToOne(targetEntity: Course::class, inversedBy: 'modules')]
-    #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
-    private ?Course $course = null;
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    private Course $course;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?\DateTimeImmutable $scheduledAt = null;
@@ -155,12 +155,12 @@ class Module
         return $this;
     }
 
-    public function getCourse(): ?Course
+    public function getCourse(): Course
     {
         return $this->course;
     }
 
-    public function setCourse(?Course $course): static
+    public function setCourse(Course $course): static
     {
         $this->course = $course;
         return $this;

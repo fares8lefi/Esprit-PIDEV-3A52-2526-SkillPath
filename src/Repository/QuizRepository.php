@@ -15,6 +15,9 @@ class QuizRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Quiz::class);
     }
+    /**
+     * @return \Doctrine\ORM\QueryBuilder
+     */
     public function searchAndSortQuery(?string $search, ?string $sort)
     {
         $qb = $this->createQueryBuilder('q');
@@ -50,11 +53,17 @@ class QuizRepository extends ServiceEntityRepository
         return $qb;
     }
 
+    /**
+     * @return Quiz[]
+     */
     public function searchAndSort(?string $search, ?string $sort): array
     {
         return $this->searchAndSortQuery($search, $sort)->getQuery()->getResult();
     }
 
+    /**
+     * @return Quiz[]
+     */
     public function findAllWithRelations(): array
     {
         return $this->createQueryBuilder('q')

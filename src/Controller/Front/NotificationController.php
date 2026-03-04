@@ -14,6 +14,7 @@ class NotificationController extends AbstractController
     #[Route('/unread-count', name: 'unread_count', methods: ['GET'])]
     public function getUnreadCount(NotificationRepository $repository): JsonResponse
     {
+        /** @var \App\Entity\User|null $user */
         $user = $this->getUser();
         if (!$user) {
             return new JsonResponse(['count' => 0]);

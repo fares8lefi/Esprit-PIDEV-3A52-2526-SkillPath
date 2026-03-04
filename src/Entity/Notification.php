@@ -14,10 +14,11 @@ class Notification
 {
     use BlameableTrait;
     use TimestampableTrait;
+    /** @var int|null */
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $id = null;
+    private ?int $id;
 
     #[ORM\ManyToOne(inversedBy: 'notifications')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
@@ -88,7 +89,7 @@ class Notification
         return $this->createdAt;
     }
 
-    public function isRead(): ?bool
+    public function isRead(): bool
     {
         return $this->isRead;
     }

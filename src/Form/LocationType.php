@@ -13,6 +13,9 @@ use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Positive;
 
+/**
+ * @extends AbstractType<Location>
+ */
 class LocationType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void

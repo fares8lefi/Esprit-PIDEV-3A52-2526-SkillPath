@@ -24,7 +24,7 @@ class GeminiTranslatorService
 
     /**
      * Translates an Event's title, description, and location into the target language.
-     * Returns an associative array: ['title' => ..., 'description' => ..., 'location' => ...]
+     * @return array<string, string>
      */
     public function translateEvent(Event $event, string $targetLanguage): array
     {
@@ -107,6 +107,9 @@ PROMPT;
         return $this->getFallback($originalTitle, $originalDesc, $originalLoc);
     }
 
+    /**
+     * @return array<string, string>
+     */
     private function getFallback(string $title, string $desc, string $loc): array
     {
         return [

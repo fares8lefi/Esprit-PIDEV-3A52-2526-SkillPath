@@ -13,26 +13,22 @@ class RecommendationService
 {
     private CourseRepository $courseRepository;
     private UserCourseViewRepository $userCourseViewRepository;
-    private AIService $aiService;
-    private EntityManagerInterface $entityManager;
     private PredictionService $predictionService;
 
     public function __construct(
         CourseRepository $courseRepository,
         UserCourseViewRepository $userCourseViewRepository,
-        AIService $aiService,
-        EntityManagerInterface $entityManager,
         PredictionService $predictionService
     ) {
         $this->courseRepository = $courseRepository;
         $this->userCourseViewRepository = $userCourseViewRepository;
-        $this->aiService = $aiService;
-        $this->entityManager = $entityManager;
         $this->predictionService = $predictionService;
     }
 
     /**
      * Recommends courses based on user profile, detected interests and budget.
+     * 
+     * @return array<array{course: Course, reasons: string[]}>
      */
     public function recommendCourses(User $user, ?float $budget = null): array
     {

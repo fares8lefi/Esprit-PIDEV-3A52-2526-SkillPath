@@ -49,7 +49,9 @@ class CourseController extends AbstractController
     #[Route('/new', name: 'new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
-        $course = new Course($this->getUser());
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+        $course = new Course($user);
         $form = $this->createForm(CourseType::class, $course);
         $form->handleRequest($request);
 
@@ -111,7 +113,7 @@ class CourseController extends AbstractController
                 }
             }
 
-            $course->setUpdatedAt(new \DateTime());
+            $course->setUpdatedAt(new \DateTimeImmutable());
             $entityManager->flush();
 
             $this->addFlash('success', 'Course updated successfully.');

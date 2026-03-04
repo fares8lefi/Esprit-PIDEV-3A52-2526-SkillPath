@@ -67,7 +67,7 @@ class CourseRepository extends ServiceEntityRepository
     /**
      * Récupère le nombre de cours par catégorie
      * 
-     * @return array
+     * @return array<int, array{name: string, count: int}>
      */
     public function countByCategories(): array
     {
@@ -79,6 +79,9 @@ class CourseRepository extends ServiceEntityRepository
             ->getArrayResult();
     }
 
+    /**
+     * @return Course[]
+     */
     public function findLatest(int $limit = 10): array
     {
         return $this->createQueryBuilder('c')

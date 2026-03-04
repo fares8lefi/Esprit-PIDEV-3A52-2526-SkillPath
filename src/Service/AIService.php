@@ -16,8 +16,9 @@ class AIService
     }
 
     /**
-     * @param array $data Données des features
+     * @param array<mixed> $data Données des features
      * @param string $model Nom du modèle (Random_Forest, Gradient_Boosting, Logistic_Regression)
+     * @return array<string, mixed>
      */
     public function getPrediction(array $data, string $model = 'Random_Forest'): array
     {

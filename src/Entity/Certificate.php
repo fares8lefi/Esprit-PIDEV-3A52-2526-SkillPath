@@ -26,11 +26,6 @@ class Certificate
         $this->issuedAt = new \DateTime();
     }
 
-    public function setIssuedAt(\DateTimeInterface $issuedAt): static
-    {
-        $this->issuedAt = $issuedAt;
-        return $this;
-    }
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: false)]
@@ -59,6 +54,12 @@ class Certificate
     public function getIssuedAt(): \DateTimeInterface
     {
         return $this->issuedAt;
+    }
+
+    public function setIssuedAt(\DateTimeInterface $issuedAt): static
+    {
+        $this->issuedAt = $issuedAt;
+        return $this;
     }
 
     public function getUser(): ?User

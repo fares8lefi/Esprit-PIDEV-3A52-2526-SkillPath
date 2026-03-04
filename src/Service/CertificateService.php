@@ -8,8 +8,8 @@ use App\Entity\Certificate;
 
 class CertificateService
 {
-    private $twig;
-    private $pdf;
+    private Environment $twig;
+    private DompdfWrapperInterface $pdf;
 
     public function __construct(Environment $twig, DompdfWrapperInterface $pdf)
     {

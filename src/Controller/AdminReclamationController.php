@@ -44,7 +44,9 @@ class AdminReclamationController extends AbstractController
 
         if ($responseForm->isSubmitted() && $responseForm->isValid()) {
             $reponse->setReclamation($reclamation);
-            $reponse->setUser($this->getUser());
+            /** @var \App\Entity\User $user */
+            $user = $this->getUser();
+            $reponse->setUser($user);
             $entityManager->persist($reponse);
             $entityManager->flush();
 

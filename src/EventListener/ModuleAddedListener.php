@@ -12,8 +12,8 @@ use Psr\Log\LoggerInterface;
 #[AsDoctrineListener(event: Events::postPersist)]
 class ModuleAddedListener
 {
-    private $notificationService;
-    private $logger;
+    private NotificationService $notificationService;
+    private LoggerInterface $logger;
 
     public function __construct(NotificationService $notificationService, LoggerInterface $logger)
     {
@@ -21,6 +21,9 @@ class ModuleAddedListener
         $this->logger = $logger;
     }
 
+    /**
+     * @param LifecycleEventArgs<\Doctrine\ORM\EntityManagerInterface> $args
+     */
     public function postPersist(LifecycleEventArgs $args): void
     {
         $module = $args->getObject();
@@ -31,10 +34,6 @@ class ModuleAddedListener
         $this->logger->info("ModuleAddedListener: Triggered for module " . $module->getId());
 
         $course = $module->getCourse();
-        if (!$course) {
-            $this->logger->warning("ModuleAddedListener: No course found for module " . $module->getId());
-            return;
-        }
 
         $users = $course->getUsers();
         $this->logger->info("ModuleAddedListener: Found " . count($users) . " users for course " . $course->getId());

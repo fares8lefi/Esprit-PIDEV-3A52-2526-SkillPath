@@ -16,8 +16,8 @@ class Question
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'questions')]
-    #[ORM\JoinColumn(name: 'quiz_id', referencedColumnName: 'id_quiz', nullable: false, onDelete: 'CASCADE')]
-    private Quiz $quiz;
+    #[ORM\JoinColumn(name: 'quiz_id', referencedColumnName: 'id_quiz', nullable: true, onDelete: 'CASCADE')]
+    private ?Quiz $quiz = null;
 
     #[ORM\Column(type: Types::TEXT)]
     #[Assert\NotBlank(message: "L'énoncé de la question est obligatoire")]
@@ -53,12 +53,12 @@ class Question
         return $this->id;
     }
 
-    public function getQuiz(): Quiz
+    public function getQuiz(): ?Quiz
     {
         return $this->quiz;
     }
 
-    public function setQuiz(Quiz $quiz): static
+    public function setQuiz(?Quiz $quiz): static
     {
         $this->quiz = $quiz;
         return $this;

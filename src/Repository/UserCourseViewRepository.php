@@ -10,9 +10,9 @@ use Doctrine\Persistence\ManagerRegistry;
  * @extends ServiceEntityRepository<UserCourseView>
  *
  * @method UserCourseView|null find($id, $lockMode = null, $lockVersion = null)
- * @method UserCourseView|null findOneBy(array $criteria, array $orderBy = null)
+ * @method UserCourseView|null findOneBy(array<string, mixed> $criteria, array<string, string>|null $orderBy = null)
  * @method UserCourseView[]    findAll()
- * @method UserCourseView[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method UserCourseView[]    findBy(array<string, mixed> $criteria, array<string, string>|null $orderBy = null, $limit = null, $offset = null)
  */
 class UserCourseViewRepository extends ServiceEntityRepository
 {
@@ -78,6 +78,9 @@ class UserCourseViewRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getMLFeaturesForUser(mixed $userId, int $courseId): array
     {
         $view = $this->findByUserAndCourse($userId, $courseId);

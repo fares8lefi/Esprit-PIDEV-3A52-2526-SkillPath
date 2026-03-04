@@ -151,15 +151,16 @@ class QuizController extends AbstractController
                 }
             }
 
+            /** @var \App\Entity\User|null $user */
             $user = $this->getUser();
 
-            if ($user && method_exists($user, 'getId')) {
+            if ($user instanceof \App\Entity\User) {
                 $resultat = new Resultat();
                 $resultat->setQuiz($quiz);
                 $resultat->setEtudiant($user);
                 $resultat->setScore($score);
                 $resultat->setNoteMax($quiz->getNoteMax() ?? 0);
-                $resultat->setDatePassage(new \DateTime());
+                $resultat->setDatePassage(new \DateTimeImmutable());
 
                 try {
                     $entityManager->persist($resultat);
@@ -210,29 +211,29 @@ class QuizController extends AbstractController
                 }
             }
 
+            /** @var \App\Entity\User|null $user */
             $user = $this->getUser();
 
-            if ($user && method_exists($user, 'getId')) {
+            if ($user instanceof \App\Entity\User) {
                 $resultat = new Resultat();
                 $resultat->setQuiz($quiz);
                 $resultat->setEtudiant($user);
                 $resultat->setScore($score);
                 $resultat->setNoteMax($quiz->getNoteMax() ?? 0);
-                $resultat->setDatePassage(new \DateTime());
+                $resultat->setDatePassage(new \DateTimeImmutable());
 
                 try {
                     $entityManager->persist($resultat);
                     
                     // Synchronisation avec UserCourseView pour l'IA
                     $course = $quiz->getCourse();
-                    if ($course) {
-                        $viewRepository = $entityManager->getRepository(\App\Entity\UserCourseView::class);
-                        $view = $viewRepository->findByUserAndCourse($user->getId(), $course->getId());
-                        
-                        if ($view) {
-                            $view->setQuizScore($score);
-                            $entityManager->persist($view);
-                        }
+                    /** @var \App\Repository\UserCourseViewRepository $viewRepository */
+                    $viewRepository = $entityManager->getRepository(\App\Entity\UserCourseView::class);
+                    $view = $viewRepository->findByUserAndCourse($user->getId(), $course->getId());
+                    
+                    if ($view) {
+                        $view->setQuizScore($score);
+                        $entityManager->persist($view);
                     }
 
                     $entityManager->flush();

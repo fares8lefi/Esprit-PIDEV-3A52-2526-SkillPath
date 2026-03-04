@@ -28,7 +28,7 @@ class QuizApiController extends AbstractController
                 'description' => $quiz->getDescription(),
                 'duration' => $quiz->getDuree(),
                 'questionCount' => count($quiz->getQuestions()),
-                'course' => $quiz->getCourse() ? $quiz->getCourse()->getTitle() : null,
+                'course' => $quiz->getCourse()->getTitle(),
             ];
         }
 
@@ -93,6 +93,7 @@ class QuizApiController extends AbstractController
         }
 
         // Save result if user is logged in
+        /** @var \App\Entity\User|null $user */
         $user = $this->getUser();
         if ($user) {
             $resultat = new Resultat();

@@ -27,6 +27,8 @@ class PredictionService
 
     /**
      * Retourne les statistiques globales (Certifs, Progression moyenne) pour l'affichage Home.
+     * 
+     * @return array{certifs: int, progression: float}
      */
     public function getGlobalStats(User $user): array
     {
@@ -84,6 +86,8 @@ class PredictionService
 
     /**
      * Détecte le domaine effectif de l'utilisateur (Profil ou Clics).
+     * 
+     * @param array<UserCourseView>|null $userViews
      */
     public function getEffectiveDomain(User $user, ?array $userViews = null): string
     {
@@ -124,6 +128,9 @@ class PredictionService
 
     /**
      * Compile et encode les features pour le modèle ML.
+     * 
+     * @param array<UserCourseView> $userViews
+     * @return array<string, mixed>
      */
     private function buildFeaturesArray(User $user, Course $course, array $userViews): array
     {

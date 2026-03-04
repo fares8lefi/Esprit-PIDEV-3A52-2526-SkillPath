@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\ResultatRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 #[ORM\Entity(repositoryClass: ResultatRepository::class)]
 class Resultat
@@ -15,8 +16,8 @@ class Resultat
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'resultats')]
-    #[ORM\JoinColumn(name: 'quiz_id', referencedColumnName: 'id_quiz', nullable: false, onDelete: 'CASCADE')]
-    private Quiz $quiz;
+    #[ORM\JoinColumn(name: 'quiz_id', referencedColumnName: 'id_quiz', nullable: true, onDelete: 'CASCADE')]
+    private ?Quiz $quiz = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: 'etudiant_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
@@ -29,6 +30,7 @@ class Resultat
     private int $noteMax;
 
     #[ORM\Column(name: 'date_passage', type: Types::DATETIME_MUTABLE)]
+    #[Gedmo\Timestampable(on: 'create')]
     private \DateTimeInterface $datePassage;
 
     public function __construct()
@@ -41,12 +43,12 @@ class Resultat
         return $this->id;
     }
 
-    public function getQuiz(): Quiz
+    public function getQuiz(): ?Quiz
     {
         return $this->quiz;
     }
 
-    public function setQuiz(Quiz $quiz): static
+    public function setQuiz(?Quiz $quiz): static
     {
         $this->quiz = $quiz;
         return $this;

@@ -16,6 +16,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Vich\UploaderBundle\Form\Type\VichImageType;
 
+/**
+ * @extends AbstractType<Event>
+ */
 class EventType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void

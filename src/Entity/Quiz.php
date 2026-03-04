@@ -9,6 +9,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 use Symfony\Component\Validator\Constraints as Assert;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 #[ORM\Entity(repositoryClass: QuizRepository::class)]
 class Quiz
@@ -30,15 +31,16 @@ class Quiz
     #[ORM\Column]
     #[Assert\NotNull(message: "La durée est obligatoire")]
     #[Assert\Positive(message: "La durée doit être positive")]
-    private int $duree;
+    private ?int $duree = null;
 
     #[ORM\Column(name: 'note_max')]
     #[Assert\NotNull(message: "La note max est obligatoire")]
     #[Assert\Positive(message: "La note max doit être positive")]
-    private int $noteMax;
+    private ?int $noteMax = null;
 
     #[ORM\Column(name: 'date_creation', type: Types::DATETIME_MUTABLE)]
-    private \DateTimeInterface $dateCreation;
+    #[Gedmo\Timestampable(on: 'create')]
+    private ?\DateTimeInterface $dateCreation = null;
 
 
     /**
@@ -53,8 +55,8 @@ class Quiz
     #[ORM\OneToMany(targetEntity: Resultat::class, mappedBy: 'quiz', orphanRemoval: true, cascade: ['persist'])]
     private Collection $resultats;
 
-    #[ORM\ManyToOne(inversedBy: 'quizzes')]
-    #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
+    #[ORM\ManyToOne(targetEntity: Course::class, inversedBy: 'quizzes')]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?Course $course = null;
 
     public function __construct()
@@ -124,12 +126,6 @@ class Quiz
         return $this->dateCreation;
     }
 
-    public function setDateCreation(\DateTimeInterface $dateCreation): static
-    {
-        $this->dateCreation = $dateCreation;
-
-        return $this;
-    }
 
     public function setId(int $id): static
     {
@@ -198,12 +194,12 @@ class Quiz
         return $this;
     }
 
-    public function getCourse(): ?Course
+    public function getCourse(): Course
     {
         return $this->course;
     }
 
-    public function setCourse(?Course $course): static
+    public function setCourse(Course $course): static
     {
         $this->course = $course;
         return $this;

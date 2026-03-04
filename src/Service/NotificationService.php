@@ -8,8 +8,8 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class NotificationService
 {
-    private $entityManager;
-    private $security;
+    private EntityManagerInterface $entityManager;
+    private \Symfony\Bundle\SecurityBundle\Security $security;
 
     public function __construct(EntityManagerInterface $entityManager, \Symfony\Bundle\SecurityBundle\Security $security)
     {

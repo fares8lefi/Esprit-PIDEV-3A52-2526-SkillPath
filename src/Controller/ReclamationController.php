@@ -29,8 +29,11 @@ class ReclamationController extends AbstractController
         $sort = $request->query->get('sort', 'id');
         $direction = $request->query->get('direction', 'desc');
 
+        /** @var \App\Entity\User $user */
+        $user = $this->getUser();
+        
         return $this->render('FrontOffice/reclamation/index.html.twig', [
-            'reclamations' => $reclamationRepository->findBySearchAndSort($search, $sort, $direction, $this->getUser()),
+            'reclamations' => $reclamationRepository->findBySearchAndSort($search, $sort, $direction, $user),
             'search' => $search,
             'sort' => $sort,
             'direction' => $direction
@@ -62,10 +65,10 @@ class ReclamationController extends AbstractController
             $statut = 'Pending';
             if ($analysis['is_aggressive']) {
                 $statut = 'Urgent';
-                $reclamation->setDescription($analysis['clean_description'] ?? $description);
+                $reclamation->setDescription($analysis['clean_description']);
             }
 
-            /** @var UploadedFile $attachmentFile */
+            /** @var UploadedFile|null $attachmentFile */
             $attachmentFile = $form->get('pieceJointe')->getData();
 
             if ($attachmentFile) {
@@ -85,7 +88,9 @@ class ReclamationController extends AbstractController
                 $reclamation->setPieceJointe($newFilename);
             }
 
-            $reclamation->setUser($this->getUser());
+            /** @var \App\Entity\User $user */
+            $user = $this->getUser();
+            $reclamation->setUser($user);
             $reclamation->setStatut($statut);
             $entityManager->persist($reclamation);
             $entityManager->flush();
@@ -107,6 +112,7 @@ class ReclamationController extends AbstractController
     public function show(Reclamation $reclamation, Request $request, EntityManagerInterface $entityManager): Response
     {
         // Allow access if user is owner OR has ROLE_ADMIN
+        /** @var \App\Entity\User|null $user */
         $user = $this->getUser();
         if ($reclamation->getUser() !== $user && !$this->isGranted('ROLE_ADMIN')) {
              throw $this->createAccessDeniedException('You cannot view this reclamation.');
@@ -118,7 +124,9 @@ class ReclamationController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $reponse->setReclamation($reclamation);
-            $reponse->setUser($this->getUser());
+            /** @var \App\Entity\User $user */
+            $user = $this->getUser();
+            $reponse->setUser($user);
             $entityManager->persist($reponse);
             $entityManager->flush();
 
@@ -148,7 +156,7 @@ class ReclamationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var UploadedFile $attachmentFile */
+            /** @var UploadedFile|null $attachmentFile */
             $attachmentFile = $form->get('pieceJointe')->getData();
 
             if ($attachmentFile) {

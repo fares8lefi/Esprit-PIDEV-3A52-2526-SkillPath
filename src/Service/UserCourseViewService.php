@@ -204,6 +204,9 @@ class UserCourseViewService
         }
     }
 
+    /**
+     * @return Course[]
+     */
     public function getRecommendations(User $user, int $topN = 1): array
     {
         $unseenCourses = $this->repository->findUnseenCoursesByUser($user->getId());
