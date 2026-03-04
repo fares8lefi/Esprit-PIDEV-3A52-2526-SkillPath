@@ -18,9 +18,9 @@ class ReclamationRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return Reclamation[]
+     * @return array<int, Reclamation>
      */
-    public function findBySearchAndSort(?string $search, ?string $sort = 'id', ?string $direction = 'desc', ?User $user = null, ?string $status = null): array
+    public function findBySearchAndSort(?string $search, ?string $sort = 'id', ?string $direction = 'desc', ?\App\Entity\User $user = null, ?string $status = null): array
     {
         $qb = $this->createQueryBuilder('r')
             ->leftJoin('r.user', 'u')
@@ -37,16 +37,16 @@ class ReclamationRepository extends ServiceEntityRepository
         }
 
         if ($search) {
-            $qb->andWhere('r.sujet LIKE :search OR u.email.value LIKE :search OR r.description LIKE :search')
+            $qb->andWhere('r.sujet LIKE :search OR u.email LIKE :search OR r.description LIKE :search')
                ->setParameter('search', '%' . $search . '%');
         }
 
-        // Validate allowed sort fields
-        $allowedSorts = ['id', 'statut', 'sujet'];
-        $sortField = in_array($sort, $allowedSorts) ? 'r.' . $sort : 'r.id';
-        $dir = (strtoupper($direction) === 'ASC') ? 'ASC' : 'DESC';
+        // Handle sorting
+        $validSortFields = ['id', 'sujet', 'statut'];
+        $actualSort = in_array($sort, $validSortFields) ? 'r.' . $sort : 'r.id';
+        $actualDirection = strtoupper($direction) === 'ASC' ? 'ASC' : 'DESC';
 
-        $qb->orderBy($sortField, $dir);
+        $qb->orderBy($actualSort, $actualDirection);
 
         return $qb->getQuery()->getResult();
     }
