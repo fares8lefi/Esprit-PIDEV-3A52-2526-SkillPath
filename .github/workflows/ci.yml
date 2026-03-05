@@ -70,3 +70,18 @@ jobs:
           APP_SECRET: testsecret
           DATABASE_URL: "mysql://root:root@127.0.0.1:3306/skillpathdb_test?serverVersion=8.0&charset=utf8mb4"
         run: php bin/phpunit --testdox
+
+  docker-test:
+    name: Test Docker Compose Build
+    needs: tests # Ne s'exécute QUE si le job 'tests' au-dessus est validé
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build and Start Containers
+        run: docker compose up -d --build
+
+      - name: Verify Running Containers
+        run: docker compose ps
