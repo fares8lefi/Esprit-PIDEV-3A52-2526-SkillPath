@@ -27,6 +27,7 @@ services:
   # ── Base de données MySQL ──────────────────────────────────
   mysql:
     image: mysql:8.0
+    command: --innodb_flush_log_at_trx_commit=2 --disable-log-bin
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: skillpathdb

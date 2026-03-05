@@ -60,7 +60,8 @@ class CourseRepository extends ServiceEntityRepository
                 break;
         }
 
-        return $qb->getQuery()
+        return $qb->setMaxResults(50)
+                  ->getQuery()
                   ->getResult();
     }
 

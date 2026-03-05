@@ -90,11 +90,11 @@ class MainController extends AbstractController
         }
 
         // Categories Data
-        $courses = $courseRepository->findAll();
+        $categoriesCounts = $courseRepository->countByCategories();
         $categoriesData = [];
-        foreach ($courses as $course) {
-            $cat = $course->getCategory() ?: 'Non classé';
-            $categoriesData[$cat] = ($categoriesData[$cat] ?? 0) + 1;
+        foreach ($categoriesCounts as $catData) {
+            $cat = $catData['name'] ?: 'Non classé';
+            $categoriesData[$cat] = $catData['count'];
         }
 
         // Reclamation Data
@@ -132,7 +132,7 @@ class MainController extends AbstractController
 
         return $this->render('BackOffice/main/dashboard.html.twig', [
             'userCount' => count($users),
-            'courseCount' => count($courses),
+            'courseCount' => array_sum(array_column($categoriesCounts, 'count')),
             'moduleCount' => $moduleRepository->count([]),
             'reclamationCount' => count($reclamations),
             'urgentCount' => $urgentCount,

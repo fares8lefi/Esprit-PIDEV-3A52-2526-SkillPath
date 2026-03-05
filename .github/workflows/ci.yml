@@ -48,6 +48,10 @@ jobs:
           restore-keys: ${{ runner.os }}-composer-
 
       - name: Install dependencies
+        env:
+          APP_ENV: test
+          APP_SECRET: testsecret
+          DATABASE_URL: "mysql://root:root@127.0.0.1:3306/skillpathdb_test?serverVersion=8.0&charset=utf8mb4"
         run: composer install --no-interaction --no-progress --optimize-autoloader
 
       - name: PHPStan
