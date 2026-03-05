@@ -5,7 +5,9 @@ namespace App\Form;
 use App\Entity\Location;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -75,6 +77,14 @@ class LocationType extends AbstractType
                         'mimeTypesMessage' => 'Formats acceptés: JPG, PNG, WEBP',
                     ])
                 ]
+            ])
+            ->add('latitude', HiddenType::class, [
+                'required' => false,
+                'attr'     => ['id' => 'location_latitude'],
+            ])
+            ->add('longitude', HiddenType::class, [
+                'required' => false,
+                'attr'     => ['id' => 'location_longitude'],
             ]);
     }
 

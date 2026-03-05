@@ -40,7 +40,9 @@ class EventRepository extends ServiceEntityRepository
                ->setParameter('locationId', $locationId);
         }
 
-        return $qb->getQuery()->getResult();
+        return $qb->setMaxResults(50)
+            ->getQuery()
+            ->getResult();
     }
 
     //    /**

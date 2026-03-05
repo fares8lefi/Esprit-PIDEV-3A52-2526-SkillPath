@@ -5,8 +5,10 @@ namespace App\Controller;
 use App\Entity\Event;
 use App\Form\EventType;
 use App\Repository\EventRepository;
+use App\Service\AiTextService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -24,6 +26,24 @@ class EventController extends AbstractController
         return $this->render('BackOffice/event/list.html.twig', [
             'events' => $events,
         ]);
+    }
+
+    #[Route('/improve-description', name: 'improve_description', methods: ['POST'])]
+    public function improveDescription(Request $request, AiTextService $aiTextService): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+        $text = trim($data['description'] ?? '');
+
+        if (empty($text)) {
+            return $this->json(['error' => 'La description est vide.'], 400);
+        }
+
+        try {
+            $improved = $aiTextService->improveText($text);
+            return $this->json(['improved' => $improved]);
+        } catch (\Throwable $e) {
+            return $this->json(['error' => 'Erreur IA : ' . $e->getMessage()], 502);
+        }
     }
 
     #[Route('/new', name: 'new', methods: ['GET', 'POST'])]
