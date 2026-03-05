@@ -8,6 +8,10 @@ doctrine:
 
         profiling_collect_backtrace: '%kernel.debug%'
         use_savepoints: true
+        # Fix timezone mismatch: synchronize MySQL session timezone with PHP (Europe/Paris = +01:00)
+        # Using offset +01:00 avoids needing MySQL named timezone tables to be loaded.
+        options:
+            1002: "SET time_zone = '+01:00'"
     orm:
         auto_generate_proxy_classes: true
         enable_lazy_ghost_objects: true
