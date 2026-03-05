@@ -33,6 +33,6 @@ COPY . .
 RUN composer install --no-interaction --no-scripts
 
 # Permissions sur var/
-RUN chown -R www-data:www-data var/ && chmod -R 777 var/
+RUN mkdir -p var/ && chown -R www-data:www-data var/ && chmod -R 777 var/
 
 EXPOSE 80

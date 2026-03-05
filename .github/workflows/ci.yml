@@ -73,7 +73,7 @@ jobs:
 
   docker-test:
     name: Test Docker Compose Build
-    needs: tests # Ne s'exécute QUE si le job 'tests' au-dessus est validé
+    needs: tests 
     runs-on: ubuntu-latest
 
     steps:
