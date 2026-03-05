@@ -38,3 +38,8 @@ services:
   App\Service\GeminiTranslatorService:
     arguments:
       $geminiApiKey: '%env(GEMINI_API_KEY)%'
+
+  App\Service\AiTextService:
+    arguments:
+      $ollamaUrl:   '%ollama_url%'
+      $ollamaModel: '%ollama_model%'
