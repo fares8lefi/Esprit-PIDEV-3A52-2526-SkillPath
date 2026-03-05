@@ -16,8 +16,8 @@ class Resultat
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'resultats')]
-    #[ORM\JoinColumn(name: 'quiz_id', referencedColumnName: 'id_quiz', nullable: true, onDelete: 'CASCADE')]
-    private ?Quiz $quiz = null;
+    #[ORM\JoinColumn(name: 'quiz_id', referencedColumnName: 'id_quiz', nullable: false, onDelete: 'CASCADE')]
+    private Quiz $quiz;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: 'etudiant_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
@@ -43,12 +43,12 @@ class Resultat
         return $this->id;
     }
 
-    public function getQuiz(): ?Quiz
+    public function getQuiz(): Quiz
     {
         return $this->quiz;
     }
 
-    public function setQuiz(?Quiz $quiz): static
+    public function setQuiz(Quiz $quiz): static
     {
         $this->quiz = $quiz;
         return $this;
@@ -92,11 +92,5 @@ class Resultat
     public function getDatePassage(): \DateTimeInterface
     {
         return $this->datePassage;
-    }
-
-    public function setDatePassage(\DateTimeInterface $datePassage): static
-    {
-        $this->datePassage = $datePassage;
-        return $this;
     }
 }

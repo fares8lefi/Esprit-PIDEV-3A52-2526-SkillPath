@@ -160,7 +160,6 @@ class QuizController extends AbstractController
                 $resultat->setEtudiant($user);
                 $resultat->setScore($score);
                 $resultat->setNoteMax($quiz->getNoteMax() ?? 0);
-                $resultat->setDatePassage(new \DateTimeImmutable());
 
                 try {
                     $entityManager->persist($resultat);
@@ -220,7 +219,6 @@ class QuizController extends AbstractController
                 $resultat->setEtudiant($user);
                 $resultat->setScore($score);
                 $resultat->setNoteMax($quiz->getNoteMax() ?? 0);
-                $resultat->setDatePassage(new \DateTimeImmutable());
 
                 try {
                     $entityManager->persist($resultat);

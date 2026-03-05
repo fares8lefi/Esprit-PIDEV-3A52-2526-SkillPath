@@ -14,8 +14,8 @@ class EventRating
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'ratings')]
-    #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
-    private ?Event $event = null;
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    private Event $event;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
@@ -29,12 +29,12 @@ class EventRating
         return $this->id;
     }
 
-    public function getEvent(): ?Event
+    public function getEvent(): Event
     {
         return $this->event;
     }
 
-    public function setEvent(?Event $event): static
+    public function setEvent(Event $event): static
     {
         $this->event = $event;
         return $this;

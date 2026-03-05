@@ -271,10 +271,6 @@ class Event
     public function removeRating(EventRating $rating): static
     {
         if ($this->ratings->removeElement($rating)) {
-            // set the owning side to null (unless already changed)
-            if ($rating->getEvent() === $this) {
-                $rating->setEvent(null);
-            }
             $this->updateAverageRating();
         }
 

@@ -28,8 +28,5 @@ class ResultatTest extends TestCase
         $this->assertEquals(20, $resultat->getNoteMax());
         
         $this->assertInstanceOf(\DateTimeInterface::class, $resultat->getDatePassage());
-        $date = new \DateTimeImmutable('2024-02-01');
-        $resultat->setDatePassage($date);
-        $this->assertEquals($date, $resultat->getDatePassage());
     }
 }

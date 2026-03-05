@@ -20,6 +20,7 @@ final class Version20260226001334 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
+        $this->addSql('SET FOREIGN_KEY_CHECKS = 0');
         $this->addSql('DROP TABLE course');
         $this->addSql('DROP TABLE event');
         $this->addSql('DROP TABLE location');
@@ -34,6 +35,7 @@ final class Version20260226001334 extends AbstractMigration
         $this->addSql('ALTER TABLE quiz ADD id_cours INT NOT NULL, DROP course_id');
         $this->addSql('ALTER TABLE quiz ADD CONSTRAINT FK_A412FA92134FCDAC FOREIGN KEY (id_cours) REFERENCES cours (id)');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_A412FA92134FCDAC ON quiz (id_cours)');
+        $this->addSql('SET FOREIGN_KEY_CHECKS = 1');
     }
 
     public function down(Schema $schema): void

@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 class ReclamationManagerTest extends TestCase
 {
-    public function testValidationReussie()
+    public function testValidationReussie(): void
     {
         $reclamation = new Reclamation();
         $reclamation->setSujet('Problème de connexion');
@@ -19,7 +19,7 @@ class ReclamationManagerTest extends TestCase
         $this->assertTrue($manager->validate($reclamation));
     }
 
-    public function testSujetVide()
+    public function testSujetVide(): void
     {
         $this->expectException(\InvalidArgumentException::class);
 
@@ -31,7 +31,7 @@ class ReclamationManagerTest extends TestCase
         $manager->validate($reclamation);
     }
 
-    public function testDescriptionVide()
+    public function testDescriptionVide(): void
     {
         $this->expectException(\InvalidArgumentException::class);
 

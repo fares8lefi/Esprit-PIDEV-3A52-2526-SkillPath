@@ -22,7 +22,7 @@ class Quiz
     #[ORM\Column(length: 150)]
     #[Assert\NotBlank(message: "Le titre est obligatoire")]
     #[Assert\Length(min: 3, minMessage: "Le titre doit faire au moins 3 caractères")]
-    private ?string $titre = null;
+    private string $titre = '';
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     #[Assert\NotBlank(message: "La description est obligatoire")]
     #[Assert\Length(min: 10, minMessage: "La description doit faire au moins 10 caractères")]
@@ -31,16 +31,16 @@ class Quiz
     #[ORM\Column]
     #[Assert\NotNull(message: "La durée est obligatoire")]
     #[Assert\Positive(message: "La durée doit être positive")]
-    private ?int $duree = null;
+    private int $duree = 0;
 
     #[ORM\Column(name: 'note_max')]
     #[Assert\NotNull(message: "La note max est obligatoire")]
     #[Assert\Positive(message: "La note max doit être positive")]
-    private ?int $noteMax = null;
+    private int $noteMax = 0;
 
     #[ORM\Column(name: 'date_creation', type: Types::DATETIME_MUTABLE)]
     #[Gedmo\Timestampable(on: 'create')]
-    private ?\DateTimeInterface $dateCreation = null;
+    private \DateTimeInterface $dateCreation;
 
 
     /**
@@ -64,8 +64,6 @@ class Quiz
         $this->questions = new ArrayCollection();
         $this->resultats = new ArrayCollection();
         $this->dateCreation = new \DateTime();
-        $this->duree = 0;
-        $this->noteMax = 0;
     }
 
     public function getId(): ?int
@@ -154,12 +152,7 @@ class Quiz
 
     public function removeQuestion(Question $question): static
     {
-        if ($this->questions->removeElement($question)) {
-            // set the owning side to null (unless already changed)
-            if ($question->getQuiz() === $this) {
-                $question->setQuiz(null);
-            }
-        }
+        $this->questions->removeElement($question);
 
         return $this;
     }
@@ -184,12 +177,7 @@ class Quiz
 
     public function removeResultat(Resultat $resultat): static
     {
-        if ($this->resultats->removeElement($resultat)) {
-            // set the owning side to null (unless already changed)
-            if ($resultat->getQuiz() === $this) {
-                $resultat->setQuiz(null);
-            }
-        }
+        $this->resultats->removeElement($resultat);
 
         return $this;
     }

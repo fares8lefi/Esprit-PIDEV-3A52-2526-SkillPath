@@ -101,7 +101,6 @@ class QuizApiController extends AbstractController
             $resultat->setEtudiant($user);
             $resultat->setScore($score);
             $resultat->setNoteMax($quiz->getNoteMax() ?? 0);
-            $resultat->setDatePassage(new \DateTime());
             
             $entityManager->persist($resultat);
             $entityManager->flush();

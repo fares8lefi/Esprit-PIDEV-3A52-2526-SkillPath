@@ -29,23 +29,36 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: PHP 8.2
+      - name: Setup PHP 8.2
         uses: shivammathur/setup-php@v2
         with:
           php-version: "8.2"
-          extensions: pdo, pdo_mysql, intl, zip
+          extensions: pdo, pdo_mysql, intl, zip, mbstring, gd, iconv
+          coverage: none
 
-      - name: Cache Composer
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache Composer dependencies
         uses: actions/cache@v4
         with:
-          path: vendor
-          key: composer-${{ hashFiles('composer.lock') }}
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
 
       - name: Install dependencies
-        run: composer install --no-interaction --no-progress
+        run: composer install --no-interaction --no-progress --optimize-autoloader
 
       - name: PHPStan
         run: vendor/bin/phpstan analyse --memory-limit=512M --no-progress
+
+      - name: Initialize Test Database
+        env:
+          DATABASE_URL: "mysql://root:root@127.0.0.1:3306/skillpathdb_test?serverVersion=8.0&charset=utf8mb4"
+        run: |
+          php bin/console doctrine:database:create --env=test --if-not-exists
+          php bin/console doctrine:schema:update --force --env=test
 
       - name: PHPUnit
         env:

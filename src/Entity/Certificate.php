@@ -56,12 +56,6 @@ class Certificate
         return $this->issuedAt;
     }
 
-    public function setIssuedAt(\DateTimeInterface $issuedAt): static
-    {
-        $this->issuedAt = $issuedAt;
-        return $this;
-    }
-
     public function getUser(): ?User
     {
         return $this->user;

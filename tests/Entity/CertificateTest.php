@@ -25,8 +25,5 @@ class CertificateTest extends TestCase
         $this->assertSame($course, $certificate->getCourse());
         
         $this->assertInstanceOf(\DateTimeInterface::class, $certificate->getIssuedAt());
-        $date = new \DateTime('2024-03-01');
-        $certificate->setIssuedAt($date);
-        $this->assertEquals($date, $certificate->getIssuedAt());
     }
 }
