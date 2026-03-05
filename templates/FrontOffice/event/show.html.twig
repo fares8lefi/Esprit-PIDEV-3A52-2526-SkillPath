@@ -2,6 +2,16 @@
 
 {% block title %}{{ event.title }} - SkillPath{% endblock %}
 
+{% block stylesheets %}
+{{ parent() }}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+    /* Ensure Leaflet tiles are not hidden by other elements and map has height */
+    #event-map { z-index: 10 !important; }
+    .glass-card { overflow: visible !important; }
+</style>
+{% endblock %}
+
 {% block body %}
 <div class="container mx-auto px-4 py-12">
     <!-- Breadcrumb -->
@@ -166,6 +176,14 @@
                             <span class="text-sm text-slate-500">{{ event.location.building }} - Salle {{ event.location.roomNumber }}</span>
                         </div>
                     </div>
+
+                    {# Leaflet Map (FREE) #}
+                    {% if event.location and event.location.latitude is not null and event.location.longitude is not null %}
+                    <div class="mt-4">
+                        <label class="block text-xs font-black uppercase tracking-wider text-slate-400 mb-3">Localisation</label>
+                        <div id="event-map" style="height: 220px;" class="w-full rounded-2xl overflow-hidden border border-slate-100 dark:border-white/10 shadow-lg bg-slate-50 dark:bg-slate-900/50"></div>
+                    </div>
+                    {% endif %}
                     {% endif %}
                 </div>
 
@@ -255,4 +273,34 @@ function fadeHtmlTo(sel, html, dir) {
     setTimeout(() => { el.innerHTML = html; el.dir = dir; el.style.opacity = 1; }, 300);
 }
 </script>
+
+{% if event.location and event.location.latitude is not null and event.location.longitude is not null %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const eventLat = {{ event.location.latitude }};
+    const eventLng = {{ event.location.longitude }};
+    const mapEl = document.getElementById('event-map');
+    
+    if (mapEl) {
+        const map = L.map('event-map', { 
+            zoomControl: true,
+            scrollWheelZoom: false 
+        }).setView([eventLat, eventLng], 15);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+            maxZoom: 19,
+        }).addTo(map);
+
+        L.marker([eventLat, eventLng])
+            .addTo(map)
+            .bindPopup('<strong>{{ event.location.name|e('js') }}</strong><br>{{ event.location.building|default('')|e('js') }}')
+            .openPopup();
+            
+        setTimeout(() => map.invalidateSize(), 500);
+    }
+});
+</script>
+{% endif %}
 {% endblock %}

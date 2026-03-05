@@ -50,8 +50,22 @@
 
                 <div class="md:col-span-2">
                     <label class="block text-xs font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 mb-2">Description</label>
-                    {{ form_widget(form.description) }}
+                    {{ form_widget(form.description, {'attr': {'id': 'event_description'}}) }}
                     {{ form_errors(form.description) }}
+
+                    {# ── AI improve button ── #}
+                    <button type="button" id="ai-improve-btn"
+                            class="mt-3 inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold
+                                   bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-md
+                                   hover:from-violet-700 hover:to-indigo-700 transition-all duration-200
+                                   disabled:opacity-50 disabled:cursor-not-allowed">
+                        <svg id="ai-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                        <span id="ai-btn-label">✨ Améliorer avec l'IA</span>
+                    </button>
+                    <span id="ai-error" class="hidden ml-3 text-xs text-red-500 font-medium"></span>
                 </div>
 
                 <div class="md:col-span-2">
@@ -72,4 +86,55 @@
         {{ form_end(form) }}
     </div>
 </div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const btn      = document.getElementById('ai-improve-btn');
+    const label    = document.getElementById('ai-btn-label');
+    const errSpan  = document.getElementById('ai-error');
+    // Symfony names the textarea "event[description]" → id = "event_description"
+    const textarea = document.getElementById('event_description');
+
+    if (!btn || !textarea) return;
+
+    btn.addEventListener('click', async function () {
+        const text = textarea.value.trim();
+        if (!text) {
+            errSpan.textContent = 'Veuillez écrire une description avant de l\'améliorer.';
+            errSpan.classList.remove('hidden');
+            return;
+        }
+
+        // Loading state
+        btn.disabled   = true;
+        label.textContent = '⏳ Amélioration en cours…';
+        errSpan.classList.add('hidden');
+
+        try {
+            const response = await fetch('{{ path('admin_event_improve_description') }}', {
+                method : 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body   : JSON.stringify({ description: text }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok || data.error) {
+                throw new Error(data.error ?? 'Erreur inconnue.');
+            }
+
+            textarea.value = data.improved;
+        } catch (err) {
+            errSpan.textContent = '❌ ' + err.message;
+            errSpan.classList.remove('hidden');
+        } finally {
+            btn.disabled      = false;
+            label.textContent = '✨ Améliorer avec l\'IA';
+        }
+    });
+});
+</script>
 {% endblock %}

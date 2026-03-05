@@ -2,6 +2,11 @@
 
 {% block title %}Modifier {{ location.name }} - SkillPath{% endblock %}
 
+{% block stylesheets %}
+{{ parent() }}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+{% endblock %}
+
 {% block content %}
 <div class="space-y-8 animate-in fade-in duration-500">
     <div class="flex items-center gap-4 mb-2">
@@ -53,6 +58,38 @@
                         </div>
                     {% endif %}
                 </div>
+
+                {# ── Hidden GPS fields ── #}
+                {{ form_widget(form.latitude) }}
+                {{ form_widget(form.longitude) }}
+
+                {# ── OpenStreetMap Picker (Leaflet — FREE, no API key) ── #}
+                <div class="md:col-span-2">
+                    <label class="block text-xs font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 mb-2">
+                        📍 Localisation sur la carte
+                        <span class="text-slate-400 lowercase font-normal">(cliquez pour modifier, glissez le marqueur pour ajuster)</span>
+                    </label>
+
+                    <div class="flex gap-2 mb-3">
+                        <input id="map-search" type="text" placeholder="Ex: Paris, Tour Eiffel, Tunis…"
+                               class="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all text-sm">
+                        <button type="button" id="map-search-btn"
+                                class="px-5 py-3 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-semibold text-sm hover:opacity-90 transition-all shadow-md">
+                            🔍 Chercher
+                        </button>
+                    </div>
+
+                    <div id="location-map" style="height:320px;" class="w-full rounded-2xl border border-slate-200 dark:border-white/10 shadow-inner overflow-hidden z-0"></div>
+
+                    <p id="coords-display" class="mt-2 text-xs font-mono font-semibold
+                        {% if location.latitude and location.longitude %}text-emerald-600 dark:text-emerald-400{% else %}text-slate-400{% endif %}">
+                        {% if location.latitude and location.longitude %}
+                            ✅ Position : {{ location.latitude }}, {{ location.longitude }}
+                        {% else %}
+                            Aucune position enregistrée — cliquez sur la carte
+                        {% endif %}
+                    </p>
+                </div>
             </div>
 
             <div class="flex gap-4 pt-6 border-t border-slate-200/50 dark:border-white/5">
@@ -66,4 +103,80 @@
         {{ form_end(form) }}
     </div>
 </div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Use saved coords or fall back to Tunis
+    const savedLat = {{ location.latitude is not null ? location.latitude : 36.8065 }};
+    const savedLng = {{ location.longitude is not null ? location.longitude : 10.1815 }};
+    const hasCoords = {{ (location.latitude is not null and location.longitude is not null) ? 'true' : 'false' }};
+
+    const map = L.map('location-map').setView([savedLat, savedLng], hasCoords ? 14 : 5);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        maxZoom: 19,
+    }).addTo(map);
+
+    let marker = null;
+
+    function placeMarker(lat, lng) {
+        if (marker) marker.remove();
+        marker = L.marker([lat, lng], { draggable: true, title: 'Glissez pour affiner' }).addTo(map);
+        marker.on('dragend', function () {
+            const pos = marker.getLatLng();
+            saveCoords(pos.lat, pos.lng);
+        });
+        saveCoords(lat, lng);
+    }
+
+    function saveCoords(lat, lng) {
+        document.getElementById('location_latitude').value  = lat.toFixed(7);
+        document.getElementById('location_longitude').value = lng.toFixed(7);
+        const el = document.getElementById('coords-display');
+        el.textContent = `✅ Position : ${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+        el.className = 'mt-2 text-xs font-mono font-semibold text-emerald-600 dark:text-emerald-400';
+    }
+
+    // Pre-place existing marker
+    if (hasCoords) placeMarker(savedLat, savedLng);
+
+    map.on('click', function (e) {
+        placeMarker(e.latlng.lat, e.latlng.lng);
+        map.setView([e.latlng.lat, e.latlng.lng], Math.max(map.getZoom(), 13));
+    });
+
+    async function doSearch(query) {
+        if (!query.trim()) return;
+        const btn = document.getElementById('map-search-btn');
+        btn.textContent = '⏳…';
+        btn.disabled = true;
+        try {
+            const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`;
+            const res  = await fetch(url, { headers: { 'Accept-Language': 'fr' } });
+            const data = await res.json();
+            if (!data.length) { alert('Aucun résultat pour : ' + query); return; }
+            const lat = parseFloat(data[0].lat);
+            const lng = parseFloat(data[0].lon);
+            map.setView([lat, lng], 15);
+            placeMarker(lat, lng);
+        } catch (e) {
+            alert('Erreur : ' + e.message);
+        } finally {
+            btn.textContent = '🔍 Chercher';
+            btn.disabled = false;
+        }
+    }
+
+    document.getElementById('map-search-btn').addEventListener('click', () =>
+        doSearch(document.getElementById('map-search').value));
+    document.getElementById('map-search').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') { e.preventDefault(); doSearch(e.target.value); }
+    });
+});
+</script>
 {% endblock %}
