@@ -86,14 +86,23 @@ class QuizController extends AbstractController
             5 // 5 results per page
         );
 
+        if (!$user instanceof \App\Entity\User) {
+            throw new \LogicException('The user must be an instance of App\Entity\User');
+        }
+        $stats = $resultatRepository->getUserStats($user);
+
         return $this->render('FrontOffice/quiz/history.html.twig', [
             'resultats' => $resultats,
+            'stats' => $stats,
         ]);
     }
 
-    #[Route('/{id}/certificat', name: 'app_quiz_certificat')]
-    public function generateCertificat(Resultat $resultat): Response
+    #[Route('/{id}/certificat', name: 'app_quiz_certificat', requirements: ['id' => '\d+'])]
+    public function generateCertificat(?Resultat $resultat): Response
     {
+        if (!$resultat) {
+            throw $this->createNotFoundException('Résultat non trouvé.');
+        }
         // Require the student to have passed
         $score = $resultat->getScore();
         $total = $resultat->getNoteMax();
@@ -126,9 +135,12 @@ class QuizController extends AbstractController
         );
     }
 
-    #[Route('/{id}/adaptive', name: 'app_front_office_quiz_adaptive', methods: ['GET', 'POST'])]
-    public function adaptive(Request $request, Quiz $quiz, EntityManagerInterface $entityManager): Response
+    #[Route('/{id}/adaptive', name: 'app_front_office_quiz_adaptive', methods: ['GET', 'POST'], requirements: ['id' => '\d+'])]
+    public function adaptive(Request $request, ?Quiz $quiz, EntityManagerInterface $entityManager): Response
     {
+        if (!$quiz) {
+            throw $this->createNotFoundException('Quiz non trouvé.');
+        }
         $user = $this->getUser();
         if (!$user) {
             $this->addFlash('warning', 'Vous devez être connecté pour passer un quiz.');
@@ -185,9 +197,12 @@ class QuizController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/take', name: 'app_front_office_quiz_take', methods: ['GET', 'POST'])]
-    public function take(Request $request, Quiz $quiz, EntityManagerInterface $entityManager): Response
+    #[Route('/{id}/take', name: 'app_front_office_quiz_take', methods: ['GET', 'POST'], requirements: ['id' => '\d+'])]
+    public function take(Request $request, ?Quiz $quiz, EntityManagerInterface $entityManager): Response
     {
+        if (!$quiz) {
+            throw $this->createNotFoundException('Quiz non trouvé.');
+        }
         $user = $this->getUser();
         if (!$user) {
             $this->addFlash('warning', 'Vous devez être connecté pour passer un quiz.');
@@ -256,9 +271,12 @@ class QuizController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/result', name: 'app_front_office_quiz_result', methods: ['GET'])]
-    public function result(Quiz $quiz, Request $request, HttpClientInterface $httpClient): Response
+    #[Route('/{id}/result', name: 'app_front_office_quiz_result', methods: ['GET'], requirements: ['id' => '\d+'])]
+    public function result(?Quiz $quiz, Request $request, HttpClientInterface $httpClient): Response
     {
+        if (!$quiz) {
+            throw $this->createNotFoundException('Quiz non trouvé.');
+        }
         $score = $request->query->get('score', 0);
         $totalPoints = $request->query->get('totalPoints', 0);
         $resultatId = $request->query->get('resultatId', null);

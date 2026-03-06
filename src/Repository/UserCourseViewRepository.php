@@ -24,42 +24,48 @@ class UserCourseViewRepository extends ServiceEntityRepository
     /**
      * @return UserCourseView[]
      */
-    public function findByUser(mixed $userId): array
+    public function findByUser(\App\Entity\User|string $user): array
     {
+        $userId = $user instanceof \App\Entity\User ? $user->getId() : $user;
+
         return $this->createQueryBuilder('u')
-            ->andWhere('u.user = :userId')
-            ->setParameter('userId', $userId)
+            ->andWhere('u.user = :user')
+            ->setParameter('user', $userId, 'uuid')
             ->getQuery()
             ->getResult();
     }
 
-    public function findByUserAndCourse(mixed $userId, int $courseId): ?UserCourseView
+    public function findByUserAndCourse(\App\Entity\User|string $user, \App\Entity\Course|int $course): ?UserCourseView
     {
+        $userId = $user instanceof \App\Entity\User ? $user->getId() : $user;
+        $courseId = $course instanceof \App\Entity\Course ? $course->getId() : $course;
+
         return $this->createQueryBuilder('u')
-            ->andWhere('u.user = :userId')
-            ->andWhere('u.course = :courseId')
-            ->setParameter('userId', $userId)
-            ->setParameter('courseId', $courseId)
+            ->andWhere('u.user = :user')
+            ->andWhere('u.course = :course')
+            ->setParameter('user', $userId, 'uuid')
+            ->setParameter('course', $courseId)
             ->getQuery()
+            ->setMaxResults(1)
             ->getOneOrNullResult();
     }
 
     /**
      * @return \App\Entity\Course[]
      */
-    public function findUnseenCoursesByUser(mixed $userId): array
+    public function findUnseenCoursesByUser(\App\Entity\User $user): array
     {
         $subQuery = $this->createQueryBuilder('uv')
             ->select('c.id')
             ->innerJoin('uv.course', 'c')
-            ->where('uv.user = :userId')
+            ->where('uv.user = :user')
             ->getDQL();
 
         return $this->getEntityManager()->createQueryBuilder()
             ->select('course')
             ->from(\App\Entity\Course::class, 'course')
             ->where($this->getEntityManager()->createQueryBuilder()->expr()->notIn('course.id', $subQuery))
-            ->setParameter('userId', $userId)
+            ->setParameter('user', $user)
             ->getQuery()
             ->getResult();
     }
@@ -67,12 +73,12 @@ class UserCourseViewRepository extends ServiceEntityRepository
     /**
      * @return UserCourseView[]
      */
-    public function findEnrolledCoursesByUser(mixed $userId): array
+    public function findEnrolledCoursesByUser(\App\Entity\User $user): array
     {
         return $this->createQueryBuilder('u')
-            ->andWhere('u.user = :userId')
+            ->andWhere('u.user = :user')
             ->andWhere('u.isEnrolled = :enrolled')
-            ->setParameter('userId', $userId)
+            ->setParameter('user', $user)
             ->setParameter('enrolled', true)
             ->getQuery()
             ->getResult();
@@ -81,13 +87,9 @@ class UserCourseViewRepository extends ServiceEntityRepository
     /**
      * @return array<string, mixed>
      */
-    public function getMLFeaturesForUser(mixed $userId, int $courseId): array
+    public function getMLFeaturesForUser(\App\Entity\User $user, \App\Entity\Course $course): array
     {
-        $view = $this->findByUserAndCourse($userId, $courseId);
-        $user = $this->getEntityManager()->getRepository(\App\Entity\User::class)->find($userId);
-        $course = $this->getEntityManager()->getRepository(\App\Entity\Course::class)->find($courseId);
-
-        if (!$course || !$user) return [];
+        $view = $this->findByUserAndCourse($user, $course);
 
         return [
             'time_spent' => $view ? $view->getTimeSpent() : 0,

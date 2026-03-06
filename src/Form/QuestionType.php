@@ -35,10 +35,12 @@ class QuestionType extends AbstractType
             ])
             ->add('choixC', TextType::class, [
                 'label' => 'Choix C',
+                'required' => false,
                 'attr' => ['class' => 'form-input', 'placeholder' => 'Réponse C']
             ])
             ->add('choixD', TextType::class, [
                 'label' => 'Choix D',
+                'required' => false,
                 'attr' => ['class' => 'form-input', 'placeholder' => 'Réponse D']
             ])
             ->add('bonneReponse', ChoiceType::class, [

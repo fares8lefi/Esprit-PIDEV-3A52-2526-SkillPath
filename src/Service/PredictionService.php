@@ -147,8 +147,10 @@ class PredictionService
 
         // 3. Progression spécifique au cours
         $courseProgression = 0;
+        $foundView = false;
         foreach ($userViews as $view) {
             if ($view->getCourse() && $view->getCourse()->getId() === $course->getId()) {
+                $foundView = true;
                 $totalModules = count($course->getModules());
                 if ($totalModules > 0) {
                     $courseProg = ($view->getMaxModuleReached() / $totalModules) * 100;
@@ -170,7 +172,7 @@ class PredictionService
         }
 
         // DEBUG LOG
-        $logMsg = date('[Y-m-d H:i:s]') . " AI DATA - User: {$user->getId()}, Course: {$course->getId()}, Certs: $certifsCount, Lvl: {$encodeLevel($user->getNiveau())}, Prog: $courseProgression, CatMatch: $categoryMatch | EffectiveDomain: \"$effectiveDomain\" vs Course: \"$courseCat\"\n";
+        $logMsg = date('[Y-m-d H:i:s]') . " AI DATA - User: {$user->getId()}, Course: {$course->getId()}, ViewsCount: " . count($userViews) . ", ViewFound: " . ($foundView ? 'Yes' : 'No') . ", Certs: $certifsCount, Lvl: {$encodeLevel($user->getNiveau())}, Prog: $courseProgression, CatMatch: $categoryMatch | EffectiveDomain: \"$effectiveDomain\" vs Course: \"$courseCat\"\n";
         file_put_contents(__DIR__ . '/../../var/log/ai_debug.log', $logMsg, FILE_APPEND);
 
         return [

@@ -17,7 +17,7 @@ class Question
 
     #[ORM\ManyToOne(inversedBy: 'questions')]
     #[ORM\JoinColumn(name: 'quiz_id', referencedColumnName: 'id_quiz', nullable: false, onDelete: 'CASCADE')]
-    private Quiz $quiz;
+    private ?Quiz $quiz = null;
 
     #[ORM\Column(type: Types::TEXT)]
     #[Assert\NotBlank(message: "L'énoncé de la question est obligatoire")]
@@ -32,11 +32,11 @@ class Question
     #[Assert\NotBlank(message: "Le choix B est obligatoire")]
     private string $choixB;
 
-    #[ORM\Column(name: 'choix_c', length: 255)]
-    private string $choixC;
+    #[ORM\Column(name: 'choix_c', length: 255, nullable: true)]
+    private ?string $choixC = null;
 
-    #[ORM\Column(name: 'choix_d', length: 255)]
-    private string $choixD;
+    #[ORM\Column(name: 'choix_d', length: 255, nullable: true)]
+    private ?string $choixD = null;
 
     #[ORM\Column(name: 'bonne_reponse', length: 1)]
     #[Assert\NotBlank(message: "La bonne réponse est obligatoire")]
@@ -53,7 +53,7 @@ class Question
         return $this->id;
     }
 
-    public function getQuiz(): Quiz
+    public function getQuiz(): ?Quiz
     {
         return $this->quiz;
     }
@@ -105,7 +105,7 @@ class Question
         return $this->choixC;
     }
 
-    public function setChoixC(string $choixC): static
+    public function setChoixC(?string $choixC): static
     {
         $this->choixC = $choixC;
 
@@ -117,7 +117,7 @@ class Question
         return $this->choixD;
     }
 
-    public function setChoixD(string $choixD): static
+    public function setChoixD(?string $choixD): static
     {
         $this->choixD = $choixD;
 

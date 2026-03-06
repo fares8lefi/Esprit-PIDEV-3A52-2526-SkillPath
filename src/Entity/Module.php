@@ -69,7 +69,7 @@ class Module
 
     #[ORM\ManyToOne(targetEntity: Course::class, inversedBy: 'modules')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
-    private Course $course;
+    private ?Course $course = null;
 
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
     private ?\DateTimeImmutable $scheduledAt = null;
@@ -155,7 +155,7 @@ class Module
         return $this;
     }
 
-    public function getCourse(): Course
+    public function getCourse(): ?Course
     {
         return $this->course;
     }

@@ -8,6 +8,7 @@ use Symfony\Component\Uid\UuidV7;
 
 #[ORM\Entity(repositoryClass: UserCourseViewRepository::class)]
 #[ORM\Table(name: 'user_course_view')]
+#[ORM\UniqueConstraint(name: 'user_course_unique', columns: ['user_id', 'course_id'])]
 class UserCourseView
 {
     #[ORM\Id]

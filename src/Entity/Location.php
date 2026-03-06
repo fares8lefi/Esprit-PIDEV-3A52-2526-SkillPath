@@ -27,11 +27,9 @@ class Location
     #[ORM\Column]
     private int $maxCapacity;
 
-    #[ORM\Column(type: 'float', nullable: true)]
-    private ?float $latitude = null;
+    #[ORM\Embedded(class: Coordinates::class, columnPrefix: false)]
+    private Coordinates $coordinates;
 
-    #[ORM\Column(type: 'float', nullable: true)]
-    private ?float $longitude = null;
 
     #[ORM\Column(length: 255)]
     private string $image;
@@ -45,6 +43,7 @@ class Location
     public function __construct()
     {
         $this->events = new ArrayCollection();
+        $this->coordinates = new Coordinates();
     }
 
     public function __toString(): string
@@ -105,26 +104,38 @@ class Location
         return $this;
     }
 
+    public function getCoordinates(): Coordinates
+    {
+        return $this->coordinates;
+    }
+
+    public function setCoordinates(Coordinates $coordinates): static
+    {
+        $this->coordinates = $coordinates;
+
+        return $this;
+    }
+
     public function getLatitude(): ?float
     {
-        return $this->latitude;
+        return $this->coordinates->getLatitude();
     }
 
     public function setLatitude(?float $latitude): static
     {
-        $this->latitude = $latitude;
+        $this->coordinates->setLatitude($latitude);
 
         return $this;
     }
 
     public function getLongitude(): ?float
     {
-        return $this->longitude;
+        return $this->coordinates->getLongitude();
     }
 
     public function setLongitude(?float $longitude): static
     {
-        $this->longitude = $longitude;
+        $this->coordinates->setLongitude($longitude);
 
         return $this;
     }

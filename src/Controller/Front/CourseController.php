@@ -66,9 +66,12 @@ class CourseController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'show', methods: ['GET'])]
-    public function show(Course $course, \App\Service\UserCourseViewService $viewService, \Doctrine\ORM\EntityManagerInterface $em): Response
+    #[Route('/{id}', name: 'show', methods: ['GET'], requirements: ['id' => '\d+'])]
+    public function show(?Course $course, \App\Service\UserCourseViewService $viewService, \Doctrine\ORM\EntityManagerInterface $em): Response
     {
+        if (!$course) {
+            throw $this->createNotFoundException('Cours non trouvé.');
+        }
         $user = $this->getUser();
         $isEnrolled = false;
         $isCompleted = false;
@@ -89,9 +92,12 @@ class CourseController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/enroll', name: 'enroll', methods: ['POST', 'GET'])]
-    public function enroll(Course $course, \App\Service\UserCourseViewService $viewService): Response
+    #[Route('/{id}/enroll', name: 'enroll', methods: ['POST', 'GET'], requirements: ['id' => '\d+'])]
+    public function enroll(?Course $course, \App\Service\UserCourseViewService $viewService): Response
     {
+        if (!$course) {
+            throw $this->createNotFoundException('Cours non trouvé.');
+        }
         $user = $this->getUser();
         if (!$user instanceof \App\Entity\User) {
             $this->addFlash('error', 'Vous devez être connecté pour vous inscrire.');
@@ -113,13 +119,16 @@ class CourseController extends AbstractController
         }
 
         return $this->render('FrontOffice/course/my_courses.html.twig', [
-            'views' => $repository->findByUser($user->getId()),
+            'views' => $repository->findByUser($user),
         ]);
     }
 
-    #[Route('/{id}/complete', name: 'complete', methods: ['POST'])]
-    public function complete(Course $course, \App\Service\UserCourseViewService $viewService): \Symfony\Component\HttpFoundation\JsonResponse
+    #[Route('/{id}/complete', name: 'complete', methods: ['POST'], requirements: ['id' => '\d+'])]
+    public function complete(?Course $course, \App\Service\UserCourseViewService $viewService): \Symfony\Component\HttpFoundation\JsonResponse
     {
+        if (!$course) {
+            return new \Symfony\Component\HttpFoundation\JsonResponse(['status' => 'error', 'message' => 'Cours non trouvé'], 404);
+        }
         $user = $this->getUser();
         if (!$user instanceof \App\Entity\User) {
             return new \Symfony\Component\HttpFoundation\JsonResponse(['status' => 'error', 'message' => 'Non authentifié'], 403);
@@ -129,13 +138,17 @@ class CourseController extends AbstractController
         return new \Symfony\Component\HttpFoundation\JsonResponse(['status' => 'success']);
     }
 
-    #[Route('/{id}/certificate/download', name: 'certificate_download', methods: ['GET'])]
+    #[Route('/{id}/certificate/download', name: 'certificate_download', methods: ['GET'], requirements: ['id' => '\d+'])]
     public function downloadCertificate(
-        Course $course, 
+        ?Course $course, 
         \App\Service\UserCourseViewService $viewService,
         \App\Service\CertificateService $certificateService,
         \Doctrine\ORM\EntityManagerInterface $entityManager
     ): Response {
+        if (!$course) {
+            throw $this->createNotFoundException('Cours non trouvé.');
+        }
+
         $user = $this->getUser();
         if (!$user instanceof \App\Entity\User) {
             $this->addFlash('error', 'Vous devez être connecté.');

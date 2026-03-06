@@ -17,11 +17,11 @@ class Resultat
 
     #[ORM\ManyToOne(inversedBy: 'resultats')]
     #[ORM\JoinColumn(name: 'quiz_id', referencedColumnName: 'id_quiz', nullable: false, onDelete: 'CASCADE')]
-    private Quiz $quiz;
+    private ?Quiz $quiz = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(name: 'etudiant_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
-    private User $etudiant;
+    private ?User $etudiant = null;
 
     #[ORM\Column]
     private int $score;
@@ -29,7 +29,7 @@ class Resultat
     #[ORM\Column(name: 'note_max')]
     private int $noteMax;
 
-    #[ORM\Column(name: 'date_passage', type: Types::DATETIME_MUTABLE)]
+    #[ORM\Column(name: 'date_passage', type: Types::DATETIME_IMMUTABLE)]
     #[Gedmo\Timestampable(on: 'create')]
     private \DateTimeInterface $datePassage;
 
@@ -43,7 +43,7 @@ class Resultat
         return $this->id;
     }
 
-    public function getQuiz(): Quiz
+    public function getQuiz(): ?Quiz
     {
         return $this->quiz;
     }
@@ -54,7 +54,7 @@ class Resultat
         return $this;
     }
 
-    public function getEtudiant(): User
+    public function getEtudiant(): ?User
     {
         return $this->etudiant;
     }

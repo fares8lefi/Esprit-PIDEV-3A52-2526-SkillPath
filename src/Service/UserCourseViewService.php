@@ -24,24 +24,44 @@ class UserCourseViewService
         $this->aiService = $aiService;
     }
 
-    public function recordView(User $user, Course $course): UserCourseView
+    public function recordView(User $user, Course $course, bool $flush = true): UserCourseView
     {
-        $view = $this->repository->findByUserAndCourse($user->getId(), $course->getId());
+        $view = $this->repository->findOneBy([
+            'user' => $user->getId(),
+            'course' => $course->getId()
+        ]);
 
         if (!$view) {
             $view = new UserCourseView();
             $view->setUser($user);
             $view->setCourse($course);
             $view->setTimeSpent(0);
-            $view->setIsEnrolled(false);
-            $view->setMaxModuleReached(0); // Nouveau champ initialisé
+            
+            // Si l'utilisateur est déjà dans la collection du cours, on marque comme inscrit
+            $isAlreadyInCollection = $user->getCourses()->contains($course);
+            $view->setIsEnrolled($isAlreadyInCollection);
+            
+            $view->setMaxModuleReached(0);
             $this->entityManager->persist($view);
-            $this->entityManager->flush();
+            
+            if ($flush) {
+                try {
+                    $this->entityManager->flush();
+                } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException $e) {
+                    $this->entityManager->detach($view);
+                    $view = $this->repository->findOneBy(['user' => $user, 'course' => $course]);
+                    if (!$view) throw $e;
+                }
+            }
         }
 
-        // Recalculer dynamiquement le niveau et le domaine de l'utilisateur à chaque clic/vue
-        $this->updateUserLevel($user);
-        $this->updateUserPreferredDomain($user);
+        // Recalculer le niveau et domaine (sans flusher immédiatement)
+        $this->updateUserLevel($user, false);
+        $this->updateUserPreferredDomain($user, false);
+
+        if ($flush && $this->entityManager->isOpen()) {
+            $this->entityManager->flush();
+        }
 
         return $view;
     }
@@ -102,36 +122,52 @@ class UserCourseViewService
 
     public function enrollUser(User $user, Course $course): void
     {
-        $view = $this->recordView($user, $course);
+        $view = $this->recordView($user, $course, false);
         $view->setIsEnrolled(true);
 
-        // Synchroniser avec la relation ManyToMany si nécessaire
         if (!$user->getCourses()->contains($course)) {
             $user->addCourse($course);
         }
 
-        $this->entityManager->flush();
+        try {
+            $this->entityManager->flush();
+        } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException $e) {
+            // Si une erreur de contrainte unique survient, c'est que l'entrée existe déjà
+            // On rafraîchit l'entity manager et on ignore l'erreur
+            $this->entityManager->clear();
+            // On ne fait rien de plus car l'utilisateur est déjà techniquement "inscrit" s'il y a un doublon
+        }
     }
 
     public function isUserEnrolled(User $user, Course $course): bool
     {
-        $view = $this->repository->findByUserAndCourse($user->getId(), $course->getId());
-        return $view ? $view->isEnrolled() : false;
+        // Les admins ont accès à tout
+        if (in_array('ROLE_ADMIN', $user->getRoles())) {
+            return true;
+        }
+
+        $view = $this->repository->findByUserAndCourse($user, $course);
+        if ($view && $view->isEnrolled()) {
+            return true;
+        }
+
+        // Fallback: vérifier la collection ManyToMany
+        return $user->getCourses()->contains($course);
     }
 
     public function markCourseAsCompleted(User $user, Course $course): void
     {
-        $view = $this->recordView($user, $course);
+        $view = $this->recordView($user, $course, false);
         if (!$view->isCompleted()) {
             $view->setIsCompleted(true);
-            $this->updateUserLevel($user);
+            $this->updateUserLevel($user, false);
             $this->entityManager->flush();
         }
     }
 
-    public function updateUserLevel(User $user): void
+    public function updateUserLevel(User $user, bool $flush = true): void
     {
-        $userViews = $this->repository->findByUser($user->getId());
+        $userViews = $this->repository->findByUser($user);
         
         $levelCounts = [
             'Débutant' => 0,
@@ -163,19 +199,21 @@ class UserCourseViewService
             if ($user->getNiveau() !== $majorityLevel) {
                 $user->setNiveau($majorityLevel);
                 $this->entityManager->persist($user);
-                $this->entityManager->flush();
+                if ($flush) {
+                    $this->entityManager->flush();
+                }
             }
         }
     }
 
-    public function updateUserPreferredDomain(User $user): void
+    public function updateUserPreferredDomain(User $user, bool $flush = true): void
     {
         // Si le domaine est déjà renseigné, on ne le touche pas
         if (trim($user->getDomaine() ?? '') !== '') {
             return;
         }
 
-        $userViews = $this->repository->findByUser($user->getId());
+        $userViews = $this->repository->findByUser($user);
         if (empty($userViews)) {
             return;
         }
@@ -200,7 +238,9 @@ class UserCourseViewService
 
         if ($user->getDomaine() !== $majorityDomain) {
             $user->setDomaine($majorityDomain);
-            $this->entityManager->flush();
+            if ($flush) {
+                $this->entityManager->flush();
+            }
         }
     }
 
@@ -209,11 +249,11 @@ class UserCourseViewService
      */
     public function getRecommendations(User $user, int $topN = 1): array
     {
-        $unseenCourses = $this->repository->findUnseenCoursesByUser($user->getId());
+        $unseenCourses = $this->repository->findUnseenCoursesByUser($user);
         $scoredCourses = [];
 
         foreach ($unseenCourses as $course) {
-            $features = $this->repository->getMLFeaturesForUser($user->getId(), $course->getId());
+            $features = $this->repository->getMLFeaturesForUser($user, $course);
             
             try {
                 // Utilisation du consensus de tous les modèles AI
