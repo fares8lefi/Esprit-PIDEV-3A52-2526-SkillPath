@@ -153,6 +153,11 @@
                 <div class="animate-fade-up">
                     <span class="text-primary font-black uppercase tracking-[0.3em] text-[10px] mb-2 block">Curriculum Architectural</span>
                     <h2 class="text-4xl md:text-5xl font-black text-white">Plan d'Apprentissage</h2>
+                    {% if app.environment == 'dev' %}
+                        <div class="text-[10px] text-slate-600 mt-2">
+                            Debug: LoggedIn={{ app.user ? 'Yes' : 'No' }} | Enrolled={{ isEnrolled ? 'Yes' : 'No' }} | Admin={{ is_granted('ROLE_ADMIN') ? 'Yes' : 'No' }}
+                        </div>
+                    {% endif %}
                 </div>
                 <p class="text-slate-400 max-w-sm text-sm font-medium leading-relaxed">
                     Un parcours structuré en étapes progressives pour une maîtrise totale des concepts.
@@ -162,10 +167,10 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {% set visible_modules = course.modules|filter(m => m.scheduledAt is null or m.scheduledAt <= date()) %}
                 {% for module in visible_modules %}
-                    {% if isEnrolled %}
+                    {% if isEnrolled or is_granted('ROLE_ADMIN') %}
                         <a href="{{ path('app_front_office_module_show', {id: module.id}) }}" class="group block relative animate-fade-up" style="animation-delay: {{ loop.index * 100 }}ms">
                     {% else %}
-                        <div class="group relative animate-fade-up cursor-not-allowed" style="animation-delay: {{ loop.index * 100 }}ms">
+                        <div class="group relative animate-fade-up cursor-not-allowed pointer-events-auto" style="animation-delay: {{ loop.index * 100 }}ms" title="Inscrivez-vous pour débloquer ce module">
                     {% endif %}
                         <div class="h-full glass border border-white/5 rounded-[2.5rem] p-10 flex flex-col justify-between overflow-hidden relative transition-all duration-500 hover:border-primary/40 hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/10">
                             {# Kinetic backgrounds #}
@@ -251,6 +256,14 @@
         backdrop-filter: blur(16px);
         -webkit-backdrop-filter: blur(16px);
         border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    /* Ensure module cards are always clickable even during animation */
+    a.animate-fade-up, a[href] {
+        pointer-events: auto !important;
+    }
+    /* Fix for animation-delay + forwards: start visible so click works immediately */
+    a.animate-fade-up {
+        opacity: 1;
     }
 </style>
 {% endblock %}

@@ -33,30 +33,18 @@
 
         {% if resultats|length > 0 %}
             <!-- Stats Summary -->
-            {% set totalAttempts = resultats|length %}
-            {% set passedCount = 0 %}
-            {% set totalScore = 0 %}
-            {% set totalMax = 0 %}
-            {% for r in resultats %}
-                {% set totalScore = totalScore + r.score %}
-                {% set totalMax = totalMax + r.noteMax %}
-                {% if r.noteMax > 0 and (r.score / r.noteMax * 100) >= 50 %}
-                    {% set passedCount = passedCount + 1 %}
-                {% endif %}
-            {% endfor %}
-
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8 animate-fade-up delay-100">
                 <div class="glass-card rounded-2xl p-5 text-center">
                     <p class="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500 mb-1">Total Tentatives</p>
-                    <p class="text-3xl font-black text-slate-900 dark:text-white">{{ totalAttempts }}</p>
+                    <p class="text-3xl font-black text-slate-900 dark:text-white">{{ stats.totalAttempts }}</p>
                 </div>
                 <div class="glass-card rounded-2xl p-5 text-center">
                     <p class="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500 mb-1">Réussis</p>
-                    <p class="text-3xl font-black text-emerald-500">{{ passedCount }}</p>
+                    <p class="text-3xl font-black text-emerald-500">{{ stats.passedCount }}</p>
                 </div>
                 <div class="glass-card rounded-2xl p-5 text-center">
                     <p class="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500 mb-1">Moyenne</p>
-                    <p class="text-3xl font-black text-primary">{{ totalMax > 0 ? ((totalScore / totalMax) * 100)|round : 0 }}%</p>
+                    <p class="text-3xl font-black text-primary">{{ stats.average }}%</p>
                 </div>
             </div>
 

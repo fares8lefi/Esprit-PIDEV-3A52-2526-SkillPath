@@ -163,7 +163,7 @@
 
                     {% if module.document %}
                         {% set fileExt = module.document|split('.')|last|lower %}
-                        {% set docUrl  = asset('uploads/modules/' ~ module.document) %}
+                        {% set docUrl  = asset('uploads/documents/' ~ module.document) %}
                         {% set isPdf   = fileExt == 'pdf' %}
                         {% set fileLabel = isPdf ? 'Fichier PDF' : 'Document Word' %}
 
