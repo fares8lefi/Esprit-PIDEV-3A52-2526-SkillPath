@@ -34,17 +34,17 @@
         {% if resultats|length > 0 %}
             <!-- Stats Summary -->
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8 animate-fade-up delay-100">
-                <div class="glass-card rounded-2xl p-5 text-center">
-                    <p class="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500 mb-1">Total Tentatives</p>
-                    <p class="text-3xl font-black text-slate-900 dark:text-white">{{ stats.totalAttempts }}</p>
+                <div class="glass-card rounded-2xl p-6 text-center transform hover:scale-105 transition-all">
+                    <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 mb-2">Total Tentatives</p>
+                    <p class="text-4xl font-black text-slate-900 dark:text-white">{{ stats.totalAttempts }}</p>
                 </div>
-                <div class="glass-card rounded-2xl p-5 text-center">
-                    <p class="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500 mb-1">Réussis</p>
-                    <p class="text-3xl font-black text-emerald-500">{{ stats.passedCount }}</p>
+                <div class="glass-card rounded-2xl p-6 text-center transform hover:scale-105 transition-all">
+                    <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 mb-2">Réussis</p>
+                    <p class="text-4xl font-black text-emerald-500">{{ stats.passedCount }}</p>
                 </div>
-                <div class="glass-card rounded-2xl p-5 text-center">
-                    <p class="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500 mb-1">Moyenne</p>
-                    <p class="text-3xl font-black text-primary">{{ stats.average }}%</p>
+                <div class="glass-card rounded-2xl p-6 text-center transform hover:scale-105 transition-all">
+                    <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 mb-2">Moyenne Globale</p>
+                    <p class="text-4xl font-black text-primary">{{ stats.average }}%</p>
                 </div>
             </div>
 
@@ -63,42 +63,56 @@
                         </thead>
                         <tbody>
                         {% for resultat in resultats %}
-                            {% set pct = resultat.noteMax > 0 ? (resultat.score / resultat.noteMax * 100)|round : 0 %}
+                            {% set raw_pct = resultat.noteMax > 0 ? (resultat.score / resultat.noteMax * 100) : 0 %}
+                            {% set pct = raw_pct|round %}
+                            {% set display_pct = pct > 100 ? 100 : pct %}
                             {% set ok = pct >= 50 %}
-                            <tr class="border-b border-slate-100/60 dark:border-white/5 hover:bg-slate-50/50 dark:hover:bg-white/[0.02] transition-colors">
-                                <td class="px-6 py-4">
-                                    <div>
-                                        <span class="font-bold text-sm text-slate-900 dark:text-white">{{ resultat.quiz.titre }}</span>
-                                        {% if resultat.quiz.course %}
-                                            <p class="text-xs text-slate-400">📚 {{ resultat.quiz.course.title }}</p>
-                                        {% endif %}
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <div class="flex items-center gap-2">
-                                        <span class="font-bold text-sm text-slate-900 dark:text-white">{{ resultat.score }}/{{ resultat.noteMax }}</span>
-                                        <div class="w-12 h-1.5 rounded-full bg-slate-100 dark:bg-white/5 overflow-hidden">
-                                            <div class="h-full rounded-full {% if ok %}bg-emerald-500{% else %}bg-red-500{% endif %}" style="width: {{ pct }}%"></div>
+                            <tr class="border-b border-slate-100/60 dark:border-white/5 hover:bg-slate-50/50 dark:hover:bg-white/[0.02] transition-colors group">
+                                <td class="px-6 py-5">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-white/5 flex items-center justify-center shrink-0">
+                                            <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
                                         </div>
-                                        <span class="text-xs font-bold {% if ok %}text-emerald-500{% else %}text-red-500{% endif %}">{{ pct }}%</span>
+                                        <div>
+                                            <span class="font-bold text-sm text-slate-900 dark:text-white group-hover:text-primary transition-colors">{{ resultat.quiz.titre }}</span>
+                                            {% if resultat.quiz.course %}
+                                                <p class="text-[10px] text-slate-400 font-medium uppercase tracking-wider mt-0.5">📚 {{ resultat.quiz.course.title }}</p>
+                                            {% endif %}
+                                        </div>
                                     </div>
                                 </td>
-                                <td class="px-6 py-4">
+                                <td class="px-6 py-5">
+                                    <div class="flex flex-col gap-1.5 min-w-[120px]">
+                                        <div class="flex items-center justify-between">
+                                            <span class="font-bold text-xs text-slate-900 dark:text-white">{{ resultat.score }} <span class="text-slate-400">/ {{ resultat.noteMax }}</span></span>
+                                            <span class="text-[10px] font-black {% if ok %}text-emerald-500{% else %}text-red-500{% endif %}">{{ pct }}%</span>
+                                        </div>
+                                        <div class="w-full h-1.5 rounded-full bg-slate-100 dark:bg-white/5 overflow-hidden">
+                                            <div class="h-full rounded-full {% if ok %}bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]{% else %}bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.4)]{% endif %} transition-all duration-1000" style="width: {{ display_pct }}%"></div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-5">
                                     {% if ok %}
-                                        <span class="badge badge-green">Réussi ✓</span>
+                                        <span class="badge badge-green !py-1 !px-3 font-bold">Réussi ✓</span>
                                     {% else %}
-                                        <span class="badge badge-red">Échoué</span>
+                                        <span class="badge badge-red !py-1 !px-3 font-bold">Échoué</span>
                                     {% endif %}
                                 </td>
-                                <td class="px-6 py-4">
-                                    <span class="text-xs text-slate-400 dark:text-slate-500">{{ resultat.datePassage|date('d/m/Y H:i') }}</span>
+                                <td class="px-6 py-5">
+                                    <div class="flex flex-col">
+                                        <span class="text-xs font-bold text-slate-700 dark:text-slate-300">{{ resultat.datePassage|date('d M Y') }}</span>
+                                        <span class="text-[10px] text-slate-400">{{ resultat.datePassage|date('H:i') }}</span>
+                                    </div>
                                 </td>
-                                <td class="px-6 py-4 text-right">
-                                    <div class="flex items-center justify-end gap-2">
-                                        <a href="{{ path('app_front_office_quiz_take', {'id': resultat.quiz.id}) }}" class="text-sm font-bold text-primary hover:text-primary-dark transition-colors">Réessayer</a>
+                                <td class="px-6 py-5 text-right">
+                                    <div class="flex items-center justify-end gap-3">
+                                        <a href="{{ path('app_front_office_quiz_take', {'id': resultat.quiz.id}) }}" class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-primary hover:bg-primary/10 transition-all" title="Réessayer">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                                        </a>
                                         {% if ok %}
-                                        <a href="{{ path('app_quiz_certificat', {'id': resultat.id}) }}" class="text-sm font-bold text-emerald-500 hover:text-emerald-600 transition-colors ml-2 flex items-center gap-1">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg> PDF
+                                        <a href="{{ path('app_quiz_certificat', {'id': resultat.id}) }}" class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-emerald-500 hover:bg-emerald-500/10 transition-all" title="Télécharger certificat">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                                         </a>
                                         {% endif %}
                                     </div>
@@ -125,6 +139,9 @@
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/></svg>
                     Découvrir les Quiz
                 </a>
+                <div class="mt-4 text-left">
+                    <pre class="text-xs text-slate-400">Debug — utilisateur: {{ app.user ? app.user.id : 'non connecté' }} — resultats: {{ resultats|length }}</pre>
+                </div>
             </div>
         {% endif %}
     </div>
