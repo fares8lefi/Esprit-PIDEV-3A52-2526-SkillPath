@@ -11,5 +11,6 @@ parameters:
         - tests/
     excludePaths:
         - src/Kernel.php
+    reportUnmatchedIgnoredErrors: false
     symfony:
         containerXmlPath: var/cache/dev/App_KernelDevDebugContainer.xml
