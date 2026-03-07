@@ -36,10 +36,11 @@ class UserCourseViewServiceTest extends TestCase
     {
         $user = $this->createMock(User::class);
         $user->method('getId')->willReturn(new UuidV7());
+        $user->method('getCourses')->willReturn(new \Doctrine\Common\Collections\ArrayCollection());
         $course = $this->createMock(Course::class);
         $course->method('getId')->willReturn(1);
         
-        $this->repository->method('findByUserAndCourse')->willReturn(null);
+        $this->repository->method('findOneBy')->willReturn(null);
         
         $this->entityManager->expects($this->once())
             ->method('persist')
@@ -78,7 +79,7 @@ class UserCourseViewServiceTest extends TestCase
         $course->method('getId')->willReturn(1);
         
         $view = new UserCourseView();
-        $this->repository->method('findByUserAndCourse')->willReturn($view);
+        $this->repository->method('findOneBy')->willReturn($view);
         
         $this->userCourseViewService->enrollUser($user, $course);
         
