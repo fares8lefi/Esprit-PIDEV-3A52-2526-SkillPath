@@ -156,10 +156,41 @@ php bin/console doctrine:migrations:execute --up VERSION
 
 ##  Controllers disponibles
 
-- `calendar_controller` - Gestion du calendrier
-- `chatbot_controller` - Chatbot IA
-- `hello_controller` - Controller de démonstration
-- `voice_recognition_controller` - Reconnaissance vocale
+### Controllers principaux
+- `AdminReclamationController` - Gestion des réclamations (Admin)
+- `CalendarController` - Gestion du calendrier
+- `ChatbotController` - Chatbot IA
+- `EventController` - Gestion des événements
+- `GoogleController` - Intégration Google
+- `HuggingFaceChatController` - Chat avec API Hugging Face
+- `LocationController` - Gestion des localisations
+- `MainController` - Controller principal
+- `PredictionController` - Prédictions ML
+- `ReclamationController` - Gestion des réclamations
+- `RecommendationController` - Système de recommandations
+- `TutorChatController` - Chat avec tuteurs
+- `UserController` - Gestion des utilisateurs
+
+### Admin
+- `Admin\CourseController` - Gestion des cours
+- `Admin\ModuleController` - Gestion des modules
+
+### API
+- `Api\QuizApiController` - Endpoint API pour les quiz
+
+### BackOffice
+- `BackOffice\QuestionController` - Gestion des questions
+- `BackOffice\QuizController` - Gestion des quiz
+- `BackOffice\ResultatController` - Gestion des résultats
+
+### Front
+- `Front\CourseController` - Affichage des cours
+- `Front\EventController` - Affichage des événements
+- `Front\NotificationController` - Gestion des notifications
+
+### FrontOffice
+- `FrontOffice\ModuleController` - Affichage des modules
+- `FrontOffice\QuizController` - Affichage des quiz
 
 ##  Configuration Email
 
