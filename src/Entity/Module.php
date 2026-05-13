@@ -25,9 +25,11 @@ class Module
     #[ORM\Column]
     private ?int $id = null;
 
-    public function __construct(User $createdBy)
+    public function __construct(?User $createdBy = null)
     {
-        $this->createdBy = $createdBy;
+        if ($createdBy) {
+            $this->createdBy = $createdBy;
+        }
         $this->createdAt = new \DateTimeImmutable();
         $this->updatedAt = new \DateTimeImmutable();
     }

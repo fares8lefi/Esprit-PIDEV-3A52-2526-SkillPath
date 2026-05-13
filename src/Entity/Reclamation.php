@@ -21,7 +21,7 @@ class Reclamation
     #[Assert\NotBlank(message: "Le sujet ne peut pas être vide.")]
     private string $sujet;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(type: 'text')]
     #[Assert\NotBlank(message: "La description ne peut pas être vide.")]
     private string $description;
 

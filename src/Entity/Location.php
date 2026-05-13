@@ -31,8 +31,8 @@ class Location
     private Coordinates $coordinates;
 
 
-    #[ORM\Column(length: 255)]
-    private string $image;
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $image = null;
 
     /**
      * @var Collection<int, Event>
@@ -144,7 +144,7 @@ class Location
         return $this->image;
     }
 
-    public function setImage(string $image): static
+    public function setImage(?string $image): static
     {
         $this->image = $image;
 

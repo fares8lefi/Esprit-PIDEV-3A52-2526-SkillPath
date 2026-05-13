@@ -14,6 +14,7 @@ use App\Entity\Event;
 use App\Entity\Embeddable\Email;
 use Symfony\Component\Serializer\Annotation\Ignore;
 use SensitiveParameter;
+use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Uid\UuidV7;
 
 use App\Entity\Trait\BlameableTrait;
@@ -27,7 +28,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     use BlameableTrait;
     #[ORM\Id]
     #[ORM\Column(type: 'uuid', unique: true)]
-    private UuidV7 $id;
+    private Uuid $id;
 
     #[ORM\Embedded(class: Email::class, columnPrefix: false)]
     private Email $email;
@@ -107,7 +108,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->createdAt = new \DateTime();
     }
 
-    public function getId(): UuidV7
+    public function getId(): Uuid
     {
         return $this->id;
     }
@@ -211,8 +212,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $role = $this->role;
         // guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
-        
-        if ($role === 'admin') {
+
+        // Accept both stored formats: 'ROLE_ADMIN' (direct SQL insert) and 'admin' (legacy)
+        if ($role === 'ROLE_ADMIN' || $role === 'admin') {
             $roles[] = 'ROLE_ADMIN';
         }
 

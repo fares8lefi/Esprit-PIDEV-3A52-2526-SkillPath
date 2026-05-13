@@ -22,7 +22,7 @@ class Event
     #[ORM\Column(length: 255)]
     private string $title;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(type: 'text')]
     private string $description;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]

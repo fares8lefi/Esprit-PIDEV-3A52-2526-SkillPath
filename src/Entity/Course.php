@@ -73,9 +73,11 @@ class Course
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'courses')]
     private Collection $users;
 
-    public function __construct(User $createdBy)
+    public function __construct(?User $createdBy = null)
     {
-        $this->createdBy = $createdBy;
+        if ($createdBy) {
+            $this->createdBy = $createdBy;
+        }
         $this->modules = new ArrayCollection();
         $this->quizzes = new ArrayCollection();
         $this->users = new ArrayCollection();

@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 import pickle
 import numpy as np
+import pandas as pd
 import os
 
 app = Flask(__name__)
@@ -31,12 +32,14 @@ def predict():
 
         # On transforme le tableau pour l'IA
         print(f"DEBUG IA - Features reçues : {features}")
-        features_array = np.array([features])
+        # On crée un DataFrame avec les noms de colonnes utilisés lors de l'entraînement
+        # pour éviter le warning "UserWarning: X does not have valid feature names"
+        df_predict = pd.DataFrame([features], columns=['certifs', 'niveau', 'progression', 'cat_match'])
         
         # Prédiction des probabilités
         # proba[0][0] = Probabilité d'échec
         # proba[0][1] = Probabilité de succès
-        prediction_proba = model.predict_proba(features_array)
+        prediction_proba = model.predict_proba(df_predict)
         prob_success = float(prediction_proba[0][1])
 
         return jsonify({

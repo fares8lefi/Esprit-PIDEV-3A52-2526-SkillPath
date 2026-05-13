@@ -81,9 +81,11 @@ class MainController extends AbstractController
         // Roles Data
         $rolesData = ['admin' => 0, 'user' => 0];
         foreach ($users as $user) {
-            $role = strtolower($user->getRole() ?? 'user');
-            if (isset($rolesData[$role])) {
-                $rolesData[$role]++;
+            $roleRaw = strtolower($user->getRole() ?? 'user');
+            
+            // Normalize role for statistics display
+            if ($roleRaw === 'admin' || $roleRaw === 'role_admin') {
+                $rolesData['admin']++;
             } else {
                 $rolesData['user']++;
             }
